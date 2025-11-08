@@ -1,0 +1,153 @@
+/* ===========================
+   Global
+=========================== */
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===========================
+   Navbar
+=========================== */
+.navbar {
+  background-color: #001c46;
+}
+
+.navbar-brand {
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.btn-login {
+  background-color: white;
+  color: #001c46;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 6px 20px;
+}
+
+.btn-register {
+  background-color: #f26522;
+  color: white;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 6px 20px;
+}
+
+/* ===========================
+   HERO SECTION
+=========================== */
+.hero {
+  height: 70vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.hero-overlay-orange {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 45%;
+  height: 100%;
+  background-color: rgba(242, 101, 34, 0.9); /* oranye transparan */
+  clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+  z-index: 2;
+}
+
+.hero-text {
+  position: relative;
+  z-index: 3;
+  font-weight: 700;
+}
+
+.hero-text h2 {
+  font-size: 2.2rem;
+  line-height: 1.4;
+}
+
+/* ===========================
+   ABOUT SECTION
+=========================== */
+.about {
+  background-color: #f8fafc; /* putih keabu-abuan */
+  padding: 80px 0 60px 0;
+}
+
+.about-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #000;
+  margin-bottom: 25px;
+}
+
+.about-box {
+  position: relative;
+  background-color: #0b2b68;
+  color: white;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 800px;
+  line-height: 1.7;
+  font-size: 1rem;
+  box-shadow: 10px 10px 0px #dbeafe, 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ===========================
+   FEATURES SECTION
+=========================== */
+.features {
+  background-color: #1E3E78;
+  color: white;
+  padding: 60px 0;
+  border-radius: 20px 20px 0 0;
+  margin-top: -20px;
+}
+
+.features .section-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 50px;
+  background-color: white;
+  color: #1E3E78;
+  display: inline-block;
+  padding: 10px 25px;
+  border-radius: 12px 12px 0 0;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.feature-icon {
+  width: 60px;
+  height: 60px;
+}
+
+.feature-text h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.feature-text p {
+  font-size: 0.95rem;
+  margin: 0;
+  color: #f0f0f0;
+}
