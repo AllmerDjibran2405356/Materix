@@ -18,7 +18,7 @@ use App\Http\Controllers\RegisterController;
 Route::get('/', [RegisterController::class, 'create'])->name('register.form');
 Route::post('/', [RegisterController::class, 'store'])->name('register.submit');
 
-// --- Rute Pengaturan ---
+// --- Rute Pengaturan ini nanti di buka pas aku udah bikin yang pengaturan ---
 //Route::get('/pengaturan', function () {
 //    return view('UI_Pengaturan.pengaturan');
 //})->name('pengaturan');
