@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\HomeController;
 
 
 /*
@@ -34,3 +35,7 @@ Route::post('/daftar', [AuthController::class, 'store'])->name('daftar.submit');
 //Route::get('/pengaturan', function () {
 //    return view('UI_Pengaturan.pengaturan');
 //})->name('pengaturan');
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+
