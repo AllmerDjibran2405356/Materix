@@ -36,6 +36,6 @@ Route::post('/daftar', [AuthController::class, 'store'])->name('daftar.submit');
 //    return view('UI_Pengaturan.pengaturan');
 //})->name('pengaturan');
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/HomePage', [HomeController::class, 'index'])->name('HomePage');
 
 
