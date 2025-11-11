@@ -16,7 +16,7 @@
         <div class="form-section">
             <h2>Buat Akun</h2>
 
-            <form method="POST" action="{{ route('daftar.submit') }}"> 
+            <form method="POST" action="{{ route('daftar.submit') }}" method="POST"> 
                 @csrf 
                 
                 {{-- Nama Depan dan Nama Belakang --}}
