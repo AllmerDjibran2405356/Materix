@@ -3,8 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\PengaturanController;
-
+use App\Http\Controllers\PengaturanController; // <-- Diambil dari versi Anda
+use App\Http\Controllers\HomeController;         // <-- Diambil dari versi server
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +30,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/daftar', [AuthController::class, 'registerCreate'])->name('daftar.form');
 Route::post('/daftar', [AuthController::class, 'registerStore'])->name('daftar.submit');
 
+// --- Rute Pengaturan (dari versi Anda) ---
 Route::get('/pengaturan', [PengaturanController::class, 'index'])
     ->name('pengaturan')
     ->middleware('auth'); // <-- 'auth' berarti HANYA user login yang bisa akses
@@ -46,4 +47,5 @@ Route::post('/pengaturan/cek-sandi', [PengaturanController::class, 'cekSandiLama
     ->name('pengaturan.cekSandi')
     ->middleware('auth');
 
-  
+// --- Rute Home Page (dari versi server) ---
+Route::get('/HomePage', [HomeController::class, 'index'])->name('HomePage');
