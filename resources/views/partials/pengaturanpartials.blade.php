@@ -140,3 +140,29 @@
         </div>
     </div>
 </div>
+
+{{-- 4. MODAL KONFIRMASI LOGOUT --}}
+<div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header modal-header-custom">
+                <h1 class="modal-title fs-5" id="logoutConfirmModalLabel">Konfirmasi Logout</h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body modal-body-custom text-center">
+                <i class="bi bi-box-arrow-right text-warning" style="font-size: 3rem;"></i>
+                <h5 class="mt-3">Apakah Anda yakin ingin logout?</h5>
+                <p class="text-muted">Anda harus login kembali untuk mengakses akun Anda.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <form id="logoutForm" action="{{ route('logout') }}" method="POST" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-box-arrow-right me-2"></i>Ya, Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

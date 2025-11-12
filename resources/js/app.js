@@ -1,99 +1,85 @@
-import './bootstrap';
-// ... (Kode setupPasswordToggle kamu yang lama ada di atas) ...
-
 document.addEventListener('DOMContentLoaded', function() {
-    // ... (Pemanggilan setupPasswordToggle kamu ada di sini) ...
+    // Fungsi untuk toggle password visibility
+    function setupPasswordToggle(buttonId, inputId) {
+        const toggleButton = document.getElementById(buttonId);
+        const passwordInput = document.getElementById(inputId);
+
+        if (!toggleButton || !passwordInput) return;
+
+        toggleButton.addEventListener('mousedown', function() {
+            passwordInput.type = 'text';
+        });
+
+        toggleButton.addEventListener('mouseup', function() {
+            passwordInput.type = 'password';
+        });
+
+        toggleButton.addEventListener('mouseleave', function() {
+            passwordInput.type = 'password';
+        });
+    }
+
+    // Setup password toggles
     setupPasswordToggle('toggleSandiLama', 'sandiLama');
     setupPasswordToggle('toggleSandiBaru', 'sandiBaru');
     setupPasswordToggle('toggleUlangiSandiBaru', 'ulangiSandiBaru');
 
-
-    // ▼▼▼ HAPUS LOGIKA LAMA 'btnLanjutSandi' DAN GANTI DENGAN YANG INI ▼▼▼
-
-   const lanjutButton = document.getElementById('btnLanjutSandi');
+    // Logic untuk tombol "Lanjut"
+    const lanjutButton = document.getElementById('btnLanjutSandi');
     
-    // Ambil elemen modal Bootstrap (ini aman di luar)
-    const cekSandiModalEl = document.getElementById('cekSandiLamaModal');
-    const cekSandiModal = bootstrap.Modal.getInstance(cekSandiModalEl) || new bootstrap.Modal(cekSandiModalEl);
-    
-    const sandiBaruModalEl = document.getElementById('sandiBaruModal');
-    const sandiBaruModal = bootstrap.Modal.getInstance(sandiBaruModalEl) || new bootstrap.Modal(sandiBaruModalEl);
-
-    // Ambil elemen error (ini aman di luar)
-    const sandiLamaError = document.getElementById('sandiLamaError');
-
-    // 
-    // const csrfToken = ... <-- BARIS INI KITA HAPUS DARI SINI
-    // 
-
     if (lanjutButton) {
         lanjutButton.addEventListener('click', async function() {
-
-            // ▼▼▼ KITA PINDAHKAN PENCARIAN TOKEN KE SINI ▼▼▼
-            // Sekarang ini hanya berjalan SAAT DIKLIK, pasti aman.
-            const csrfToken = document.querySelector('#formUbahAkun input[name="_token"]').value;
-
-            // 1. Ambil nilai sandi lama
             const sandiLamaInput = document.getElementById('sandiLama');
             const sandiLamaValue = sandiLamaInput.value;
+            const errorBox = document.getElementById('sandiLamaError');
 
-            // 2. Sembunyikan error lama & tampilkan status loading
-            sandiLamaError.style.display = 'none';
-            sandiLamaError.textContent = '';
-            lanjutButton.disabled = true;
-            lanjutButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Mengecek...';
+            if (errorBox) {
+                errorBox.style.display = 'none';
+                errorBox.textContent = '';
+            }
 
             try {
-                // 3. Kirim data ke server untuk dicek via AJAX
-                const response = await fetch("/pengaturan/cek-sandi", {
+                const response = await fetch('/pengaturan/cek-sandi', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     },
-                    body: JSON.stringify({
-                        sandi_lama: sandiLamaValue
-                    })
+                    body: JSON.stringify({ sandi_lama: sandiLamaValue }),
                 });
 
-                // 4. Proses balasan
                 const data = await response.json();
 
-                if (response.ok && data.success) {
-                    // 5. JIKA BENAR: Pindahkan data sandi lama
-                    const sandiBaruForm = document.getElementById('formSandiBaru');
-                    
-                    const oldHiddenInput = sandiBaruForm.querySelector('input[name="sandi_lama"]');
-                    if (oldHiddenInput) {
-                        oldHiddenInput.remove();
+                if (!data.success) {
+                    if (errorBox) {
+                        errorBox.textContent = data.message || 'Terjadi kesalahan.';
+                        errorBox.style.display = 'block';
                     }
-                    
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'sandi_lama';
-                    hiddenInput.value = sandiLamaValue;
-                    sandiBaruForm.appendChild(hiddenInput);
-
-                    sandiLamaInput.value = '';
-                    
-                    cekSandiModal.hide();
-                    sandiBaruModal.show();
-
-                } else {
-                    // 6. JIKA SALAH (dari server): Tampilkan pesan error
-                    sandiLamaError.textContent = data.message || 'Terjadi kesalahan.';
-                    sandiLamaError.style.display = 'block';
+                    return;
                 }
 
-            } catch (error) {
-                // 7. JIKA GAGAL TOTAL (network error, dll)
-                sandiLamaError.textContent = 'Tidak dapat terhubung ke server. Coba lagi.';
-                sandiLamaError.style.display = 'block';
-            } finally {
-                // 8. Kembalikan tombol ke kondisi normal
-                lanjutButton.disabled = false;
-                lanjutButton.innerHTML = 'Lanjut';
+                // Sukses - lanjut ke modal sandi baru
+                const sandiBaruForm = document.getElementById('formSandiBaru');
+                const oldHiddenInput = sandiBaruForm.querySelector('input[name="sandi_lama"]');
+                if (oldHiddenInput) oldHiddenInput.remove();
+
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'sandi_lama';
+                hiddenInput.value = sandiLamaValue;
+                sandiBaruForm.appendChild(hiddenInput);
+
+                sandiLamaInput.value = '';
+
+                // Tutup modal lama dan buka modal baru
+                const modalLama = bootstrap.Modal.getInstance(document.getElementById('cekSandiLamaModal'));
+                if (modalLama) modalLama.hide();
+
+                const modalBaru = new bootstrap.Modal(document.getElementById('sandiBaruModal'));
+                modalBaru.show();
+
+            } catch (err) {
+                console.error('Terjadi kesalahan:', err);
             }
         });
     }

@@ -37,7 +37,6 @@
             </div>
         @endif
 
-
         <div class="d-flex align-items-center mb-4">
             
             {{-- Tampilan Foto Profil (Sederhana/Non-Aktif) --}}
@@ -52,7 +51,6 @@
         </div>
 
         {{-- Kartu "Akun Saya" --}}
-        {{-- ▼▼▼ PERBAIKAN TYPO HTML DI SINI ▼▼▼ --}}
         <div class="card shadow-sm mb-4">
             <div class="card-header section-header">
                 <h4 class="mb-0">Akun Saya</h4>
@@ -90,31 +88,7 @@
                             <td>{{ auth()->user()->created_at->format('F d, Y') }}</td>
                         </tr>
                         @else
-                        {{-- Tampilan jika user belum login (untuk tes UI) --}}
-                        <tr>
-                            <th>Nama Pengguna</th>
-                            <td>JohnDoe001</td>
-                        </tr>
-                        <tr>
-                            <th>Nama Depan</th>
-                            <td>John</td>
-                        </tr>
-                         <tr>
-                            <th>Nama Belakang</th>
-                            <td>Doe</td>
-                        </tr>
-                        <tr>
-                            <th>Email</th>
-                            <td>JohnDoe314159@mail.com</td>
-                        </tr>
-                        <tr>
-                            <th>Kata Sandi</th>
-                            <td>**********</td>
-                        </tr>
-                        <tr>
-                            <th>Tanggal Bergabung</th>
-                            <td>April 26, 2025</td>
-                        </tr>
+                                               
                         @endauth
                     </tbody>
                 </table>
@@ -122,7 +96,6 @@
         </div>
 
         {{-- Kartu "Informasi Website" --}}
-        {{-- ▼▼▼ PERBAIKAN TYPO HTML DI SINI ▼▼▼ --}}
         <div class="card shadow-sm mb-4">
             <div class="card-header section-header">
                 <h4 class="mb-0">Informasi Website</h4>
@@ -137,6 +110,13 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        {{-- TOMBOL LOGOUT DI POJOK KANAN BAWAH --}}
+        <div class="text-end mt-5">
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
+                <i class="bi bi-box-arrow-right me-2"></i>Logout
+            </button>
         </div>
 
     </div>

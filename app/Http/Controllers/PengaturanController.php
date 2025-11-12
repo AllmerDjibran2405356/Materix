@@ -7,7 +7,7 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth; // Panggil "Satpam"
 use Illuminate\Support\Facades\Hash; // Panggil "Pengecek Sandi"
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Validation\Rule; // Panggil "Aturan Validasi"
+use Illuminate\Validation\Rule; 
 use Illuminate\Http\JsonResponse;
 
 class PengaturanController extends Controller
@@ -86,33 +86,36 @@ class PengaturanController extends Controller
     }
 
     
-    // LOGIKA 4: (Fitur Foto Dimatikan Sesuai Permintaan)
+    // LOGIKA 4: (Fitur Foto Dimatikan)
     // public function updatePhoto(Request $request)
     // {
     //     // ...
     // }
 
-    public function cekSandiLama(Request $request): JsonResponse
-    {
-        // Validasi input
-        $request->validate([
-            'sandi_lama' => 'required|string',
-        ]);
+   public function cekSandiLama(Request $request): JsonResponse
+{
+    // Debug logging
+    \Log::info('CekSandiLama called', ['input' => $request->all()]);
+    
+    $request->validate([
+        'sandi_lama' => 'required|string',
+    ]);
 
-        $user = Auth::user();
+    $user = Auth::user();
+    
+    \Log::info('User checking password', ['user_id' => $user->id]);
 
-        // Cek hash
-        if (Hash::check($request->sandi_lama, $user->password)) {
-            // Jika BENAR, kirim balasan sukses
-            return response()->json(['success' => true]);
-        } else {
-            // Jika SALAH, kirim balasan error
-            return response()->json([
-                'success' => false,
-                'message' => 'Kata sandi lama yang Anda masukkan salah.'
-            ], 422); // 422 adalah kode error validasi
-        }
+    if (Hash::check($request->sandi_lama, $user->password)) {
+        \Log::info('Password CORRECT for user', ['user_id' => $user->id]);
+        return response()->json(['success' => true]);
+    } else {
+        \Log::info('Password WRONG for user', ['user_id' => $user->id]);
+        return response()->json([
+            'success' => false,
+            'message' => 'Kata sandi lama yang Anda masukkan salah.'
+        ], 422);
     }
+}
 
 
 }

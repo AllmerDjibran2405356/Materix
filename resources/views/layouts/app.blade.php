@@ -3,24 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Materix - @yield('title', 'Selamat Datang')</title>
 
-    {{-- Link CSS (Bootstrap, Icons, Fonts) --}}
+    {{-- Link CSS --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-    {{-- Link CSS dan JS Kustom kita (dari Vite) --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
 </head>
 <body class="bg-light">
 
-    {{-- =================================== --}}
-    {{--         NAVBAR UTAMA ANDA           --}}
-    {{-- =================================== --}}
+    {{-- NAVBAR --}}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="/" style="font-family: 'Alte Haas Grotesk', sans-serif; font-size: 1.5rem;">
@@ -32,27 +29,21 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     
-                    {{-- Cek apakah user sudah login --}}
                     @auth
                         {{-- User Sudah Login --}}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Dashboard</a>
+                            <a class="nav-link" href="{{ route('HomePage') }}">Dashboard</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                {{-- Menampilkan nama user yang login --}}
                                 {{ auth()->user()->username ?? 'Akun Saya' }} 
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{{ route('pengaturan') }}">Pengaturan Akun</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    {{-- Tombol Logout harus di dalam form POST --}}
-                                    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item">Keluar</button>
-                                    </form>
-                                </li>
+                                {{-- HANYA menu Pengaturan, TANPA logout --}}
+                                <li><a class="dropdown-item" href="{{ route('pengaturan') }}">
+                                    <i class="bi bi-gear me-2"></i>Pengaturan Akun
+                                </a></li>
+                                {{-- HAPUS bagian logout dari sini --}}
                             </ul>
                         </li>
                     @else
@@ -70,19 +61,19 @@
         </div>
     </nav>
 
-    {{-- =================================== --}}
-    {{--       WADAH UNTUK KONTEN            --}}
-    {{-- =================================== --}}
+    {{-- KONTEN UTAMA --}}
     <main>
         @yield('content')
     </main>
 
-    {{-- =================================== --}}
-    {{--     SCRIPT JS (DI BAWAH BODY)       --}}
-    {{-- =================================== --}}
+    {{-- SCRIPT --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
-    {{-- Wadah untuk script kustom  --}}
+    {{-- Include SEMUA modal (pengaturan + logout) untuk user yang login --}}
+    @if(auth()->check())
+        @include('partials.pengaturanpartials')
+    @endif
+
     @stack('scripts')
 </body>
 </html>
