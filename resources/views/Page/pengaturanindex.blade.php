@@ -85,7 +85,7 @@
                         </tr>
                         <tr>
                             <th>Tanggal Bergabung</th>
-                            <td>{{ auth()->user()->created_at->format('F d, Y') }}</td>
+                            <td>{{ auth()->user()->Tanggal_dibuat->format('F d, Y') }}</td>
                         </tr>
                         @else
                                                

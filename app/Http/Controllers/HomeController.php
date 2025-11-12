@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use illuminate\Http\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DesainRumah;
 
 class HomeController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
 
         $user = Auth::user();
-        $project = DesainRumah::where('user_id', $user->id)
-            ->orderBy('created_at', 'desc')
+        $project = DesainRumah::where('id_user', $user->id)
+            ->orderBy('Tanggal_dibuat', 'desc')
             ->take(4)
             ->get();
             
