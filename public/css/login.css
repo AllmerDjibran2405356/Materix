@@ -35,7 +35,7 @@ body {
 .c_login-left {
     width: 835px;
     height: 900px;
-    background: url("../public/images/login0.png") center center / cover no-repeat;    
+    background: url("../images/materix.jpg") center center / cover no-repeat;    
     border-radius: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }

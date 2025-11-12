@@ -1,6 +1,7 @@
 const images = [
-    "../public/images/login0.png",
-    "../public/images/login1.png"
+    "../images/materix.jpg",
+    "../images/login.png",
+    "../images/login1.png"
 ];
 
 let index = 0;
