@@ -17,7 +17,7 @@
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <div class="ms-auto d-flex align-items-center">
-        <a class="btn btn-masuk" href="/masuk">Masuk</a>
+        <a class="btn btn-masuk" href="{{ route('login.form') }}">Masuk</a>
         <a class="btn btn-daftar me-3" href="/daftar">Daftar</a>
       </div>
     </div>

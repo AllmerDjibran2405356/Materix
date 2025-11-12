@@ -10,8 +10,11 @@
  
 
  protected $table = 'desain_rumah';
-
+ 
  protected $primaryKey = 'id';
  public $incrementing = true;
  protected $keyType = 'bigint';
  };
+
+
+
