@@ -1,4 +1,4 @@
-<?
+<?php
  namespace App\Models;
 
  use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,4 +13,5 @@
 
  protected $primaryKey = 'id';
  public $incrementing = true;
- protected $keyType = 'bigint'
+ protected $keyType = 'bigint';
+ };
