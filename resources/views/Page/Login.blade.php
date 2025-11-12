@@ -6,7 +6,7 @@
     <title>Masuk Akun</title>
     <!-- link Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/app.css','resources/js/login.js'],)
 
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 </head>
@@ -24,6 +24,7 @@
                     <div class="form-group">
                         <label for="username">Nama Pengguna</label>
                         <input type="text" id="username" name="username" required placeholder="Masukkan nama Pengguna">
+                    </div>
 
                     <!-- input email -->
                     <div class="form-group">

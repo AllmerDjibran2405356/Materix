@@ -33,17 +33,17 @@ body {
 
 /*   LEFT IMAGE CONTAINER   */
 .c_login-left {
-    width: 600px;
-    height: 720px;
-    background: url("../images/62de8a50a3563388ce4fcdca83e42539.png") center center/cover no-repeat;
+    width: 835px;
+    height: 900px;
+    background: url("../public/images/login0.png") center center / cover no-repeat;    
     border-radius: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 /*   RIGHT FORM CONTAINER   */
 .c_login-right {
-    width: 600px;
-    height: 720px;
+    width: 835px;
+    height: 900px;
     background-color: #FF5E16;
     border-radius: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -56,9 +56,11 @@ body {
 }
 
 .c_login-right h1 {
-    font-size: 40px;
+    font-size: 70px;
     font-weight: 700;
-    margin-bottom: 40px;
+    margin-bottom: 90px;
+    text-align: center;
+
 }
 
 /*   FORM   */
@@ -146,4 +148,5 @@ form {
     .c_login-right {
         padding: 40px 30px;
     }
+
 }
