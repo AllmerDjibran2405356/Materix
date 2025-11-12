@@ -18,15 +18,15 @@ class HomeController extends Controller
     {
 
         $user = Auth::user();
-        $project = DesainRumah::where('id_user', $user->id)
+        $projects = DesainRumah::where('id_user', $user->id)
             ->orderBy('Tanggal_dibuat', 'desc')
             ->take(4)
             ->get();
             
-        $massage = $project->isEmpty()
+        $message = $projects->isEmpty()
         ? "Belum ada proyek desain rumah yang kamu unggah😅 
            Yuk mulai proyek pertamamu!" : null;
 
-        return view('Page.HomePage', compact('user', 'project', 'massage'));
+        return view('Page.HomePage', compact('user', 'projects', 'message'));
     }
 }
