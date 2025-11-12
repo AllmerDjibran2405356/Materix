@@ -13,9 +13,7 @@
       <img src="{{ asset('images/Materix.png') }}" alt="Logo" width="60" height="50" class="d-inline-block align-text-top">
       ateRix
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <div class="ms-auto d-flex align-items-center">
