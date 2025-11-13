@@ -114,12 +114,11 @@
             </div>
         </div>
 
-        {{-- TOMBOL LOGOUT DI POJOK KANAN BAWAH --}}
-        <div class="text-end mt-5">
-            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
-                <i class="bi bi-box-arrow-right me-2"></i>Logout
-            </button>
-        </div>
+            <div class="text-end mt-5">
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
+                    <i class="bi bi-box-arrow-right me-2 text-white"></i>Logout
+                </button>
+            </div>
 
     </div>
 

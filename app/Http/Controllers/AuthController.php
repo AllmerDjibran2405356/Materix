@@ -85,7 +85,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             // Arahkan ke Halaman Pengaturan
-            return redirect()->route('pengaturan');
+            return redirect()->route('HomePage');
         }
 
         // 4. Jika GAGAL

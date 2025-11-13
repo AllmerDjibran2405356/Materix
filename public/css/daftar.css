@@ -8,9 +8,6 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Poppins', sans-serif;
-    /* ▲▲▲ PERBAIKI: HAPUS overflow hidden & height ▲▲▲ */
-    /* overflow: hidden; */
-    /* height: 100vh; */
 }
 
 /* ▲▲▲ PERBAIKI: GUNAKAN register-container SESUAI HTML ▲▲▲ */
@@ -26,11 +23,7 @@ body {
 .form-wrapper {
     display: flex;
     width: 95%; 
-    /* ▲▲▲ HAPUS height fixed ▲▲▲ */
-    /* height: 95vh; */
     max-width: 1200px;
-    /* ▲▲▲ HAPUS max-height ▲▲▲ */
-    /* max-height: 700px; */
     margin: auto;
     border-radius: 10px;
     overflow: hidden; 
@@ -44,8 +37,6 @@ body {
     display: flex;
     flex-direction: column;
     color: white;
-    /* ▲▲▲ HAPUS overflow-y ▲▲▲ */
-    /* overflow-y: auto; */
 }
 
 .form-section form {
@@ -65,11 +56,10 @@ body {
     background-color: #ffffff;
 }
 
-/* ▲▲▲ KEMBALIKAN MARGIN KE NORMAL ▲▲▲ */
 h2 {
     font-size: 2.5rem; /* ▲▲▲ KEMBALIKAN KE NORMAL ▲▲▲ */
     font-weight: bold;
-    margin-bottom: 30px; /* ▲▲▲ KEMBALIKAN KE NORMAL ▲▲▲ */
+    margin-bottom: 30px; 
     font-family: 'Alte Haas Grotesk', sans-serif; 
 }
 
@@ -104,8 +94,6 @@ h2 {
     margin-top: 20px; /* ▲▲▲ KEMBALIKAN KE NORMAL ▲▲▲ */
 }
 
-/* ▲▲▲ HAPUS SCROLLBAR HIDE ▲▲▲ */
-/* .form-section::-webkit-scrollbar { ... } */
 
 /* Sisanya tetap sama... */
 .form-group label {
@@ -221,10 +209,6 @@ h2 {
 }
 
 @media (max-width: 992px) {
-    body {
-        /* overflow: auto; */ /* ▲▲▲ SUDAH TIDAK PERLU ▲▲▲ */
-    }
-    
     .register-container {
         padding: 15px;
     }
@@ -256,4 +240,6 @@ h2 {
         margin-top: 5px; 
         display: block; 
     }
+
+
 }

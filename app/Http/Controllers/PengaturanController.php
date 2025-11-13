@@ -87,13 +87,6 @@ class PengaturanController extends Controller
         return back()->with('success', 'Kata sandi berhasil diubah!');
     }
 
-    
-    // LOGIKA 4: (Fitur Foto Dimatikan)
-    // public function updatePhoto(Request $request)
-    // {
-    //     // ...
-    // }
-
    public function cekSandiLama(Request $request): JsonResponse
     {
     // Debug logging

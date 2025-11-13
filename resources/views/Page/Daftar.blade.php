@@ -19,8 +19,6 @@
     
         <div class="form-section">
             <h2>Buat Akun</h2>
-
-            {{-- ▼▼▼ PERBAIKI: HAPUS DUPLICATE METHOD ▼▼▼ --}}
             <form method="POST" action="{{ route('daftar.submit') }}">
                 @csrf 
                 
@@ -95,9 +93,9 @@
             </form>
         </div>
 
-        {{-- ▼▼▼ TAMBAHKAN BAGIAN IMAGE SECTION YANG HILANG ▼▼▼ --}}
+        {{-- ▼▼▼ BAGIAN IMAGE SECTION ▼▼▼ --}}
 <div class="image-section d-none d-lg-block">
-    <div id="imageSlideshow" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+    <div id="imageSlideshow" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3800">
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <img src="{{ asset('images/daftar/konstruksi1.jpg') }}" class="image-fill" alt="Konstruksi">

@@ -144,6 +144,159 @@ body {
   margin-top: 25px;
 }
 
+/* POSISI TOMBOL LOGOUT */
+.text-end.mt-5 {
+    margin-top: 2rem !important; /* DARI 25px JADI 20px */
+    margin-bottom: 2rem; /* TAMBAH MARGIN BAWAH */
+    padding-right: 10px; /* SEDIKIT JARAK DARI KANAN */
+}
+
+.modal .modal-header-custom {
+    background: #0A2568;
+    color: white;
+    border-bottom: none;
+}
+
+.modal .modal-body-custom {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.modal .btn-custom-orange {
+    background: #FF5E16;
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.modal .btn-custom-orange:hover {
+    background: #e05513;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 94, 22, 0.4);
+}
+
+.btn-outline-danger {
+    background-color: #B80F0A; /* BACKGROUND MERAH */
+    border-color: #B80F0A; /* BORDER MERAH */
+    color: white; /* TEKS PUTIH */
+    transition: all 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+    background-color: #9a0d08; /* LEBIH GELAP SAAT HOVER */
+    border-color: #9a0d08;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(184, 15, 10, 0.4);
+}
+
+/* MODAL LOGOUT  */
+#logoutConfirmModal .modal-content {
+    background: white;
+    border: none;
+    border-radius: 8px; /* BORDER RADIUS KECIL */
+    overflow: hidden; /* IMPORTANT */
+}
+
+#logoutConfirmModal .modal-header {
+    background: #B80F0A;
+    color: white;
+    border-bottom: none;
+    border-radius: 0; /* HEADER TANPA BORDER RADIUS */
+    margin: 0;
+    padding: 1rem;
+}
+
+#logoutConfirmModal .modal-footer {
+    border-radius: 0; /* FOOTER TANPA BORDER RADIUS */
+    margin: 0;
+    padding: 1rem;
+}
+.bi-box-arrow-right {
+    color: #B80F0A;
+}
+
+.modal .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    transition: all 0.3s ease;
+}
+
+.modal .btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+    transform: translateY(-1px);
+}
+
+.modal .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    transition: all 0.3s ease;
+}
+
+.modal .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+    transform: translateY(-1px);
+}
+
+.modal .form-control:focus {
+    border-color: #0A2568;
+    box-shadow: 0 0 0 0.2rem rgba(10, 37, 104, 0.25);
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* HOVER EFFECT TEMA KONSTRUKSI */
+/* HOVER EFFECT SEDERHANA DAN LUCU */
+.avatar-icon {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.avatar-icon:hover {
+    transform: scale(1.1);
+    border: 3px solid #FF5E16; /* Border orange */
+    box-shadow: 
+        0 0 0 2px rgba(255, 94, 22, 0.3), /* Outer glow */
+        0 4px 15px rgba(255, 94, 22, 0.2); /* Shadow */
+}
+
+/* FOTO DI DALAMNYA */
+.avatar-icon img {
+    transition: all 0.3s ease;
+}
+
+.avatar-icon:hover img {
+    transform: scale(0.95); /* Sedikit mengecil biar keliatan border */
+}
+
+/* UNTUK FOTO PROFIL DI NAVBAR */
+.navbar .nav-link img.rounded-circle {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+.navbar .nav-link img.rounded-circle:hover {
+    transform: scale(1.15);
+    border: 2px solid #FF5E16 !important;
+    box-shadow: 
+        0 0 0 2px rgba(255, 94, 22, 0.4),
+        0 3px 10px rgba(255, 94, 22, 0.3);
+}
+
 /* ====== Responsif ====== */
 @media (max-width: 600px) {
   .header {
@@ -163,4 +316,7 @@ body {
   .btn {
     font-size: 13px;
   }
+
+  
+
 }
