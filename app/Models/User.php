@@ -46,6 +46,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed', 
         'Tanggal_dibuat' => 'datetime',
+        'Tanggal_diperbarui' => 'datetime',
     ];
 
      public function getAvatarUrl()
@@ -55,4 +56,7 @@ class User extends Authenticatable
         }
         return asset('images/default-avatar.png');
     }
+    
+    const CREATED_AT = 'Tanggal_dibuat';
+    const UPDATED_AT = 'Tanggal_diperbarui';
 }
