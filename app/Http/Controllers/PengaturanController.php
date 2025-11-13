@@ -48,7 +48,6 @@ class PengaturanController extends Controller
 
         // 3. Simpan data baru ke database
         $user->update($validatedData);
-
         return back()->with('success', 'Informasi akun berhasil diperbarui!');
     }
 
