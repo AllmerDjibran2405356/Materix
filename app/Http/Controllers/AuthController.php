@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth; // <-- Panggil "Satpam" Keamanan
+use Illuminate\Support\Facades\Auth; 
 
 class AuthController extends Controller
 {
@@ -19,7 +19,6 @@ class AuthController extends Controller
      */
     public function registerCreate(): View
     {
-        // Ganti 'Page.daftar' sesuai nama file Blade registrasi kamu
         return view('Page.daftar'); 
     }
 
@@ -49,11 +48,10 @@ class AuthController extends Controller
             'password.confirmed'  => 'Konfirmasi kata sandi tidak cocok.',
         ]);
 
-        // 2. SIMPAN KE DATABASE: (Sudah 100% benar)
+        
         User::create($validatedData);
 
-        // 3. KEMBALIKAN:
-        //    (Kita arahkan ke halaman Login)
+       
         return redirect()->route('login.form')->with('success', 'Akun berhasil dibuat! Silakan login.');
     }
 
@@ -61,12 +59,9 @@ class AuthController extends Controller
     // LOGIKA LOGIN
     // =====================================================
 
-    /**
-     * LOGIKA 3: Menampilkan halaman form login.
-     */
+   
     public function loginCreate(): View
     {
-        // Ganti 'Page.Login' sesuai nama file Blade login kamu
         return view('Page.Login');
     }
 
@@ -76,7 +71,6 @@ class AuthController extends Controller
     public function loginStore(Request $request): RedirectResponse
     {
         // 1. Validasi (Email & Password)
-        // Kita pakai nama 'credential' dari form login simple kita
         $credentials = $request->validate([
             'credential' => 'required|email',
             'password'   => 'required|string',
@@ -85,13 +79,10 @@ class AuthController extends Controller
             'credential.email'    => 'Format email tidak valid.'
         ]);
 
-        // Ganti nama 'credential' menjadi 'email' agar "Sihir" Auth::attempt() paham
         $credentials['email'] = $credentials['credential'];
         unset($credentials['credential']);
 
-        // 2. "Sihir" Auth::attempt()
         if (Auth::attempt($credentials)) {
-            // 3. Jika BERHASIL
             $request->session()->regenerate();
             // Arahkan ke Halaman Pengaturan
             return redirect()->route('pengaturan');

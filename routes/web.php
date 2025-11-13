@@ -44,6 +44,10 @@ Route::post('/pengaturan/password', [PengaturanController::class, 'updatePasswor
     ->name('pengaturan.updatePassword')
     ->middleware('auth');
 
+Route::post('/pengaturan/avatar', [PengaturanController::class, 'updateAvatar'])
+    ->name('pengaturan.updateAvatar')
+    ->middleware('auth');
+
 Route::post('/pengaturan/cek-sandi', [PengaturanController::class, 'cekSandiLama'])
     ->name('pengaturan.cekSandi')
     ->middleware('auth');

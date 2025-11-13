@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth; // Panggil "Satpam"
-use Illuminate\Support\Facades\Hash; // Panggil "Pengecek Sandi"
+use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Hash; 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rule; 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 
 class PengaturanController extends Controller
@@ -95,7 +96,7 @@ class PengaturanController extends Controller
     // }
 
    public function cekSandiLama(Request $request): JsonResponse
-{
+    {
     // Debug logging
     Log::info('CekSandiLama called', ['input' => $request->all()]);
     
@@ -117,7 +118,64 @@ class PengaturanController extends Controller
             'message' => 'Kata sandi lama yang Anda masukkan salah.'
         ], 422);
     }
-}
+    }
 
+ /**
+     * LOGIKA 5: Update Profile Picture - PAKAI REDIRECT RESPONSE
+     */
+    public function updateAvatar(Request $request): RedirectResponse
+    {
+        try {
+            Log::info('Update Avatar Called', ['has_file' => $request->hasFile('avatar')]);
+            
+            $request->validate([
+                'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+            ]);
+
+            $user = Auth::user();
+            
+            Log::info('User attempting avatar update', ['user_id' => $user->id]);
+
+            // Hapus avatar lama jika ada
+            if ($user->avatar) {
+                $oldAvatarPath = 'public/avatars/' . $user->avatar;
+                if (Storage::exists($oldAvatarPath)) {
+                    Storage::delete($oldAvatarPath);
+                    Log::info('Old avatar deleted', ['file' => $user->avatar]);
+                }
+            }
+
+            // Simpan avatar baru
+            if ($request->hasFile('avatar')) {
+                $avatar = $request->file('avatar');
+                $filename = 'avatar_' . $user->id . '_' . time() . '.' . $avatar->getClientOriginalExtension();
+                
+                Log::info('File details', [
+                    'original_name' => $avatar->getClientOriginalName(),
+                    'extension' => $avatar->getClientOriginalExtension(),
+                    'size' => $avatar->getSize()
+                ]);
+                
+                // Simpan ke storage
+                $path = $avatar->storeAs('public/avatars', $filename);
+                Log::info('File stored', ['path' => $path, 'filename' => $filename]);
+                
+                // Update database
+                $user->avatar = $filename;
+                $user->save();
+                
+                Log::info('Avatar updated in database', ['new_avatar' => $filename]);
+                
+                return redirect()->route('pengaturan')->with('success', 'Profile picture berhasil diupdate!');
+            }
+
+            Log::error('No file found in request');
+            return redirect()->route('pengaturan')->with('error', 'Gagal mengupload avatar!');
+
+        } catch (\Exception $e) {
+            Log::error('Avatar update error: ' . $e->getMessage());
+            return redirect()->route('pengaturan')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
 
 }

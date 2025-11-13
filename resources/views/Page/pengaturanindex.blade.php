@@ -38,13 +38,14 @@
         @endif
 
         <div class="d-flex align-items-center mb-4">
-            
-            {{-- Tampilan Foto Profil (Sederhana/Non-Aktif) --}}
-            @auth
-                <img src="{{ asset('images/almer katelpak.jpg') }}" 
+            {{-- ▼▼▼ UBAH FOTO PROFIL MENJADI BISA DIKLIK ▼▼▼ --}}
+                @auth
+                <img src="{{ auth()->user()->getAvatarUrl() }}" 
                      alt="Foto Profil" 
-                     class="avatar-icon me-3" 
-                     style="cursor: default;">
+                     class="avatar-icon me-3 rounded-circle"
+                     style="cursor: pointer; width: 60px; height: 60px; object-fit: cover;"
+                     data-bs-toggle="modal" 
+                     data-bs-target="#ubahAvatarModal">
             @endauth
             
             <h1 class="pengaturan-title">Pengaturan</h1>
@@ -85,7 +86,7 @@
                         </tr>
                         <tr>
                             <th>Tanggal Bergabung</th>
-                            <td>{{ auth()->user()->Tanggal_dibuat->format('F d, Y') }}</td>
+                            <td>{{ optional(auth()->user()->Tanggal_dibuat)->format('F d, Y') }}</td>
                         </tr>
                         @else
                                                
