@@ -1,0 +1,174 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  color: #000000;
+}
+
+/* ====== Container utama ====== */
+.container {
+  max-width: 1440px;
+  margin: 0px auto;
+  padding: 0 20px;
+}
+
+/* ====== Tombol kembali ====== */
+.back-button {
+  position: fixed;
+  top: 15px;
+  left: 0px;
+  z-index: 1000;
+}
+
+.back-button a {
+  text-decoration: none;
+  font-size: 30px;
+  color: #ffffff;
+  transition: color 0.2s;
+  background-color: #001a66;
+  padding: 30px 30px;
+  border-radius: 0px 0px 75px 0px; 
+  /* top-left | top-right | bottom-right | bottom-left */
+  box-shadow: 0 2px 6px #00000026;
+}
+
+.back-button a:hover {
+  color: #ff6600;
+  background-color: #f5f5f5;
+}
+
+/* ====== Header Pengaturan ====== */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 10px;
+  margin-top: 30px;
+}
+
+/* .header img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #ccc;
+  object-fit: cover;
+} */
+
+.header h1 {
+  font-size: 48px;
+  color: #ff6600;
+  font-weight: 700;
+}
+
+/* ====== Section umum ====== */
+.section {
+  margin-bottom: 25px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+/* ====== Header tiap kontainer ====== */
+.section-header {
+  background-color: #001a66;
+  color: #fff;
+  padding: 12px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+}
+
+.section-header h2 {
+  font-size: 34px;
+  font-weight: 500;
+}
+
+/* ====== Body tiap kontainer ====== */
+.section-body {
+  background-color: #e9eff2;
+  padding: 0;
+}
+
+/* ====== Tabel informasi ====== */
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.info-table td {
+  padding: 12px 16px;
+  border-bottom: 2px solid #f5f5f5;
+  font-size: 16px;
+}
+
+.info-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ====== Tombol umum ====== */
+.btn {
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-ubah {
+  background-color: #00b300;
+  color: white;
+}
+
+.btn-ubah:hover {
+  background-color: #00cc00;
+}
+
+.btn-keluar {
+  background-color: #b30000;
+  color: white;
+}
+
+.btn-keluar:hover {
+  background-color: #cc0000;
+}
+
+/* ====== Logout container ====== */
+.logout {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 25px;
+}
+
+/* ====== Responsif ====== */
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .header h1 {
+    font-size: 36px;
+  }
+
+  .info-table td {
+    font-size: 14px;
+  }
+
+  .btn {
+    font-size: 13px;
+  }
+}
