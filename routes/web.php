@@ -56,7 +56,7 @@ Route::post('/pengaturan/cek-sandi', [PengaturanController::class, 'cekSandiLama
 Route::get('/HomePage', [HomeController::class, 'index'])->name('HomePage');
 
 // --- Rute Kalkulator ---
-Route::get('/kalkulator', [KalkulasiController::class, 'index'])->name('kalkulasi.index');
+Route::get('/kalkulator', [KalkulasiController::class, 'index'])->name('Kalkulasi.index');
 
 // --- Rute Harga Bahan ---
-Route::get('/harga-bahan', [HargaBahanController::class, 'index'])->name('hargaBahan.index');
+Route::get('/harga-bahan', [HargaBahanController::class, 'index'])->name('Bahan.index');

@@ -80,8 +80,8 @@ class PengaturanController extends Controller
 
         // 4. Jika sandi lama benar, simpan sandi baru
         $user->update([
-            'password' => $request->sandi_baru,
-        ]);
+        'password' => Hash::make($request->sandi_baru),
+        ]); 
 
         // 5. Kembalikan dengan pesan sukses
         return back()->with('success', 'Kata sandi berhasil diubah!');
