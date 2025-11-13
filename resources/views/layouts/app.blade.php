@@ -20,7 +20,8 @@
     {{-- NAVBAR --}}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="/" style="font-family: 'Alte Haas Grotesk', sans-serif; font-size: 1.5rem;">
+            {{-- ▼▼▼ LOGO MATERIX MENGARAH KE HOMEPAGE ▼▼▼ --}}
+            <a class="navbar-brand" href="{{ route('HomePage') }}" style="font-family: 'Alte Haas Grotesk', sans-serif; font-size: 1.5rem;">
                 Materix
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -31,19 +32,41 @@
                     
                     @auth
                         {{-- User Sudah Login --}}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('HomePage') }}">Dashboard</a>
-                        </li>
+                        
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                {{ auth()->user()->username ?? 'Akun Saya' }} 
+                            {{-- NAVBAR DROPDOWN DENGAN FOTO --}}
+                            <a class="nav-link dropdown-toggle p-0" 
+                               href="#" 
+                               id="navbarDropdown" 
+                               role="button" 
+                               data-bs-toggle="dropdown"
+                               style="margin-left: 1rem;">
+                                <img src="{{ auth()->user()->getAvatarUrl() }}" 
+                                     alt="Profile" 
+                                     class="rounded-circle"
+                                     width="40" 
+                                     height="40"
+                                     style="object-fit: cover; border: 2px solid rgba(255,255,255,0.3);">
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                {{-- HANYA menu Pengaturan, TANPA logout --}}
-                                <li><a class="dropdown-item" href="{{ route('pengaturan') }}">
-                                    <i class="bi bi-gear me-2"></i>Pengaturan Akun
-                                </a></li>
-                                {{-- HAPUS bagian logout dari sini --}}
+                                <li>
+                                    <div class="dropdown-header text-center">
+                                        <img src="{{ auth()->user()->getAvatarUrl() }}" 
+                                             alt="Profile" 
+                                             class="rounded-circle mb-2"
+                                             width="60" 
+                                             height="60"
+                                             style="object-fit: cover;">
+                                        <h6 class="mb-0">{{ auth()->user()->username }}</h6>
+                                        <small class="text-muted">{{ auth()->user()->email }}</small>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('pengaturan') }}">
+                                        <i class="bi bi-gear me-2"></i>Pengaturan Akun
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     @else
@@ -69,11 +92,63 @@
     {{-- SCRIPT --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
-    {{-- Include SEMUA modal (pengaturan + logout) untuk user yang login --}}
+    {{-- Include SEMUA modal --}}
     @if(auth()->check())
         @include('partials.pengaturanpartials')
     @endif
 
+    {{-- SCRIPT PREVIEW AVATAR --}}
+    <script>
+        // Preview avatar sebelum upload
+        document.getElementById('avatarInput')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarPreview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+
     @stack('scripts')
+
+   <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const avatarInput = document.getElementById('avatarInput');
+    const avatarPreview = document.getElementById('avatarPreview');
+
+    // Preview image saja
+    if (avatarInput && avatarPreview) {
+        avatarInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            
+            if (file) {
+                // Validasi file size (2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('File terlalu besar! Maksimal 2MB.');
+                    avatarInput.value = '';
+                    return;
+                }
+
+                // Validasi file type
+                const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    alert('Format file tidak didukung!');
+                    avatarInput.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarPreview.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
 </body>
 </html>

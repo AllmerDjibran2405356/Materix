@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Fungsi untuk toggle password visibility
+    // Fungsi untuk toggle password visibility bisa di bilang ikon matanya
     function setupPasswordToggle(buttonId, inputId) {
         const toggleButton = document.getElementById(buttonId);
         const passwordInput = document.getElementById(inputId);

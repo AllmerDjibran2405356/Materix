@@ -166,3 +166,57 @@
         </div>
     </div>
 </div>
+
+{{-- MODAL UNTUK UBAH AVATAR --}}
+<div class="modal fade" id="ubahAvatarModal" tabindex="-1" aria-labelledby="ubahAvatarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header modal-header-custom">
+                <h1 class="modal-title fs-5" id="ubahAvatarModalLabel">Ubah Foto Profil</h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            {{-- FORM BIASA TANPA JAVASCRIPT --}}
+            <form action="{{ route('pengaturan.updateAvatar') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body modal-body-custom text-center">
+                    
+                    {{-- Preview Avatar --}}
+                    <div class="mb-4">
+                        <img src="{{ auth()->user()->getAvatarUrl() }}" 
+                             alt="Preview Avatar" 
+                             id="avatarPreview"
+                             class="rounded-circle border"
+                             width="120" 
+                             height="120"
+                             style="object-fit: cover;">
+                    </div>
+
+                    {{-- Input File --}}
+                    <div class="mb-3">
+                        <label for="avatarInput" class="form-label">Pilih Foto Baru</label>
+                        <input type="file" 
+                               class="form-control" 
+                               id="avatarInput" 
+                               name="avatar"
+                               accept="image/*"
+                               required>
+                        <div class="form-text">
+                            Format: JPEG, PNG, JPG, GIF, WEBP<br>(Max: 2MB)
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-success">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- Modal lainnya tetap sama --}}
+<div class="modal fade" id="ubahAkunModal" tabindex="-1" aria-labelledby="ubahAkunModalLabel" aria-hidden="true">
+    {{-- ... kode modal ubah akun yang sudah ada ... --}}
+</div>
