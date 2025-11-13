@@ -88,6 +88,11 @@
                             <th>Tanggal Bergabung</th>
                             <td>{{ optional(auth()->user()->Tanggal_dibuat)->format('F d, Y') }}</td>
                         </tr>
+
+                        <tr>
+                            <th>Tanggal Diperbarui</th>
+                            <td>{{ optional(auth()->user()->Tanggal_diperbarui)->format('F d, Y H:i') }}</td>
+                        </tr>
                         @else
                                                
                         @endauth
