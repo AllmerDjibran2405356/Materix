@@ -6,8 +6,12 @@
     <title>Buat Akun</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="{{ asset('css/daftar.css') }}" rel="stylesheet">
 
-    </head>
+</head>
 <body>
 
 <div class="register-container">
@@ -16,7 +20,8 @@
         <div class="form-section">
             <h2>Buat Akun</h2>
 
-            <form method="POST" action="{{ route('daftar.submit') }}" method="POST"> 
+            {{-- ▼▼▼ PERBAIKI: HAPUS DUPLICATE METHOD ▼▼▼ --}}
+            <form method="POST" action="{{ route('daftar.submit') }}">
                 @csrf 
                 
                 {{-- Nama Depan dan Nama Belakang --}}
@@ -89,7 +94,26 @@
 
             </form>
         </div>
+
+        {{-- ▼▼▼ TAMBAHKAN BAGIAN IMAGE SECTION YANG HILANG ▼▼▼ --}}
+<div class="image-section d-none d-lg-block">
+    <div id="imageSlideshow" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="{{ asset('images/daftar/konstruksi1.jpg') }}" class="image-fill" alt="Konstruksi">
+            </div>
+            <div class="carousel-item">
+                <img src="{{ asset('images/daftar/konstruksi2.jpg') }}" class="image-fill" alt="Konstruksi2">
+            </div>
+            <div class="carousel-item">
+                <img src="{{ asset('images/daftar/MateRix (1).png') }}" class="image-fill" alt="Logo">
+            </div>
+            <div class="carousel-item">
+                <img src="{{ asset('images/daftar/konstruksi3.jpg') }}" class="image-fill" alt="Konstruksi3">
+            </div>
+        </div>
     </div>
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
