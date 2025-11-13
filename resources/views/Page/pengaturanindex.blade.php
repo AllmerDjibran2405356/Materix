@@ -6,7 +6,9 @@
 
 {{-- Ini adalah konten utama halaman --}}
 @section('content')
-    <div class="container pengaturan-container my-4 my-md-5">
+<link rel="stylesheet" href="{{ asset('css/pengaturan.css') }}">
+
+    <div class="container">
 
         {{-- ▼▼▼ "PENANGKAP" PESAN SEKARANG AKAN BERFUNGSI ▼▼▼ --}}
         
@@ -36,62 +38,57 @@
                 </ul>
             </div>
         @endif
-
-        <div class="d-flex align-items-center mb-4">
-            {{-- ▼▼▼ UBAH FOTO PROFIL MENJADI BISA DIKLIK ▼▼▼ --}}
-                @auth
-                <img src="{{ auth()->user()->getAvatarUrl() }}" 
-                     alt="Foto Profil" 
-                     class="avatar-icon me-3 rounded-circle"
-                     style="cursor: pointer; width: 60px; height: 60px; object-fit: cover;"
-                     data-bs-toggle="modal" 
-                     data-bs-target="#ubahAvatarModal">
-            @endauth
-            
-            <h1 class="pengaturan-title">Pengaturan</h1>
+        <div class="header">
+            <div class="d-flex align-items-center mb-4">
+                    @auth
+                    <img src="{{ auth()->user()->getAvatarUrl() }}" 
+                        alt="Foto Profil" 
+                        class="avatar-icon me-3 rounded-circle"
+                        style="cursor: pointer; width: 60px; height: 60px; object-fit: cover;"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#ubahAvatarModal">
+                @endauth
+                
+                <h1>Pengaturan</h1>
+            </div>
         </div>
 
         {{-- Kartu "Akun Saya" --}}
-        <div class="card shadow-sm mb-4">
-            <div class="card-header section-header">
-                <h4 class="mb-0">Akun Saya</h4>
+        <div class="section akun-container">
+            <div class="section-header">
+                <h2>Akun Saya</h2>
                 <button class="btn btn-success btn-ubah" data-bs-toggle="modal" data-bs-target="#ubahAkunModal">
                     Ubah
                 </button>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-striped table-borderless mb-0 pengaturan-table">
+            <div class="section-body">
+                <table class="info-table">
                     <tbody>
                         {{-- Kita gunakan data user yang sedang login --}}
                         @auth
                         <tr>
-                            <th>Nama Pengguna</th>
+                            <td>Nama Pengguna</td>
                             <td>{{ auth()->user()->username }}</td>
                         </tr>
                         <tr>
-                            <th>Nama Depan</th>
+                            <td>Nama Depan</td>
                             <td>{{ auth()->user()->first_name }}</td>
                         </tr>
                         <tr>
-                            <th>Nama Belakang</th>
+                            <td>Nama Belakang</td>
                             <td>{{ auth()->user()->last_name }}</td>
                         </tr>
                         <tr>
-                            <th>Email</th>
+                            <td>Email</td>
                             <td>{{ auth()->user()->email }}</td>
                         </tr>
                         <tr>
-                            <th>Kata Sandi</th>
+                            <td>Kata Sandi</td>
                             <td>**********</td>
                         </tr>
                         <tr>
-                            <th>Tanggal Bergabung</th>
+                            <td>Tanggal Bergabung</td>
                             <td>{{ optional(auth()->user()->Tanggal_dibuat)->format('F d, Y') }}</td>
-                        </tr>
-
-                        <tr>
-                            <th>Tanggal Diperbarui</th>
-                            <td>{{ optional(auth()->user()->Tanggal_diperbarui)->format('F d, Y H:i') }}</td>
                         </tr>
                         @else
                                                
@@ -102,18 +99,17 @@
         </div>
 
         {{-- Kartu "Informasi Website" --}}
-        <div class="card shadow-sm mb-4">
-            <div class="card-header section-header">
-                <h4 class="mb-0">Informasi Website</h4>
+        <div class="section info-container">
+            <div class="section-header">
+                <h2>Informasi Laman</h2>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-striped table-borderless mb-0 pengaturan-table">
-                    <tbody>
-                        <tr>
-                            <th>Versi</th>
-                            <td>web.release.ver1.0</td>
-                        </tr>
-                    </tbody>
+
+            <div class="section-body">
+                <table class="info-table">
+                    <tr>
+                        <td>Versi</td>
+                        <td>web.release.ver1.0</td>
+                    </tr>
                 </table>
             </div>
         </div>
