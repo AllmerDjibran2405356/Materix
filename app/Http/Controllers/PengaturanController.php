@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash; // Panggil "Pengecek Sandi"
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rule; 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+
 
 class PengaturanController extends Controller
 {
@@ -78,7 +80,7 @@ class PengaturanController extends Controller
 
         // 4. Jika sandi lama benar, simpan sandi baru
         $user->update([
-            'password' => $request->sandi_baru
+            'password' => $request->sandi_baru,
         ]);
 
         // 5. Kembalikan dengan pesan sukses
@@ -95,7 +97,7 @@ class PengaturanController extends Controller
    public function cekSandiLama(Request $request): JsonResponse
 {
     // Debug logging
-    \Log::info('CekSandiLama called', ['input' => $request->all()]);
+    Log::info('CekSandiLama called', ['input' => $request->all()]);
     
     $request->validate([
         'sandi_lama' => 'required|string',
@@ -103,13 +105,13 @@ class PengaturanController extends Controller
 
     $user = Auth::user();
     
-    \Log::info('User checking password', ['user_id' => $user->id]);
+    Log::info('User checking password', ['user_id' => $user->id]);
 
     if (Hash::check($request->sandi_lama, $user->password)) {
-        \Log::info('Password CORRECT for user', ['user_id' => $user->id]);
+        Log::info('Password CORRECT for user', ['user_id' => $user->id]);
         return response()->json(['success' => true]);
     } else {
-        \Log::info('Password WRONG for user', ['user_id' => $user->id]);
+        Log::info('Password WRONG for user', ['user_id' => $user->id]);
         return response()->json([
             'success' => false,
             'message' => 'Kata sandi lama yang Anda masukkan salah.'

@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\PengaturanController; 
-use App\Http\Controllers\HomeController;         
+use App\Http\Controllers\HomeController;   
+use App\Http\Controllers\KalkulasiController;    
+use App\Http\Controllers\HargaBahanController;  
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +31,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/daftar', [AuthController::class, 'registerCreate'])->name('daftar.form');
 Route::post('/daftar', [AuthController::class, 'registerStore'])->name('daftar.submit');
 
-// --- Rute Pengaturan (dari versi Anda) ---
+// --- Rute Pengaturan Akun ---
 Route::get('/pengaturan', [PengaturanController::class, 'index'])
     ->name('pengaturan')
     ->middleware('auth'); 
@@ -46,4 +48,11 @@ Route::post('/pengaturan/cek-sandi', [PengaturanController::class, 'cekSandiLama
     ->name('pengaturan.cekSandi')
     ->middleware('auth');
 
+// --- Rute Home Page ---
 Route::get('/HomePage', [HomeController::class, 'index'])->name('HomePage');
+
+// --- Rute Kalkulator ---
+Route::get('/kalkulator', [KalkulasiController::class, 'index'])->name('kalkulasi.index');
+
+// --- Rute Harga Bahan ---
+Route::get('/harga-bahan', [HargaBahanController::class, 'index'])->name('hargaBahan.index');
