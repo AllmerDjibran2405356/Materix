@@ -16,10 +16,10 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-light">
 
+<body class="bg-light">
     {{-- NAVBAR --}}
-    <nav class="navbar navbar-expand-lg custom-navbar shadow-sm">
+    <nav class="navbar navbar-expand-lg custom-navbar shadow-sm **fixed-top**">
         <div class="container">
             {{-- ▼▼▼ LOGO MATERIX MENGARAH KE HOMEPAGE ▼▼▼ --}}
             <a class="navbar-brand" href="{{ route('HomePage') }}">

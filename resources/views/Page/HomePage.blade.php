@@ -7,7 +7,7 @@
     <div class="container py-4 px-3" style="background: linear-gradient(to right, #FF6600, #FF8533); border-radius: 10px; color: #fff;">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h2 class="fw-bold mb-2">Selamat Datang, {{ $user->name }}!</h2>
+                <h2 class="fw-bold mb-2">Selamat Datang, {{ $user->username }}!</h2>
             </div>
             <div class="col-md-4 text-end">
                 <img src="{{ asset('images/worker.png') }}" alt="Worker" style="max-height: 150px;"> {{-- ini buat gambar --}}
@@ -30,6 +30,9 @@
                    Harga Bahan & Produsen Material
                </a>
            </div>
+       </div>
+   </div>
+</section>
 
 {{-- Riwayat Bangunan kalcer (kalo user baru nampilin pesan singkat cihuy) --}}
 <section class="riwayat-section py-5 bg-light">
