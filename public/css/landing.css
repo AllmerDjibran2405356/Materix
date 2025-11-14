@@ -1,0 +1,204 @@
+/* ========== Global Reset ========== */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+    scroll-behavior: smooth;
+}
+
+/* ========== Container 1: Hero Section ========== */
+.hero-container {
+    position: relative;
+    width: 100%;
+    height: 85vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 39%;
+    height: 100%;
+    background: rgba(255, 102, 0, 0.7);
+    clip-path: polygon(0 0, 75% 0, 100% 100%, 0 100%);
+    z-index: 2;
+}
+
+.hero-text {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    color: white;
+    padding: 0 20px;
+}
+
+.hero-text h1 {
+    font-size: 4.2rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+/* ========== Container 2: Tentang Materix ========== */
+.about-container {
+    background-color: white;
+    width: 100%;
+    padding: 80px 8%;
+    display: flex;
+    justify-content: center;
+}
+
+.about-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+}
+
+.about-text {
+    flex: 1 1 450px;
+    background: #0a3161;
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.about-text h2 {
+    margin-bottom: 15px;
+}
+
+.about-image {
+    flex: 1 1 400px;
+}
+
+.about-image img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+/* ========== Container 3: Apa yang Bisa Anda Lakukan ========== */
+.features-header {
+  background-color: #0a3161;
+  align-self: center;
+  color: #fff;
+  width: 670px;
+  margin: 0 auto;
+  align-items: center;
+  border-radius: 25px 25px 0px 0px; 
+  /* top-left | top-right | bottom-right | bottom-left */
+
+}
+
+.features-title h2 {
+  font-size: 34px;
+  font-weight: 500;
+  text-align: center;
+  
+}
+
+.features-container {
+    background-color: #0a3161;
+    color: white;
+    text-align: center;
+    padding: 70px 6%;
+}
+
+.features-title {
+    background-color: #142850;
+    display: inline-block;
+    padding: 10px 25px;
+    border-radius: 12px 12px 0 0;
+    margin-bottom: 40px;
+}
+
+.features-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.feature-item {
+    background-color:#0a3161;
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    width: 90%;
+    max-width: 90%;
+    text-align: left;
+
+    align-items: center;
+    display: flex;
+    gap: 30px;
+}
+
+.feature-img {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    background-color:#fff;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.feature-text {
+    flex: 1;
+    text-align: left;
+}
+
+.feature-text h2 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.feature-text p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.feature-item h3 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+/* .feature-item div {
+    flex: 1;
+} */
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+    .about-content {
+        flex-direction: column;
+    }
+    .hero-text h1 {
+        font-size: 1.6rem;
+    }
+    .feature-item {
+        width: 100%;
+        max-width: 350px;
+    }
+}
