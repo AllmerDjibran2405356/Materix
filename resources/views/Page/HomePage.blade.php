@@ -8,7 +8,6 @@
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h2 class="fw-bold mb-2">Selamat Datang, {{ $user->name }}!</h2>
-                <p>Halo, {{ $user->name }}! Saatnya wujudkan rencana konstruksimu dengan lebih efisien</p> {{-- bagian ini yang buat ngatur munculnya si halo, user --}}
             </div>
             <div class="col-md-4 text-end">
                 <img src="{{ asset('images/worker.png') }}" alt="Worker" style="max-height: 150px;"> {{-- ini buat gambar --}}
