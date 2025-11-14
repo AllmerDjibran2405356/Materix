@@ -44,18 +44,23 @@ body {
 
 /* ====== Header Pengaturan ====== */
 .header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 10px;
-  margin-top: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px; /* KURANGI JARAK DARI 20px KE 15px */
+    margin-bottom: 10px;
+    margin-top: 30px;
 }
 
 .header h1 {
-  font-size: 48px;
-  color: #ff6600;
-  font-weight: 700;
+    font-size: 48px;
+    color: #ff6600;
+    font-weight: 700;
+    margin: 0;
+    position: relative;
+    display: inline-block;
+    margin-left: 10px;
 }
+
 
 /* ====== Section umum ====== */
 .section {
@@ -258,29 +263,88 @@ body {
     color: #721c24;
 }
 
-/* HOVER EFFECT TEMA KONSTRUKSI */
-/* HOVER EFFECT SEDERHANA DAN LUCU */
-.avatar-icon {
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.avatar-container {
+    position: relative;
+    display: inline-block;
+    transition: all 0.5s ease;
     cursor: pointer;
-    border: 2px solid transparent;
 }
 
-.avatar-icon:hover {
-    transform: scale(1.1);
-    border: 3px solid #FF5E16; /* Border orange */
+.avatar-profile {
+    width: 85px !important;
+    height: 85px !important;
+    object-fit: cover;
+    border: 2px solid #0E1247;
+    border-radius: 50% !important;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.5s ease;
+}
+
+.avatar-container::after {
+    content: '✏️';
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+    background: #ff6b35;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    border: 2px solid white;
+    transition: all 0.5s ease;
+    z-index: 2;
+}
+
+/* EFEK HOVER DENGAN KELAP-KELIP */
+.avatar-container:hover .avatar-profile {
+    transform: scale(1.12);
+    border-color: #ff6b35;
     box-shadow: 
-        0 0 0 2px rgba(255, 94, 22, 0.3), /* Outer glow */
-        0 4px 15px rgba(255, 94, 22, 0.2); /* Shadow */
+        0 0 0 4px rgba(14, 18, 71, 0.2),
+        0 8px 25px rgba(14, 18, 71, 0.3);
+    animation: pulseGlow 1.5s ease-in-out infinite alternate;
 }
 
-/* FOTO DI DALAMNYA */
-.avatar-icon img {
-    transition: all 0.3s ease;
+.avatar-container:hover::after {
+    transform: scale(1.15);
+    background: #0E1247;
+    color: #ff6b35;
+    border-color: #ff6b35;
+    box-shadow: 0 3px 10px rgba(255, 107, 53, 0.4);
+    animation: pulseIcon 1.5s ease-in-out infinite alternate;
 }
 
-.avatar-icon:hover img {
-    transform: scale(0.95); /* Sedikit mengecil biar keliatan border */
+/* ANIMASI KELAP-KELIP UNTUK AVATAR */
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 
+            0 0 0 4px rgba(255, 107, 53, 0.2),
+            0 8px 25px rgba(14, 18, 71, 0.3);
+        filter: brightness(1);
+    }
+    100% {
+        box-shadow: 
+            0 0 0 6px rgba(255, 107, 53, 0.4),
+            0 8px 30px rgba(14, 18, 71, 0.5);
+        filter: brightness(1.1);
+    }
+}
+
+/* ANIMASI KELAP-KELIP UNTUK ICON */
+@keyframes pulseIcon {
+    0% {
+        transform: scale(1.15);
+        box-shadow: 0 3px 10px rgba(255, 107, 53, 0.4);
+    }
+    100% {
+        transform: scale(1.2);
+        box-shadow: 0 5px 15px rgba(255, 107, 53, 0.6);
+    }
 }
 
 /* UNTUK FOTO PROFIL DI NAVBAR */
@@ -295,6 +359,77 @@ body {
     box-shadow: 
         0 0 0 2px rgba(255, 94, 22, 0.4),
         0 3px 10px rgba(255, 94, 22, 0.3);
+}
+
+/* ====== AVATAR DI MODAL EDIT PROFILE ====== */
+#ubahAvatarModal .avatar-profile {
+    width: 120px !important;
+    height: 120px !important;
+    object-fit: cover;
+    border: 3px solid #0E1247;
+    border-radius: 50% !important;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    /* Hapus transition dan cursor untuk non-interactive */
+}
+
+#ubahAvatarModal .avatar-container {
+    position: relative;
+    display: inline-block;
+    cursor: default !important; /* Default cursor, bukan pointer */
+}
+
+#ubahAvatarModal .avatar-container::after {
+    content: '✏️';
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: #ff6b35;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    border: 2px solid white;
+    /* Hapus transition dan efek hover */
+}
+
+/* TAMBAHKAN KEMBALI ICON HELM */
+#ubahAvatarModal .avatar-container::before {
+    content: '⛑️'; /* HELM WITH WHITE CROSS */
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 30px;
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
+    z-index: 3;
+    display: block !important; /* PASTIKAN TAMPIL */
+}
+
+/* HAPUS SEMUA EFEK HOVER UNTUK MODAL AVATAR */
+#ubahAvatarModal .avatar-container:hover .avatar-profile {
+    transform: none; /* Tidak ada scale */
+    border-color: #0E1247; /* Tetap warna border normal */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Tetap shadow normal */
+    animation: none; /* Hapus animasi */
+}
+
+#ubahAvatarModal .avatar-container:hover::after {
+    transform: none; /* Tidak ada scale */
+    background: #ff6b35; /* Tetap warna normal */
+    color: white; /* Tetap warna normal */
+    border-color: white; /* Tetap warna normal */
+    box-shadow: none; /* Hapus shadow */
+    animation: none; /* Hapus animasi */
+}
+
+#ubahAvatarModal .avatar-container:hover::before {
+    transform: translateX(-50%); /* Tetap di posisi normal */
+    /* Tidak ada efek hover untuk helm */
 }
 
 /* ====== Responsif ====== */

@@ -182,14 +182,11 @@
                 <div class="modal-body modal-body-custom text-center">
                     
                     {{-- Preview Avatar --}}
-                    <div class="mb-4">
+                    <div class="avatar-container mb-4">
                         <img src="{{ auth()->user()->getAvatarUrl() }}" 
                              alt="Preview Avatar" 
                              id="avatarPreview"
-                             class="rounded-circle border"
-                             width="120" 
-                             height="120"
-                             style="object-fit: cover;">
+                             class="avatar-profile rounded-circle">
                     </div>
 
                     {{-- Input File --}}

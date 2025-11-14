@@ -9,8 +9,6 @@
 <link rel="stylesheet" href="{{ asset('css/pengaturan.css') }}">
 
     <div class="container">
-
-        {{-- ▼▼▼ "PENANGKAP" PESAN SEKARANG AKAN BERFUNGSI ▼▼▼ --}}
         
         {{-- 1. "Penangkap" Pesan Sukses (jika berhasil ubah info) --}}
         @if(session('success'))
@@ -26,7 +24,6 @@
             </div>
         @endif
         
-        {{-- ▲▲▲ BATAS "PENANGKAP" ▲▲▲ --}}
 
         @if ($errors->any())
             <div class="alert alert-danger shadow-sm mb-4">
@@ -40,13 +37,16 @@
         @endif
         <div class="header">
             <div class="d-flex align-items-center mb-4">
-                    @auth
+                @auth
+                <div class="avatar-container position-relative">
                     <img src="{{ auth()->user()->getAvatarUrl() }}" 
                         alt="Foto Profil" 
-                        class="avatar-icon me-3 rounded-circle"
-                        style="cursor: pointer; width: 60px; height: 60px; object-fit: cover;"
+                        class="avatar-profile rounded-circle"
+                        style="cursor: pointer;"
                         data-bs-toggle="modal" 
                         data-bs-target="#ubahAvatarModal">
+                    <div class="avatar-border"></div>
+                </div>
                 @endauth
                 
                 <h1>Pengaturan</h1>
