@@ -23,7 +23,7 @@
         <div class="container">
             {{-- ▼▼▼ LOGO MATERIX MENGARAH KE HOMEPAGE ▼▼▼ --}}
             <a class="navbar-brand" href="{{ route('HomePage') }}">
-                <img src="/images/materixlogos.png" alt="Logo" class="navbar-logo">
+                <img src="/images/materixlogos.png" alt="MateRix Logo" class="navbar-logo">
                 <span class="logo-text">aterix</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

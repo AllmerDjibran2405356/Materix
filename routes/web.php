@@ -21,21 +21,20 @@ use App\Http\Controllers\HargaBahanController;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
-
-// --- Rute Login & Logout (Sekarang menunjuk ke AuthController) ---
-Route::get('/login', [AuthController::class, 'loginCreate'])->name('login.form');
+// --- Rute Login & Logout ---
+// HANYA SATU ROUTE GET UNTUK LOGIN
+Route::get('/login', [AuthController::class, 'loginCreate'])->name('login.form'); // GUNAKAN 'login' SAJA
 Route::post('/login', [AuthController::class, 'loginStore'])->name('login.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// --- Rute Registrasi (Sudah benar menunjuk ke AuthController) ---
+// --- Rute Registrasi ---
 Route::get('/daftar', [AuthController::class, 'registerCreate'])->name('daftar.form');
 Route::post('/daftar', [AuthController::class, 'registerStore'])->name('daftar.submit');
 
 // --- Rute Pengaturan Akun ---
 Route::get('/pengaturan', [PengaturanController::class, 'index'])
     ->name('pengaturan')
-    ->middleware('auth'); 
-
+    ->middleware('auth');
 Route::post('/pengaturan/info', [PengaturanController::class, 'updateInfo'])
     ->name('pengaturan.updateInfo')
     ->middleware('auth');

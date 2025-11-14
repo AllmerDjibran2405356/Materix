@@ -58,39 +58,40 @@ class AuthController extends Controller
     // =====================================================
     // LOGIKA LOGIN
     // =====================================================
-
    
     public function loginCreate(): View
     {
-        return view('Page.Login');
+        // PERBAIKAN: Arahkan ke file view yang benar
+        return view('Page.Login'); // UBAH DARI 'login.form' KE 'Page.Login'
     }
 
     /**
      * LOGIKA 4: Memproses percobaan login.
      */
     public function loginStore(Request $request): RedirectResponse
-    {
-        // 1. Validasi (Email & Password)
-        $credentials = $request->validate([
-            'credential' => 'required|email',
-            'password'   => 'required|string',
-        ], [
-            'credential.required' => 'Email wajib diisi.',
-            'credential.email'    => 'Format email tidak valid.'
-        ]);
+{
+    // 1. Validasi (bisa username atau email)
+    $credentials = $request->validate([
+        'credential' => 'required|string',
+        'password'   => 'required|string',
+    ], [
+        'credential.required' => 'Nama pengguna atau email wajib diisi.',
+    ]);
 
-        $credentials['email'] = $credentials['credential'];
-        unset($credentials['credential']);
+    // 2. Tentukan apakah input adalah email atau username
+    $field = filter_var($credentials['credential'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+    $credentials[$field] = $credentials['credential'];
+    unset($credentials['credential']);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            // Arahkan ke Halaman Pengaturan
-            return redirect()->route('HomePage');
-        }
-
-        // 4. Jika GAGAL
-        return back()->with('error', 'Email atau Password yang Anda masukkan salah.');
+    // 3. Coba login
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        return redirect()->route('HomePage');
     }
+
+    // 4. Jika GAGAL
+    return back()->with('error', 'Nama pengguna/email atau password yang Anda masukkan salah.');
+}
 
     // =====================================================
     // LOGIKA LOGOUT
@@ -105,7 +106,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         
-        // Kembalikan ke halaman login
-        return redirect()->route('login.form');
+        return redirect()->route('landing');
     }
 }

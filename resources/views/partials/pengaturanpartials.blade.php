@@ -216,7 +216,4 @@
     </div>
 </div>
 
-{{-- Modal lainnya tetap sama --}}
-<div class="modal fade" id="ubahAkunModal" tabindex="-1" aria-labelledby="ubahAkunModalLabel" aria-hidden="true">
-    {{-- ... kode modal ubah akun yang sudah ada ... --}}
 </div>
