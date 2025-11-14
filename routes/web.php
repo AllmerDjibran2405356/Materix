@@ -53,7 +53,9 @@ Route::post('/pengaturan/cek-sandi', [PengaturanController::class, 'cekSandiLama
     ->middleware('auth');
 
 // --- Rute Home Page ---
-Route::get('/HomePage', [HomeController::class, 'index'])->name('HomePage');
+Route::get('/HomePage', [HomeController::class, 'index'])
+    ->name('HomePage')
+    ->middleware('auth');
 
 // --- Rute Kalkulator ---
 Route::get('/kalkulator', [KalkulasiController::class, 'index'])->name('Kalkulasi.index');
