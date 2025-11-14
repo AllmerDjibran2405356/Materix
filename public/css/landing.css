@@ -1,12 +1,11 @@
-/* ========== Global Reset ========== */
 body, html {
     margin: 0;
     padding: 0;
-    font-family: "Poppins", sans-serif;
+    font-family: "Inter", sans-serif;
     scroll-behavior: smooth;
 }
 
-/* ========== Container 1: Hero Section ========== */
+/* ==============Hero Container============== */
 .hero-container {
     position: relative;
     width: 100%;
@@ -52,64 +51,115 @@ body, html {
     line-height: 1.4;
 }
 
-/* ========== Container 2: Tentang Materix ========== */
+/* ==============Tentang MateRix============== */
 .about-container {
-    background-color: white;
     width: 100%;
     padding: 80px 8%;
-    display: flex;
+    /* background: yellowgreen; */
+    z-index: -3;
+    position: relative;
+    margin: 0 auto;
+    max-width: 1800px;
+    height: 1200px;
+    align-content: center;
+}
+
+.about-title h2 {
+    font-size: 50px;
+    font-weight: 670;
+    margin-bottom: 0px;
+    color: #000;
+    text-align: left;
     justify-content: center;
+    margin: 0 auto;
+    max-width: 1300px;
+    margin-bottom: 10px;
 }
 
 .about-content {
     display: flex;
-    flex-wrap: wrap;
     gap: 40px;
     align-items: center;
-    justify-content: space-between;
-    max-width: 1200px;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 1300px;
 }
 
 .about-text {
-    flex: 1 1 450px;
+    width: 870px;
+    height: 670px;
     background: #0a3161;
     color: white;
-    padding: 30px;
+    padding: 35px;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    position: relative;
+    box-sizing: border-box;
 }
 
-.about-text h2 {
-    margin-bottom: 15px;
+.about-text p {
+    font-size: 36px;
+    line-height: 1.5;
+    text-align: justify;
 }
 
+.about-text::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 100%;
+    height: 100%;
+    background: #dadada;
+    border-radius: 12px;
+    z-index: -1;
+}
+
+/* ==============Image container============== */
 .about-image {
-    flex: 1 1 400px;
+    width: 500px;
+    height: 670px;
+    position: relative;
+    z-index: 1;
+}
+
+.about-image::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 100%;
+    height: 100%;
+    background: #dadada;
+    border-radius: 12px;
+    z-index: -1;
 }
 
 .about-image img {
     width: 100%;
-    border-radius: 10px;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    position: relative;
+    z-index: 2;
 }
 
-/* ========== Container 3: Apa yang Bisa Anda Lakukan ========== */
+/* ==============Apa yang bisa and lakukan============== */
 .features-header {
   background-color: #0a3161;
-  align-self: center;
   color: #fff;
-  width: 670px;
+  width: 550px;
+  height: 67px;
   margin: 0 auto;
-  align-items: center;
-  border-radius: 25px 25px 0px 0px; 
-  /* top-left | top-right | bottom-right | bottom-left */
-
+  text-align: center;
+  border-radius: 25px 25px 0 0;   /* top-left | top-right | bottom-right | bottom-left */
+  padding: 5px 5px;
 }
 
 .features-title h2 {
   font-size: 34px;
   font-weight: 500;
   text-align: center;
-  
+  margin-top: 10px;
 }
 
 .features-container {
@@ -185,11 +235,7 @@ body, html {
     margin-bottom: 10px;
 }
 
-/* .feature-item div {
-    flex: 1;
-} */
-
-/* ========== Responsive ========== */
+/* ==============Responsive============== */
 @media (max-width: 768px) {
     .about-content {
         flex-direction: column;
