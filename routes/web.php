@@ -7,6 +7,7 @@ use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\HomeController;   
 use App\Http\Controllers\KalkulasiController;    
 use App\Http\Controllers\HargaBahanController;  
+use App\Http\Controllers\UnggahController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,8 +57,15 @@ Route::get('/HomePage', [HomeController::class, 'index'])
     ->name('HomePage')
     ->middleware('auth');
 
-// --- Rute Kalkulator ---
+//Rute Kalkulator
 Route::get('/kalkulator', [KalkulasiController::class, 'index'])->name('Kalkulasi.index');
 
-// --- Rute Harga Bahan ---
+//Rute Harga Bahan 
 Route::get('/harga-bahan', [HargaBahanController::class, 'index'])->name('Bahan.index');
+
+//Rute Unggah File 
+Route::get('/unggah', [UnggahController::class, 'index'])->name('Unggah.index');
+
+//Upload Gambar
+Route::get('/unggah-gambar', [UnggahController::class, 'unggahGambarForm'])->name('Unggah.gambar.form');
+Route::post('/unggah-desain', [UnggahController::class, 'upload'])->name('unggah.upload');
