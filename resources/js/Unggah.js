@@ -5,12 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const fileInput = document.getElementById('fileInput');
     const triggerBtn = document.getElementById('triggerInput');
 
-    // Klik tombol = buka dialog file
+    // tombol buat buka dialog file
     triggerBtn.addEventListener('click', () => {
         fileInput.click();
     });
 
-    // Drag di area biru
+    // Drag di area tertentu
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropZone.style.opacity = '0.85';
