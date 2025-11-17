@@ -1,0 +1,239 @@
+/* ====== NAVBAR STICKY UNTUK HOMEPAGE ====== */
+.navbar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1050 !important;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* HAPUS/REDUCE PADDING BODY */
+body {
+    padding-top: 0 !important; /* HAPUS INI */
+}
+
+/* ====== HERO SECTION - DISAMAKAN DENGAN LANDING PAGE ====== */
+.hero-home {
+    position: relative;
+    width: 100%;
+    height: 85vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    margin-top: 0 !important;
+}
+
+.hero-home::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px; /* SESUAIKAN DENGAN TINGGI NAVBAR */
+    background: transparent;
+    z-index: 4;
+}
+
+.hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 100%;
+    background: rgba(255, 102, 0, 0.7);
+    clip-path: polygon(0 0, 85% 0, 100% 100%, 0 100%);
+    z-index: 2;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+
+.hero-home h2 {
+    font-size: 4.2rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-text {
+    position: absolute;
+    right: 8%;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    text-align: right;
+    z-index: 4;
+}
+/* ====== KARAKTER DAN SPEECH BUBBLE ====== */
+.hero-character {
+    position: absolute;
+    left: 5%; /* LEBIH KE KIRI */
+    top: 50%;
+    transform: translateY(-50%);
+    height: 420px; /* SEDIKIT LEBIH BESAR */
+    z-index: 4;
+}
+
+.speech-bubble {
+    background-color: #FFDDA9;
+    color: #333;
+    padding: 20px 25px;
+    border-radius: 12px;
+    max-width: 320px;
+    position: absolute;
+    top: 25%; /* LEBIH ATAS */
+    left: 25%; /* LEBIH KE KANAN DARI GAMBAR */
+    z-index: 5;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 40px; /* SEGITIGA LEBIH KE KANAN */
+    border-width: 10px;
+    border-style: solid;
+    border-color: #FFDDA9 transparent transparent transparent;
+}
+
+/* ====== TOMBOL FITUR ====== */
+.fitur-section .btn-primary {
+    background: linear-gradient(to right, #001a66, #0033cc);
+    border: none;
+    padding: 15px 20px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.fitur-section .btn-secondary {
+    background: linear-gradient(to right, #ff6600, #ff8533);
+    border: none;
+    padding: 15px 20px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.fitur-section .btn-primary:hover,
+.fitur-section .btn-secondary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* ====== RIWAYAT SECTION ====== */
+.riwayat-section {
+    border-radius: 10px;
+}
+
+.riwayat-section .list-group-item {
+    border: none;
+    border-radius: 8px !important;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.riwayat-section .list-group-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 1200px) {
+    .hero-home h2 {
+        font-size: 3.5rem;
+    }
+    
+    .hero-character {
+        height: 350px;
+        left: 10%;
+    }
+    
+    .speech-bubble {
+        left: 40%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-home {
+        height: 70vh;
+    }
+    
+    .hero-overlay {
+        width: 70%;
+    }
+    
+    .hero-home h2 {
+        font-size: 2.5rem;
+        text-align: center;
+    }
+    
+    .hero-text {
+        right: 5%;
+        text-align: center;
+    }
+    
+    .hero-character {
+        height: 250px;
+        left: 5%;
+    }
+    
+    .speech-bubble {
+        top: 20%;
+        left: 45%;
+        max-width: 250px;
+        padding: 15px 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-home {
+        height: 60vh;
+    }
+    
+    .hero-home h2 {
+        font-size: 2rem;
+    }
+    
+    .hero-character {
+        height: 200px;
+        left: 2%;
+    }
+    
+    .speech-bubble {
+        top: 15%;
+        left: 50%;
+        max-width: 200px;
+        padding: 10px 15px;
+    }
+    
+    .speech-bubble::after {
+        bottom: -15px;
+        left: 20px;
+        border-width: 8px;
+    }
+}
