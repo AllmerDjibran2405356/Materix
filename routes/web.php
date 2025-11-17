@@ -7,6 +7,7 @@ use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\HomeController;   
 use App\Http\Controllers\KalkulasiController;    
 use App\Http\Controllers\HargaBahanController;  
+use App\Http\Controllers\MaterialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,3 +62,26 @@ Route::get('/kalkulator', [KalkulasiController::class, 'index'])->name('Kalkulas
 
 // --- Rute Harga Bahan ---
 Route::get('/harga-bahan', [HargaBahanController::class, 'index'])->name('Bahan.index');
+
+// MATERIAL ROUTES
+Route::prefix('projects')->group(function () {
+    Route::get('/{id}/materials', [MaterialController::class, 'index'])->name('materials.index');
+    Route::post('/{id}/materials', [MaterialController::class, 'store'])->name('materials.store');
+    
+    // Export
+    Route::get('/{id}/materials/export-pdf', [MaterialController::class, 'exportPDF'])->name('materials.export.pdf');
+    Route::get('/{id}/materials/export-excel', [MaterialController::class, 'exportExcel'])->name('materials.export.excel');
+    
+    // Kategori & Satuan
+    Route::post('/kategori/store', [MaterialController::class, 'storeKategori'])->name('materials.kategori.store');
+    Route::get('/kategori/list', [MaterialController::class, 'getKategori'])->name('materials.kategori.list');
+    Route::post('/satuan/store', [MaterialController::class, 'storeSatuan'])->name('materials.satuan.store');
+    Route::get('/satuan/list', [MaterialController::class, 'getSatuan'])->name('materials.satuan.list');
+});
+
+// API DATA
+Route::prefix('api')->group(function () {
+    Route::get('/bahan-list', [MaterialController::class, 'getBahanList'])->name('api.bahan-list');
+    Route::get('/komponen-list', [MaterialController::class, 'getKomponenList'])->name('api.komponen-list');
+    Route::get('/supplier-list', [MaterialController::class, 'getSupplierList'])->name('api.supplier-list');
+});

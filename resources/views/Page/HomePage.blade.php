@@ -2,19 +2,32 @@
 
 @section('title', 'Home | MateRix Smart Database Konstruksi')
 
+@section('styles')
+
+        <link href="{{ asset('css/homepage.css') }}" rel="stylesheet">
+
+        @endsection
+
 @section('content')
 <section class="hero-home">
-    <div class="container py-4 px-3" style="background: linear-gradient(to right, #FF6600, #FF8533); border-radius: 10px; color: #fff;">
+    <!-- Overlay oranye miring -->
+    <div class="hero-overlay"></div>
+    
+    <div class="container hero-content">
         <div class="row align-items-center">
-            <div class="col-md-8">
-                <h2 class="fw-bold mb-2">Selamat Datang, {{ $user->username }}!</h2>
-            </div>
-            <div class="col-md-4 text-end">
-                <img src="{{ asset('images/worker.png') }}" alt="Worker" style="max-height: 150px;"> {{-- ini buat gambar --}}
+            <div class="col-md-6">
+                <h2 class="fw-bold">Selamat Datang, {{ $user->username }}!</h2>
+                <div class="speech-bubble">
+                    <p class="mb-0 fw-semibold">Hai! Mari kita mulai perhitungan material konstruksi bangunanmu!</p>
+                </div>
             </div>
         </div>
+        
+        <!-- Gambar karakter -->
+        <img src="{{ asset('images/worker.png') }}" alt="Worker" class="hero-character">
     </div>
 </section>
+
 
 {{-- 2 Tombol dibawah Hero  --}}
 <section class="fitur-section py-5">
