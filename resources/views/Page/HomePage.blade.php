@@ -57,7 +57,7 @@
                 Belum ada proyek desain rumah yang kamu unggah 😅 <br>
                 Yuk mulai kalkulasi pertamamu sekarang!
                 <br>
-                <a href="{{ route('Kalkulasi.index') }}" class="btn btn-warning mt-3">Mulai Sekarang</a>
+                <a href="{{ route('Unggah.index') }}" class="btn btn-warning mt-3">Mulai Proyek Baru</a>
             </div>
         @else
             <div class="list-group shadow-sm">

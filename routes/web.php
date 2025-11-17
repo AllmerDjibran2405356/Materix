@@ -8,23 +8,12 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KalkulasiController;    
 use App\Http\Controllers\HargaBahanController;  
 use App\Http\Controllers\MaterialController;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| This file is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+use App\Http\Controllers\UnggahController;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 // --- Rute Login & Logout ---
-// HANYA SATU ROUTE GET UNTUK LOGIN
-Route::get('/login', [AuthController::class, 'loginCreate'])->name('login.form'); // GUNAKAN 'login' SAJA
+Route::get('/login', [AuthController::class, 'loginCreate'])->name('login.form');
 Route::post('/login', [AuthController::class, 'loginStore'])->name('login.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -33,37 +22,24 @@ Route::get('/daftar', [AuthController::class, 'registerCreate'])->name('daftar.f
 Route::post('/daftar', [AuthController::class, 'registerStore'])->name('daftar.submit');
 
 // --- Rute Pengaturan Akun ---
-Route::get('/pengaturan', [PengaturanController::class, 'index'])
-    ->name('pengaturan')
-    ->middleware('auth');
-Route::post('/pengaturan/info', [PengaturanController::class, 'updateInfo'])
-    ->name('pengaturan.updateInfo')
-    ->middleware('auth');
+Route::middleware('auth')->group(function () {
+    Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan');
+    Route::post('/pengaturan/info', [PengaturanController::class, 'updateInfo'])->name('pengaturan.updateInfo');
+    Route::post('/pengaturan/password', [PengaturanController::class, 'updatePassword'])->name('pengaturan.updatePassword');
+    Route::post('/pengaturan/avatar', [PengaturanController::class, 'updateAvatar'])->name('pengaturan.updateAvatar');
+    Route::post('/pengaturan/cek-sandi', [PengaturanController::class, 'cekSandiLama'])->name('pengaturan.cekSandi');
+    
+    // --- Rute Home Page ---
+    Route::get('/HomePage', [HomeController::class, 'index'])->name('HomePage');
+});
 
-Route::post('/pengaturan/password', [PengaturanController::class, 'updatePassword'])
-    ->name('pengaturan.updatePassword')
-    ->middleware('auth');
-
-Route::post('/pengaturan/avatar', [PengaturanController::class, 'updateAvatar'])
-    ->name('pengaturan.updateAvatar')
-    ->middleware('auth');
-
-Route::post('/pengaturan/cek-sandi', [PengaturanController::class, 'cekSandiLama'])
-    ->name('pengaturan.cekSandi')
-    ->middleware('auth');
-
-// --- Rute Home Page ---
-Route::get('/HomePage', [HomeController::class, 'index'])
-    ->name('HomePage')
-    ->middleware('auth');
-
-// --- Rute Kalkulator ---
+// Rute Kalkulator
 Route::get('/kalkulator', [KalkulasiController::class, 'index'])->name('Kalkulasi.index');
 
 // --- Rute Harga Bahan ---
 Route::get('/harga-bahan', [HargaBahanController::class, 'index'])->name('Bahan.index');
 
-// MATERIAL ROUTES
+// --- MATERIAL ROUTES ---
 Route::prefix('projects')->group(function () {
     Route::get('/{id}/materials', [MaterialController::class, 'index'])->name('materials.index');
     Route::post('/{id}/materials', [MaterialController::class, 'store'])->name('materials.store');
@@ -85,3 +61,10 @@ Route::prefix('api')->group(function () {
     Route::get('/komponen-list', [MaterialController::class, 'getKomponenList'])->name('api.komponen-list');
     Route::get('/supplier-list', [MaterialController::class, 'getSupplierList'])->name('api.supplier-list');
 });
+
+// Rute Unggah File 
+Route::get('/unggah', [UnggahController::class, 'index'])->name('Unggah.index');
+
+// Upload Gambar
+Route::get('/unggah-gambar', [UnggahController::class, 'unggahGambarForm'])->name('Unggah.gambar.form');
+Route::post('/unggah-desain', [UnggahController::class, 'upload'])->name('unggah.upload');
