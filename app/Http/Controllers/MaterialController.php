@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ListMaterialKomponen;
-use App\Models\ListBahan;
+use App\Models\Material;
+use App\Models\Bahan;
 use App\Models\KomponenDesain;
-use App\Models\ListSupplier;
+use App\Models\Supplier;
 use App\Models\KategoriBahan;
 use App\Models\SatuanUkur;
 use App\Models\DesainRumah;
@@ -20,7 +20,7 @@ class MaterialController extends Controller
         // Get project data untuk judul
         $project = DesainRumah::findOrFail($id_desain_rumah);
         
-        $materials = ListMaterialKomponen::with([
+        $materials = Material::with([
             'bahan.kategori', 
             'bahan.satuanUkur',
             'supplier', 
@@ -33,13 +33,13 @@ class MaterialController extends Controller
     // ✅ TAMBAH MATERIAL
     public function store(Request $request, $id_desain_rumah) {
         $request->validate([
-            'bahan_id' => 'required|exists:list_bahan,id',
-            'komponen_id' => 'required|exists:komponen_desain,id',
-            'supplier_id' => 'required|exists:list_supplier,id',
+            'bahan_id' => 'required|exists:list_bahan,ID_Bahan',
+            'komponen_id' => 'required|exists:list_komponen_desain,ID_Komponen',
+            'supplier_id' => 'required|exists:list_supplier,ID_Supplier',
             'jumlah' => 'required|numeric|min:0'
         ]);
 
-        ListMaterialKomponen::create([
+        Material::create([
             'ID_Desain_Rumah' => $id_desain_rumah,
             'ID_Bahan' => $request->bahan_id,
             'ID_Komponen' => $request->komponen_id,
@@ -54,11 +54,14 @@ class MaterialController extends Controller
     public function storeKategori(Request $request) {
         $request->validate(['nama_kategori' => 'required|string|max:255']);
         
-        KategoriBahan::create($request->all());
+        KategoriBahan::create([
+            'Nama_Kelompok_Bahan' => $request->nama_kategori
+        ]);
+        
         return response()->json(['success' => true, 'message' => 'Kategori berhasil ditambahkan']);
     }
 
-    // ✅ KATEGORI - READ (untuk modal lihat)
+    // ✅ KATEGORI - READ
     public function getKategori() {
         $kategories = KategoriBahan::all();
         return response()->json($kategories);
@@ -68,11 +71,14 @@ class MaterialController extends Controller
     public function storeSatuan(Request $request) {
         $request->validate(['nama_satuan' => 'required|string|max:255']);
         
-        SatuanUkur::create($request->all());
+        SatuanUkur::create([
+            'Nama_Satuan' => $request->nama_satuan
+        ]);
+        
         return response()->json(['success' => true, 'message' => 'Satuan berhasil ditambahkan']);
     }
 
-    // ✅ SATUAN - READ (untuk modal lihat)
+    // ✅ SATUAN - READ
     public function getSatuan() {
         $satuans = SatuanUkur::all();
         return response()->json($satuans);
@@ -81,23 +87,23 @@ class MaterialController extends Controller
     // ✅ EXPORT PDF
     public function exportPDF($id_desain_rumah) {
         $project = DesainRumah::findOrFail($id_desain_rumah);
-        $materials = ListMaterialKomponen::with([
+        $materials = Material::with([
             'bahan.kategori', 'bahan.satuanUkur', 'supplier', 'komponen'
         ])->where('ID_Desain_Rumah', $id_desain_rumah)->get();
         
         $pdf = PDF::loadView('materials.export.pdf', compact('materials', 'project'));
-        return $pdf->download("material-{$project->nama_desain}.pdf");
+        return $pdf->download("material-{$project->Nama_Desain}.pdf");
     }
 
     // ✅ EXPORT EXCEL
     public function exportExcel($id_desain_rumah) {
         $project = DesainRumah::findOrFail($id_desain_rumah);
-        return Excel::download(new MaterialsExport($id_desain_rumah), "material-{$project->nama_desain}.xlsx");
+        return Excel::download(new MaterialsExport($id_desain_rumah), "material-{$project->Nama_Desain}.xlsx");
     }
 
     // ✅ API DATA DROPDOWN
     public function getBahanList() {
-        $bahan = ListBahan::with(['kategori', 'satuanUkur'])->get();
+        $bahan = Bahan::with(['kategori', 'satuanUkur'])->get();
         return response()->json($bahan);
     }
 
@@ -107,7 +113,7 @@ class MaterialController extends Controller
     }
 
     public function getSupplierList() {
-        $supplier = ListSupplier::all();
+        $supplier = Supplier::all();
         return response()->json($supplier);
     }
 }

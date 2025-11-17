@@ -24,7 +24,7 @@ class Material extends Model
         return $this->belongsTo(DesainRumah::class, 'ID_Desain_Rumah');
     }
     
-    // Relasi ke Bahan (dengan kategori dan satuan)
+    // Relasi ke Bahan
     public function bahan() {
         return $this->belongsTo(Bahan::class, 'ID_Bahan');
     }
@@ -34,8 +34,8 @@ class Material extends Model
         return $this->belongsTo(Supplier::class, 'ID_Supplier');
     }
     
-    // Relasi ke Komponen
+    // Relasi ke KomponenDesain
     public function komponen() {
-        return $this->belongsTo(Komponen::class, 'ID_Komponen');
+        return $this->belongsTo(KomponenDesain::class, 'ID_Komponen');
     }
 }

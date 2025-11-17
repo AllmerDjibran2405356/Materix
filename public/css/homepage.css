@@ -9,14 +9,112 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Padding untuk body agar konten tidak tertutup navbar */
+/* HAPUS/REDUCE PADDING BODY */
 body {
-    padding-top: 80px;
+    padding-top: 0 !important; /* HAPUS INI */
 }
 
-/* ====== HERO SECTION ====== */
+/* ====== HERO SECTION - DISAMAKAN DENGAN LANDING PAGE ====== */
 .hero-home {
-    margin-top: 20px;
+    position: relative;
+    width: 100%;
+    height: 85vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    margin-top: 0 !important;
+}
+
+.hero-home::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px; /* SESUAIKAN DENGAN TINGGI NAVBAR */
+    background: transparent;
+    z-index: 4;
+}
+
+.hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 100%;
+    background: rgba(255, 102, 0, 0.7);
+    clip-path: polygon(0 0, 85% 0, 100% 100%, 0 100%);
+    z-index: 2;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+
+.hero-home h2 {
+    font-size: 4.2rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-text {
+    position: absolute;
+    right: 8%;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    text-align: right;
+    z-index: 4;
+}
+/* ====== KARAKTER DAN SPEECH BUBBLE ====== */
+.hero-character {
+    position: absolute;
+    left: 5%; /* LEBIH KE KIRI */
+    top: 50%;
+    transform: translateY(-50%);
+    height: 420px; /* SEDIKIT LEBIH BESAR */
+    z-index: 4;
+}
+
+.speech-bubble {
+    background-color: #FFDDA9;
+    color: #333;
+    padding: 20px 25px;
+    border-radius: 12px;
+    max-width: 320px;
+    position: absolute;
+    top: 25%; /* LEBIH ATAS */
+    left: 25%; /* LEBIH KE KANAN DARI GAMBAR */
+    z-index: 5;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 40px; /* SEGITIGA LEBIH KE KANAN */
+    border-width: 10px;
+    border-style: solid;
+    border-color: #FFDDA9 transparent transparent transparent;
 }
 
 /* ====== TOMBOL FITUR ====== */
@@ -63,96 +161,58 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* ========================================= */
-/* CSS BARU UNTUK HERO SECTION               */
-/* ========================================= */
-
-.hero-home {
-    /* 1. Atur background gedung */
-    background-image: url('../images/gedung-background.jpg'); /* GANTI DENGAN GAMBAR ANDA */
-    background-size: cover;
-    background-position: center;
+/* ====== RESPONSIVE ====== */
+@media (max-width: 1200px) {
+    .hero-home h2 {
+        font-size: 3.5rem;
+    }
     
-    /* 2. Atur posisi & tinggi */
-    position: relative;
-    padding: 0;
-    margin: 0;
-    height: 400px; /* Tambahkan tinggi yang pasti */
-    overflow: hidden; /* Agar tidak ada yang keluar dari container */
-}
-
-.hero-overlay {
-    /* 3. Lapisan oranye semi-transparan - DIUBAH GARIS TENGAH */
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background: linear-gradient(to right, rgba(255, 102, 0, 0.9), rgba(255, 133, 51, 0.85));
-    clip-path: polygon(0 0, 50% 0, 100% 100%, 0 100%);
-}
-
-.hero-content {
-    /* 5. Konten (teks, bubble) agar di atas overlay */
-    position: relative;
-    z-index: 2;
-    height: 100%;
-    display: flex;
-    align-items: center;
-}
-
-.hero-home h2 {
-    /* Teks "Selamat Datang" */
-    font-size: 3rem;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    margin-bottom: 20px;
-}
-
-.hero-character {
-    /* 6. Gambar karakter pekerja - PINDAH KE KIRI */
-    position: absolute;
-    bottom: 0;
-    left: 40px; /* Pindah ke kiri */
-    height: 350px;
-    z-index: 3;
-}
-
-.speech-bubble {
-    /* 7. Kotak "speech bubble" - PINDAH KE ATAS KANAN GAMBAR */
-    background-color: #FFDDA9;
-    color: #333;
-    padding: 20px 25px;
-    border-radius: 12px;
-    max-width: 450px;
-    position: absolute;
-    top: 60px; /* Posisi dari atas */
-    right: 40px; /* Posisi dari kanan */
-    z-index: 4;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.speech-bubble::after {
-    /* 8. Segitiga penunjuk pada bubble - DIUBAH MENGAKOMODASI POSISI BARU */
-    content: '';
-    position: absolute;
-    bottom: -20px; /* Pindah ke bawah bubble */
-    left: 50px; /* Posisi segitiga */
+    .hero-character {
+        height: 350px;
+        left: 10%;
+    }
     
-    /* Membuat segitiga mengarah ke bawah */
-    border-width: 10px;
-    border-style: solid;
-    border-color: #FFDDA9 transparent transparent transparent;
+    .speech-bubble {
+        left: 40%;
+        max-width: 300px;
+    }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .hero-home {
-        height: 300px;
+        height: 70vh;
     }
     
     .hero-overlay {
-        clip-path: polygon(0 0, 60% 0, 100% 100%, 0 100%);
+        width: 70%;
+    }
+    
+    .hero-home h2 {
+        font-size: 2.5rem;
+        text-align: center;
+    }
+    
+    .hero-text {
+        right: 5%;
+        text-align: center;
+    }
+    
+    .hero-character {
+        height: 250px;
+        left: 5%;
+    }
+    
+    .speech-bubble {
+        top: 20%;
+        left: 45%;
+        max-width: 250px;
+        padding: 15px 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-home {
+        height: 60vh;
     }
     
     .hero-home h2 {
@@ -161,31 +221,19 @@ body {
     
     .hero-character {
         height: 200px;
-        left: 20px;
+        left: 2%;
     }
     
     .speech-bubble {
-        top: 40px;
-        right: 20px;
-        max-width: 250px;
-        padding: 15px 20px;
+        top: 15%;
+        left: 50%;
+        max-width: 200px;
+        padding: 10px 15px;
     }
     
     .speech-bubble::after {
-        bottom: -20px;
-        left: 30px;
-    }
-}
-
-/* ====== RESPONSIVE ====== */
-@media (max-width: 768px) {
-    body {
-        padding-top: 70px;
-    }
-    
-    .fitur-section .btn-primary,
-    .fitur-section .btn-secondary {
-        font-size: 16px;
-        padding: 12px 15px;
+        bottom: -15px;
+        left: 20px;
+        border-width: 8px;
     }
 }

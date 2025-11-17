@@ -3,33 +3,34 @@
 @section('title', 'Home | MateRix Smart Database Konstruksi')
 
 @section('styles')
-
-        <link href="{{ asset('css/homepage.css') }}" rel="stylesheet">
-
-        @endsection
+    <link href="{{ asset('css/homepage.css') }}" rel="stylesheet">
+@endsection
 
 @section('content')
 <section class="hero-home">
-    <!-- Overlay oranye miring -->
+    <!-- Background Image -->
+    <img src="{{ asset('images/landingpage.jpg') }}" alt="Background" class="hero-bg">
+    
+    <!-- Overlay oranye miring (lebih lebar) -->
     <div class="hero-overlay"></div>
     
-    <div class="container hero-content">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <h2 class="fw-bold">Selamat Datang, {{ $user->username }}!</h2>
-                <div class="speech-bubble">
-                    <p class="mb-0 fw-semibold">Hai! Mari kita mulai perhitungan material konstruksi bangunanmu!</p>
-                </div>
-            </div>
+    <div class="hero-content">
+        <!-- Gambar karakter di TENGAH KIRI -->
+        <img src="{{ asset('images/pekerja.png') }}" alt="Worker" class="hero-character">
+        
+        <!-- Tulisan di KANAN TENGAH -->
+        <div class="hero-text">
+            <h2 class="fw-bold">Selamat Datang,<br>{{ $user->username }}!</h2>
         </div>
         
-        <!-- Gambar karakter -->
-        <img src="{{ asset('images/worker.png') }}" alt="Worker" class="hero-character">
+        <!-- Speech Bubble di KANAN ATAS GAMBAR -->
+        <div class="speech-bubble">
+            <p class="mb-0 fw-semibold">Hai! Mari kita mulai perhitungan material konstruksi bangunanmu!</p>
+        </div>
     </div>
 </section>
 
-
-{{-- 2 Tombol dibawah Hero  --}}
+{{-- 2 Tombol dibawah Hero --}}
 <section class="fitur-section py-5">
    <div class="container">
        <div class="row text-center">
@@ -47,7 +48,7 @@
    </div>
 </section>
 
-{{-- Riwayat Bangunan kalcer (kalo user baru nampilin pesan singkat cihuy) --}}
+{{-- Riwayat Bangunan --}}
 <section class="riwayat-section py-5 bg-light">
     <div class="container">
         <h3 class="fw-bold mb-4">Riwayat Bangunan</h3>
@@ -79,3 +80,4 @@
         @endif
     </div>
 </section>
+@endsection
