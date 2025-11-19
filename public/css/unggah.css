@@ -1,0 +1,61 @@
+/* =========================================
+Hide original file input (remove Choose File)
+========================================= */
+#fileInput {
+display: none !important;
+}
+
+/* =========================================
+Drop Zone Wrapper
+========================================= */
+#drop-zone {
+width:100%;
+height:220px;
+background:#007bff;
+border-radius:10px;
+border: 2px dashed rgba(255,255,255,0.6);
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+color:#ffffff;
+cursor:pointer;
+text-align:center;
+transition: 0.3s;
+}
+
+/* Hover effect */
+#drop-zone:hover {
+background: #0066d4;
+}
+
+/* Text below title */
+.drop-sub-text {
+opacity: 0.8;
+margin-top:-5px;
+}
+
+/* Alert spacing consistency */
+.alert {
+margin-bottom: 20px;
+}
+
+/* Buttons inside dropzone */
+#drop-zone button {
+margin-top: 8px;
+}
+
+/* Button hover animation */
+#drop-zone button:hover {
+opacity: 0.9;
+}
+
+/* =========================================
+Responsive Behavior
+========================================= */
+@media (max-width: 576px) {
+#drop-zone {
+height: 180px;
+font-size: 14px;
+}
+}

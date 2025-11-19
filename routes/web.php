@@ -3,10 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\PengaturanController; 
-use App\Http\Controllers\HomeController;   
-use App\Http\Controllers\KalkulasiController;    
-use App\Http\Controllers\HargaBahanController;  
+use App\Http\Controllers\PengaturanController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\KalkulasiController;
+use App\Http\Controllers\HargaBahanController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\UnggahController;
 
@@ -28,7 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/pengaturan/password', [PengaturanController::class, 'updatePassword'])->name('pengaturan.updatePassword');
     Route::post('/pengaturan/avatar', [PengaturanController::class, 'updateAvatar'])->name('pengaturan.updateAvatar');
     Route::post('/pengaturan/cek-sandi', [PengaturanController::class, 'cekSandiLama'])->name('pengaturan.cekSandi');
-    
+
     // --- Rute Home Page ---
     Route::get('/HomePage', [HomeController::class, 'index'])->name('HomePage');
 });
@@ -43,11 +43,11 @@ Route::get('/harga-bahan', [HargaBahanController::class, 'index'])->name('Bahan.
 Route::prefix('projects')->group(function () {
     Route::get('/{id}/materials', [MaterialController::class, 'index'])->name('materials.index');
     Route::post('/{id}/materials', [MaterialController::class, 'store'])->name('materials.store');
-    
+
     // Export
     Route::get('/{id}/materials/export-pdf', [MaterialController::class, 'exportPDF'])->name('materials.export.pdf');
     Route::get('/{id}/materials/export-excel', [MaterialController::class, 'exportExcel'])->name('materials.export.excel');
-    
+
     // Kategori & Satuan
     Route::post('/kategori/store', [MaterialController::class, 'storeKategori'])->name('materials.kategori.store');
     Route::get('/kategori/list', [MaterialController::class, 'getKategori'])->name('materials.kategori.list');
@@ -62,8 +62,9 @@ Route::prefix('api')->group(function () {
     Route::get('/supplier-list', [MaterialController::class, 'getSupplierList'])->name('api.supplier-list');
 });
 
-// Rute Unggah File 
+// Rute Unggah File
 Route::get('/unggah', [UnggahController::class, 'index'])->name('Unggah.index');
+Route::post('/unggah', [UnggahController::class, 'upload'])->name('Unggah.upload');
 
 // Upload Gambar
 Route::get('/unggah-gambar', [UnggahController::class, 'unggahGambarForm'])->name('Unggah.gambar.form');

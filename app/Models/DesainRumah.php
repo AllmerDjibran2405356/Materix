@@ -9,24 +9,40 @@ class DesainRumah extends Model
 {
     use HasFactory;
 
+    // Nama tabel
     protected $table = 'desain_rumah';
+
+    // Primary key
     protected $primaryKey = 'ID_Desain_Rumah';
-    
+
+    // Jika tabel tidak memiliki created_at & updated_at
+    public $timestamps = false;
+
+    // Kolom yang boleh diisi mass assignment
     protected $fillable = [
         'id_user',
         'Nama_Desain',
-        'Luas_Tanah_m²',
-        'Volume_Bangunan_m³',
-        'Jumlah_Ruangan',
-        'Jumlah_Lantai',
-        'Tanggal_Dibuat'
+        'Tanggal_Dibuat',
+        'Nama_File'
     ];
 
-    public function materials() {
-        return $this->hasMany(Material::class, 'ID_Desain_Rumah', 'ID_Desain_Rumah');
+    // Relasi ke tabel material
+    public function materials()
+    {
+        return $this->hasMany(
+            Material::class,
+            'ID_Desain_Rumah',
+            'ID_Desain_Rumah'
+        );
     }
 
-    public function komponen() {
-        return $this->hasMany(KomponenDesain::class, 'ID_Desain_Rumah', 'ID_Desain_Rumah');
+    // Relasi ke tabel komponen desain
+    public function komponen()
+    {
+        return $this->hasMany(
+            KomponenDesain::class,
+            'ID_Desain_Rumah',
+            'ID_Desain_Rumah'
+        );
     }
 }

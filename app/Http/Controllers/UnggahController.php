@@ -1,34 +1,57 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use App\Models\DesainRumah;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
-Class UnggahController extends Controller{
-    public function upload(Request $request)
+class UnggahController extends Controller
 {
-    $request->validate([
-        'file' => 'required|mimes:ifc,IFC|max:51200',
-    ]);
+    /**
+     * Halaman Upload
+     */
+    public function index(): View
+    {
+        return view('Page.Unggah');
+    }
 
-    $file = $request->file('file');
-    $Nama_Desain = time() . '_' . $file->getClientOriginalName();
-    $path = 'uploads/ifc';
+    /**
+     * Proses Upload File IFC
+     */
+    public function upload(Request $request)
+    {
+        // Validasi file
+        $request->validate([
+            'file' => 'required|file|extensions:ifc', // max 50MB
+        ]);
 
-    // Simpan file fisik
-    $file->move(public_path($path), $Nama_Desain);
+        $file = $request->file('file');
 
-    // Simpan ke database
-    $ifc = \App\Models\IfcFile::create([
-        'nama_desain' => $Nama_Desain,
-        'filepath' => $path . '/' . $Nama_Desain,
-        'filesize' => $file->getSize(),
-    ]);
+        if (!$file) {
+            return back()->withErrors('Upload gagal! File tidak ditemukan.');
+        }
 
-    return response()->json([
-        'success' => true,
-        'message' => 'File berhasil diunggah & disimpan ke database!',
-        'data'    => $ifc
-    ]);
-}
+        // Nama file unik
+        $Nama_Desain = time() . '_' . $file->getClientOriginalName();
+
+        // Simpan menggunakan filesystem (public storage)
+        $filepath = Storage::disk('public')->putFileAs(
+            'uploads/ifc',
+            $file,
+            $Nama_Desain
+        );
+
+        // Simpan metadata ke database
+        DesainRumah::create([
+            'id_user'        => Auth::user()->id, // pastikan sudah login
+            'Nama_Desain'    => pathinfo($Nama_Desain, PATHINFO_FILENAME),
+            'Tanggal_Dibuat' => now(),
+            'Nama_File'      => $filepath,
+        ]);
+
+        return redirect()->back()->with('success', 'File berhasil diunggah!');
+    }
 }
