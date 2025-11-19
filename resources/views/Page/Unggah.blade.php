@@ -1,8 +1,8 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<div id="drop-zone" 
-     style="width: 100%; height: 200px; background:#007bff; 
-            border-radius:10px; display:flex; align-items:center; 
+<div id="drop-zone"
+     style="width: 100%; height: 200px; background:#007bff;
+            border-radius:10px; display:flex; align-items:center;
             justify-content:center; flex-direction:column; color:#fff;
             cursor:pointer;">
 
