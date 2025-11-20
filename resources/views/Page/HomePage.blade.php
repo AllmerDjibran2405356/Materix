@@ -10,19 +10,19 @@
 <section class="hero-home">
     <!-- Background Image -->
     <img src="{{ asset('images/landingpage.jpg') }}" alt="Background" class="hero-bg">
-    
+
     <!-- Overlay oranye miring (lebih lebar) -->
     <div class="hero-overlay"></div>
-    
+
     <div class="hero-content">
         <!-- Gambar karakter di TENGAH KIRI -->
         <img src="{{ asset('images/pekerja.png') }}" alt="Worker" class="hero-character">
-        
+
         <!-- Tulisan di KANAN TENGAH -->
         <div class="hero-text">
             <h2 class="fw-bold">Selamat Datang,<br>{{ $user->username }}!</h2>
         </div>
-        
+
         <!-- Speech Bubble di KANAN ATAS GAMBAR -->
         <div class="speech-bubble">
             <p class="mb-0 fw-semibold">Hai! Mari kita mulai perhitungan material konstruksi bangunanmu!</p>
@@ -63,7 +63,7 @@
         @else
             <div class="list-group shadow-sm">
                 @foreach ($projects as $project)
-                    <a href="{{ route('Kalkulasi.show', $project->id) }}" 
+                    <a href="{{ route('Kalkulasi.show', $project->id) }}"
                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-1 fw-bold text-primary">{{ $project->Nama_desain ?? 'Tanpa Judul' }}</h5>
