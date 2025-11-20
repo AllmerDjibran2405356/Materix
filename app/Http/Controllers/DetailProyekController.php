@@ -7,12 +7,15 @@ use Illuminate\Http\Request;
 
 class ProyekController extends Controller
 {
-    public function show($ID_Desain_Rumah)
-    {
-        $proyek = DesainRumah::findOrFail($ID_Desain_Rumah);
+   public function show($id)
+{
+    $project = DesainRumah::where('ID_Desain_Rumah', $id)
+        ->where('id_user', auth()->id()) 
+        ->firstOrFail();
 
-        return view('page.detail-proyek', compact('proyek'));
-    }
+    return view('page.proyek-detail', compact('Project'));
+}
+
 }
 
     

@@ -70,3 +70,6 @@ Route::post('/unggah', [UnggahController::class, 'upload'])->name('Unggah.upload
 // Upload Gambar
 Route::get('/unggah-gambar', [UnggahController::class, 'unggahGambarForm'])->name('Unggah.gambar.form');
 Route::post('/unggah-desain', [UnggahController::class, 'upload'])->name('unggah.upload');
+
+// Rute Detail Proyek
+Route::get('/detail-proyek/{id}', [DetailProyekController::class, 'show'])->name('detail-proyek.show');
