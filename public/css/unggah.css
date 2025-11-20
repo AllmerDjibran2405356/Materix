@@ -5,9 +5,54 @@ Hide original file input
     display: none !important;
 }
 
-/* =========================================
-Drop Zone Wrapper
-========================================= */
+/* ================================
+Halaman Wrapper + Background
+================================ */
+.unggah-page-wrapper {
+    background: url("../images/materix-background.png") center top no-repeat;
+    background-size: contain;
+    background-attachment: fixed;
+    width: 100%;
+    padding-top: 60px;
+    padding-bottom: 120px;
+}
+
+/* ================================
+Logo
+================================ */
+.unggah-logo-wrapper {
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 67px;
+}
+
+.unggah-logo-wrapper img {
+    width: 70px;
+    opacity: 0.8;
+}
+
+/* ================================
+Title
+================================ */
+.unggah-title {
+    text-align: center;
+    font-size: 42px;
+    font-weight: 700;
+    color: #002060;
+    margin-bottom: 40px;
+}
+
+/* ================================
+Container Unggah
+================================ */
+.unggah-container {
+    display: flex;
+    justify-content: center;
+}
+
+/* ================================
+Drop Zone (Mirip gambar)
+================================ */
 #drop-zone {
     width: 100%;
     min-height: 200px; /* dari Blade style sebelumnya */
@@ -25,7 +70,6 @@ Drop Zone Wrapper
     transition: 0.3s;
 }
 
-/* Hover effect */
 #drop-zone:hover {
     background: #0066d4;
 }
