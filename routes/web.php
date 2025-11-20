@@ -9,6 +9,7 @@ use App\Http\Controllers\KalkulasiController;
 use App\Http\Controllers\HargaBahanController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\UnggahController;
+use App\Http\Controllers\DetailProyekController;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
