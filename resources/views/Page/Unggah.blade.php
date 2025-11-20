@@ -7,7 +7,13 @@
 
 @section('content')
 
-<div class="container mt-5 pt-4">
+<div class="unggah-page-wrapper">
+
+    <div class="unggah-logo-wrapper">
+        <img src="../images/materixlogos.png" alt="Materix Logo">
+    </div>
+
+    <h1 class="unggah-title">Unggah desain anda.</h1>
 
     {{-- Notifikasi sukses --}}
     @if(session('success'))
@@ -27,36 +33,41 @@
         </div>
     @endif
 
-    <form id="uploadForm" action="{{ route('Unggah.upload') }}" method="POST" enctype="multipart/form-data">
-        @csrf
+    <div class="unggah-container">
+        <form id="uploadForm" action="{{ route('Unggah.upload') }}" method="POST" enctype="multipart/form-data">
+            @csrf
 
-        <div id="drop-zone">
+            <div id="drop-zone">
+                <div class="drop-border">
+                    {{-- Jika belum upload file --}}
+                    @if(!session('uploaded_file'))
+                        <p class="drop-main-text">
+                            <span class="orange-text">Tarik dan letakkan gambar</span><br>
+                            atau telusuri untuk mengunggah.
+                        </p>
+                        <input type="file" id="fileInput" name="file" accept=".ifc,.IFC">
 
-            {{-- Jika belum upload file --}}
-            @if(!session('uploaded_file'))
-                <h4 class="fw-bold">Upload File Desain IFC</h4>
-                <p>Klik tombol atau seret file ke sini</p>
+                        <button type="button" id="triggerInput" class="unggah-btn">Unggah berkas.</button>
 
-                <input type="file" id="fileInput" name="file" accept=".ifc,.IFC">
+                        <p class="drop-sub-text">Unggah berkas Desain IFC anda.</p>
+                @else
+                    {{-- Jika file sudah diupload --}}
+                    <p class="drop-main-text">
+                        <span class="orange-text">Tarik dan letakkan gambar</span><br>
+                        atau telusuri untuk mengunggah.
+                    </p>
+                    <p class="mb-1">{{ session('uploaded_file') }}</p>
 
-                <button type="button" id="triggerInput" class="btn btn-light mt-3">
-                    Pilih File
-                </button>
+                    <input type="file" id="fileInput" name="file" accept=".ifc,.IFC">
 
-            @else
-                {{-- Jika file sudah diupload --}}
-                <h4 class="fw-bold">File Berhasil Diupload</h4>
-                <p class="mb-1">{{ session('uploaded_file') }}</p>
+                    <button id="triggerInput" type="button" class="unggah-btn">Ubah berkas.</button>
 
-                <input type="file" id="fileInput" name="file" accept=".ifc,.IFC">
+                    <p class="drop-sub-text">Ubah berkas Desain IFC anda.</p>
 
-                <button type="button" id="triggerInput" class="btn btn-warning mt-3">
-                    Ubah File
-                </button>
-            @endif
-
-        </div>
-    </form>
+                @endif
+                </div>
+            </div>
+        </form>
 
 </div>
 
