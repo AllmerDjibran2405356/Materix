@@ -30,22 +30,28 @@
     </div>
 </section>
 
-{{-- 2 Tombol dibawah Hero --}}
 <section class="fitur-section py-5">
-   <div class="container">
-       <div class="row text-center">
-           <div class="col-md-6 mb-4">
-               <a href="{{ route('Kalkulasi.index') }}" class="btn btn-primary btn-lg w-100 shadow-sm">
-                   Kalkulasi Material
-               </a>
-           </div>
-           <div class="col-md-6 mb-4">
-               <a href="{{ route('Bahan.index') }}" class="btn btn-secondary btn-lg w-100 shadow-sm">
-                   Harga Bahan & Produsen Material
-               </a>
-           </div>
-       </div>
-   </div>
+    <div class="container">
+        <div class="dual-container-wrapper">
+
+            <!-- BOX KIRI -->
+            <div class="fitur-box">
+                <img src="../images/icon-kalkulasi.png" alt="icon" class="fitur-icon">
+                <a href="{{ route('Kalkulasi.index') }}" class="fitur-btn">
+                    Kalkulasi Material
+                </a>
+            </div>
+
+            <!-- BOX KANAN -->
+            <div class="fitur-box">
+                <img src="../images/icon-chart.png" alt="icon" class="fitur-icon">
+                <a href="{{ route('Bahan.index') }}" class="fitur-btn">
+                    Harga Bahan & Produsen Material
+                </a>
+            </div>
+
+        </div>
+    </div>
 </section>
 
 {{-- Riwayat Bangunan --}}
