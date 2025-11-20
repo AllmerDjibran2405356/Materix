@@ -7,6 +7,7 @@ use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KalkulasiController;
 use App\Http\Controllers\HargaBahanController;
+use App\Http\Controllers\HasilAnalisisController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\UnggahController;
 
@@ -71,3 +72,6 @@ Route::post('/analisis', [UnggahController::class, 'showJson'])->name('Unggah.sh
 // Upload Gambar
 Route::get('/unggah-gambar', [UnggahController::class, 'unggahGambarForm'])->name('Unggah.gambar.form');
 Route::post('/unggah-desain', [UnggahController::class, 'upload'])->name('unggah.upload');
+
+// Hasil Analisis
+Route::get('/analyze/{nama}', [HasilAnalisisController::class, 'view'])->name('viewer');

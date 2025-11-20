@@ -1,0 +1,14 @@
+#viewer-container {
+    position: relative;
+    width: 100%;
+    height: 80vh; /* Tinggi wajib ada */
+    background-color: #f0f0f0; /* Abu-abu muda saat loading */
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+h3 {
+    margin-bottom: 20px;
+    color: #333;
+}
