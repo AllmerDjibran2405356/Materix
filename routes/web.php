@@ -66,6 +66,8 @@ Route::prefix('api')->group(function () {
 // Rute Unggah File
 Route::get('/unggah', [UnggahController::class, 'index'])->name('Unggah.index');
 Route::post('/unggah', [UnggahController::class, 'upload'])->name('Unggah.upload');
+Route::post('/analyze', [UnggahController::class, 'analyze'])->name('Unggah.analyze');
+Route::post('/analisis', [UnggahController::class, 'showJson'])->name('Unggah.showJson');
 
 // Upload Gambar
 Route::get('/unggah-gambar', [UnggahController::class, 'unggahGambarForm'])->name('Unggah.gambar.form');

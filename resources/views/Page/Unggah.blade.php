@@ -6,72 +6,60 @@
 @endsection
 
 @section('content')
-
 <div class="container mt-5 pt-4">
 
     {{-- Notifikasi sukses --}}
     @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
+        <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
     {{-- Notifikasi error --}}
     @if ($errors->any())
         <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+            <ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
         </div>
     @endif
 
-    <form id="uploadForm" action="{{ route('Unggah.upload') }}" method="POST" enctype="multipart/form-data">
+    <form id="uploadForm" action="{{ session('uploaded_file') ? route('Unggah.analyze') : route('Unggah.upload') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div id="drop-zone">
 
-            {{-- Jika belum upload file --}}
             @if(!session('uploaded_file'))
                 <h4 class="fw-bold">Upload File Desain IFC</h4>
                 <p>Klik tombol atau seret file ke sini</p>
 
-                <input type="file" id="fileInput" name="file" accept=".ifc,.IFC">
+                <input type="file" id="fileInput" name="file" accept=".ifc,.IFC" style="display:none;">
 
                 <button type="button" id="triggerInput" class="btn btn-light mt-3">
                     Pilih File
                 </button>
-
             @else
-                {{-- Jika file sudah diupload --}}
-                <h4 class="fw-bold">File Berhasil Diupload</h4>
+                <h4 class="fw-bold">File Siap untuk Analisis</h4>
                 <p class="mb-1">{{ session('uploaded_file') }}</p>
 
-                <input type="file" id="fileInput" name="file" accept=".ifc,.IFC">
-
-                <button type="button" id="triggerInput" class="btn btn-warning mt-3">
-                    Ubah File
-                </button>
+                <button type="submit" class="btn btn-success mt-3">Analisis</button>
             @endif
 
         </div>
     </form>
-
 </div>
 
 <script>
-// Klik tombol
-document.getElementById('triggerInput').addEventListener('click', () => {
-    document.getElementById('fileInput').click();
-});
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('fileInput');
+    const triggerBtn = document.getElementById('triggerInput');
 
-// Begitu file dipilih -> submit form otomatis
-document.getElementById('fileInput').addEventListener('change', (e) => {
-    if(e.target.files.length > 0){
-        document.getElementById('uploadForm').submit();
+    // Hanya jalankan jika elemen ada (artinya file belum diupload)
+    if(triggerBtn && fileInput) {
+        triggerBtn.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if(e.target.files.length > 0) {
+                document.getElementById('uploadForm').submit();
+            }
+        });
     }
 });
 </script>
-
 @endsection

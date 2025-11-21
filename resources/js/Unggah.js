@@ -1,9 +1,11 @@
-
 document.addEventListener("DOMContentLoaded", () => {
 
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('fileInput');
     const triggerBtn = document.getElementById('triggerInput');
+
+    // Jalankan hanya jika file belum diupload
+    if (!fileInput || !triggerBtn || !dropZone) return;
 
     // tombol buat buka dialog file
     triggerBtn.addEventListener('click', () => {
@@ -45,16 +47,28 @@ document.addEventListener("DOMContentLoaded", () => {
         const formData = new FormData();
         formData.append("file", file);
 
-        let response = await fetch("{{ route('unggah.upload') }}", {
-            method:"POST",
-            headers: { 
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: formData
-        });
+        try {
+            let response = await fetch("{{ route('Unggah.upload') }}", {
+                method:"POST",
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: formData
+            });
 
-        let result = await response.json();
-        alert(result.message);
+            let result = await response.json();
+
+            // Tampilkan pesan
+            alert(result.message);
+
+            // Jika sukses, reload halaman agar tombol berubah menjadi "Analisis"
+            if(result.success) {
+                window.location.reload();
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert("Terjadi kesalahan saat upload file.");
+        }
     }
-
 });

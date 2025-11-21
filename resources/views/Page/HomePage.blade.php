@@ -10,19 +10,19 @@
 <section class="hero-home">
     <!-- Background Image -->
     <img src="{{ asset('images/landingpage.jpg') }}" alt="Background" class="hero-bg">
-    
+
     <!-- Overlay oranye miring (lebih lebar) -->
     <div class="hero-overlay"></div>
-    
+
     <div class="hero-content">
         <!-- Gambar karakter di TENGAH KIRI -->
         <img src="{{ asset('images/pekerja.png') }}" alt="Worker" class="hero-character">
-        
+
         <!-- Tulisan di KANAN TENGAH -->
         <div class="hero-text">
             <h2 class="fw-bold">Selamat Datang,<br>{{ $user->username }}!</h2>
         </div>
-        
+
         <!-- Speech Bubble di KANAN ATAS GAMBAR -->
         <div class="speech-bubble">
             <p class="mb-0 fw-semibold">Hai! Mari kita mulai perhitungan material konstruksi bangunanmu!</p>
@@ -30,22 +30,28 @@
     </div>
 </section>
 
-{{-- 2 Tombol dibawah Hero --}}
 <section class="fitur-section py-5">
-   <div class="container">
-       <div class="row text-center">
-           <div class="col-md-6 mb-4">
-               <a href="{{ route('Kalkulasi.index') }}" class="btn btn-primary btn-lg w-100 shadow-sm">
-                   Kalkulasi Material
-               </a>
-           </div>
-           <div class="col-md-6 mb-4">
-               <a href="{{ route('Bahan.index') }}" class="btn btn-secondary btn-lg w-100 shadow-sm">
-                   Harga Bahan & Produsen Material
-               </a>
-           </div>
-       </div>
-   </div>
+    <div class="container">
+        <div class="dual-container-wrapper">
+
+            <!-- BOX KIRI -->
+            <div class="fitur-box">
+                <img src="../images/icon-kalkulasi.png" alt="icon" class="fitur-icon">
+                <a href="{{ route('Kalkulasi.index') }}" class="fitur-btn">
+                    Kalkulasi Material
+                </a>
+            </div>
+
+            <!-- BOX KANAN -->
+            <div class="fitur-box">
+                <img src="../images/icon-chart.png" alt="icon" class="fitur-icon">
+                <a href="{{ route('Bahan.index') }}" class="fitur-btn">
+                    Harga Bahan & Produsen Material
+                </a>
+            </div>
+
+        </div>
+    </div>
 </section>
 
 {{-- Riwayat Bangunan --}}
@@ -63,7 +69,7 @@
         @else
             <div class="list-group shadow-sm">
                 @foreach ($projects as $project)
-                    <a href="{{ route('Kalkulasi.show', $project->id) }}" 
+                    <a href="{{ route('Kalkulasi.show', $project->id) }}"
                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-1 fw-bold text-primary">{{ $project->Nama_desain ?? 'Tanpa Judul' }}</h5>
