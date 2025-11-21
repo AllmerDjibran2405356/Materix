@@ -70,51 +70,41 @@ class UnggahController extends Controller
      */
     public function analyze(Request $request)
     {
-        $fileName  = session('uploaded_file');
         $desain_id = session('desain_id');
 
-        if (!$fileName) {
-            return back()->with('error', 'Tidak ada file untuk dianalisis.');
+        if (!$desain_id) {
+            return back()->with('error', 'Tidak ada desain untuk dianalisis.');
         }
 
-        // Path asli file IFC (Laravel storage)
-        $fullPath = storage_path('app/public/uploads/ifc/' . $fileName);
+        // Ambil data desain langsung dari database
+        $desain = DesainRumah::find($desain_id);
+        if (!$desain) {
+            return back()->with('error', 'Desain tidak ditemukan di database.');
+        }
 
-        // Perbaiki slash path Windows
-        $fullPath = str_replace('/', '\\', $fullPath);
+        // Path file IFC
+        $fullPath = storage_path('app/public/' . $desain->Nama_File);
 
         if (!file_exists($fullPath)) {
-            return back()->with('error', "File IFC tidak ditemukan di server: $fullPath");
+            return back()->with('error', "File IFC tidak ditemukan: $fullPath");
         }
 
-        // Path Python environment & script
-        $pythonVenv  = 'C:\\Users\\allme\\Documents\\python_projects\\ai_engine_materix\\venv\\Scripts\\python.exe';
+        $pythonVenv   = 'C:\\Users\\allme\\Documents\\python_projects\\ai_engine_materix\\venv\\Scripts\\python.exe';
         $pythonScript = 'C:\\Users\\allme\\Documents\\python_projects\\ai_engine_materix\\ai_engine_materix\\engine_bim_and_ifc\\main\\parser.py';
 
-        // Buat command lengkap
         $command = "\"$pythonVenv\" \"$pythonScript\" \"$fullPath\" 2>&1";
 
-        // Jalankan Python
         $output = shell_exec($command);
 
-        // File JSON hasil parsing
-        $jsonFileName = pathinfo($fileName, PATHINFO_FILENAME) . '_ifc_data.json';
+        // Lokasi JSON hasil parsing
+        $jsonFileName = pathinfo($desain->Nama_File, PATHINFO_FILENAME) . '_ifc_data.json';
         $jsonFilePath = 'C:\\Users\\allme\\Documents\\python_projects\\ai_engine_materix\\ai_engine_materix\\engine_bim_and_ifc\\data\\processed\\' . $jsonFileName;
 
-        $jsonData = [];
-        if (file_exists($jsonFilePath)) {
-            $jsonData = json_decode(file_get_contents($jsonFilePath), true);
+        if (!file_exists($jsonFilePath)) {
+            return back()->with('error', 'Analisis gagal, file JSON tidak ditemukan.');
         }
 
-        // Log debug
-        $logFile = storage_path('logs/python_exec.log');
-        file_put_contents($logFile, "CMD: $command\n", FILE_APPEND);
-        file_put_contents($logFile, "OUTPUT:\n$output\n\n", FILE_APPEND);
-
-        return view('Page.HasilAnalisis', [
-            'output'    => $output ?: '[EMPTY OUTPUT]',
-            'jsonData'  => $jsonData,
-            'desain_id' => $desain_id
-        ]);
+        return redirect()->route('viewer', $desain_id);
     }
+
 }

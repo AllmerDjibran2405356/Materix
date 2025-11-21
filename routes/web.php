@@ -7,6 +7,7 @@ use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KalkulasiController;
 use App\Http\Controllers\HargaBahanController;
+use App\Http\Controllers\HasilAnalisisController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\UnggahController;
 use App\Http\Controllers\DetailProyekController;
@@ -75,3 +76,5 @@ Route::post('/unggah-desain', [UnggahController::class, 'upload'])->name('unggah
 
 // Rute Detail Proyek
 Route::get('/detail-proyek/{id}', [DetailProyekController::class, 'show'])->name('detail-proyek.show');
+// Hasil Analisis
+Route::get('/analyze/{nama}', [HasilAnalisisController::class, 'view'])->name('viewer');
