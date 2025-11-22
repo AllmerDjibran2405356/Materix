@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
 
     // --- Rute Home Page ---
     Route::get('/HomePage', [HomeController::class, 'index'])->name('HomePage');
+    Route::get('/kalkulasi/{id}', [KalkulasiController::class, 'index'])->name('Kalkulasi.show');
 });
 
 // Rute Kalkulator
@@ -68,10 +69,11 @@ Route::get('/unggah', [UnggahController::class, 'index'])->name('Unggah.index');
 Route::post('/unggah', [UnggahController::class, 'upload'])->name('Unggah.upload');
 Route::post('/analyze', [UnggahController::class, 'analyze'])->name('Unggah.analyze');
 Route::post('/analisis', [UnggahController::class, 'showJson'])->name('Unggah.showJson');
+Route::post('/unggah/remove', [UnggahController::class, 'remove'])->name('Unggah.remove');
 
 // Upload Gambar
 Route::get('/unggah-gambar', [UnggahController::class, 'unggahGambarForm'])->name('Unggah.gambar.form');
 Route::post('/unggah-desain', [UnggahController::class, 'upload'])->name('unggah.upload');
 
 // Hasil Analisis
-Route::get('/analyze/{nama}', [HasilAnalisisController::class, 'view'])->name('viewer');
+Route::get('/viewer/{id}', [HasilAnalisisController::class, 'view'])->name('viewer');
