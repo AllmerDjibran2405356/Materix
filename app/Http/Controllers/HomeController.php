@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers;
 
@@ -26,9 +26,16 @@ class HomeController extends Controller
             
             
         $message = $projects->isEmpty()
-        ? "Belum ada proyek desain rumah yang kamu unggah😅 
+        ? "Belum ada proyek desain rumah yang kamu unggah😅
            Yuk mulai proyek pertamamu!" : null;
 
         return view('Page.HomePage', compact('user', 'projects', 'message'));
+    }
+
+    public function show($id)
+    {
+        $project = DesainRumah::findOrFail($id);
+
+        return view('Kalkulasi.show', compact('project'));
     }
 }

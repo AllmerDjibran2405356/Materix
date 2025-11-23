@@ -11,10 +11,6 @@ class HasilAnalisisController extends Controller
     public function view($id)
     {
         $desain = DesainRumah::where('ID_Desain_Rumah', $id)->firstOrFail();
-
-        // 1. JSON Data
-        // Catatan: Path ini spesifik untuk komputer lokal Anda.
-        // Pastikan file benar-benar ada atau gunakan storage_path() jika file ada di folder Laravel.
         $jsonPath = "C:\\Users\\allme\\Documents\\python_projects\\ai_engine_materix\\ai_engine_materix\\engine_bim_and_ifc\\data\\processed\\{$desain->Nama_Desain}_ifc_data.json";
 
         $data = [];
@@ -26,13 +22,13 @@ class HasilAnalisisController extends Controller
         // File fisik ada di: storage/app/public/uploads/ifc/NamaFile.ifc
         // Pastikan Anda sudah menjalankan: php artisan storage:link
         $filename = $desain->Nama_Desain . '.ifc';
-        $pathInStorage = 'public/uploads/ifc/' . $filename;
+        $publicPath = public_path('uploads/ifc/' . $filename);
 
         $ifcUrl = '';
 
-        if (Storage::exists($pathInStorage)) {
+        if (file_exists($publicPath)) {
             // Menghasilkan URL publik: http://domain/storage/uploads/ifc/NamaFile.ifc
-            $ifcUrl = asset('storage/uploads/ifc/' . $filename);
+            $ifcUrl = asset('uploads/ifc/' . $filename);
         }
 
         return view('Page.HasilAnalisis', compact('desain', 'data', 'ifcUrl'));

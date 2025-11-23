@@ -8,6 +8,6 @@ class KalkulasiController extends Controller
 {
     public function index()
     {
-        return view('Page.Kalkulasi'); 
+        return view('Page.Kalkulasi');
     }
 }
