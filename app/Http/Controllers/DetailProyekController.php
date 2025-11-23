@@ -3,17 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\DesainRumah;
-use Illuminate\Http\Request;
 
-class ProyekController extends Controller
+class DetailProyekController extends Controller
 {
-   public function show($id)
+   public function show(int $id)
 {
     $project = DesainRumah::where('ID_Desain_Rumah', $id)
-        ->where('id_user', auth()->id()) 
+        ->where('id_user', auth()->id())
         ->firstOrFail();
 
-    return view('page.proyek-detail', compact('Project'));
+    return view('page.proyek_detail', compact('Project'));
 }
 
 }

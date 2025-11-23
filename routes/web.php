@@ -75,6 +75,6 @@ Route::get('/unggah-gambar', [UnggahController::class, 'unggahGambarForm'])->nam
 Route::post('/unggah-desain', [UnggahController::class, 'upload'])->name('unggah.upload');
 
 // Rute Detail Proyek
-Route::get('/detail-proyek/{id}', [DetailProyekController::class, 'show'])->name('detail-proyek.show');
+Route::get('/proyek/{ID_Desain_Rumah}', [DetailProyekController::class, 'show'])->name('detail_proyek.show');
 // Hasil Analisis
 Route::get('/analyze/{nama}', [HasilAnalisisController::class, 'view'])->name('viewer');

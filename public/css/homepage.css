@@ -102,7 +102,7 @@ body {
     max-width: 320px;
     position: absolute;
     top: 20%; /* LEBIH ATAS */
-    left: 25%; /* LEBIH KE KANAN DARI GAMBAR */
+    left: 25%; 
     z-index: 5;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }

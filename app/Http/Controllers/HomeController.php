@@ -22,6 +22,8 @@ class HomeController extends Controller
             ->orderBy('Tanggal_dibuat', 'desc')
             ->take(4)
             ->get();
+
+            
             
         $message = $projects->isEmpty()
         ? "Belum ada proyek desain rumah yang kamu unggah😅 
