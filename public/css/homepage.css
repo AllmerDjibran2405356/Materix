@@ -87,10 +87,10 @@ body {
 /* ====== KARAKTER DAN SPEECH BUBBLE ====== */
 .hero-character {
     position: absolute;
-    left: 5%; 
-    top: 50%;
+    left: 7%; /* LEBIH KE KIRI */
+    top: 62%;
     transform: translateY(-50%);
-    height: 420px; 
+    height: 670px; /* SEDIKIT LEBIH BESAR */
     z-index: 4;
 }
 
@@ -101,7 +101,7 @@ body {
     border-radius: 12px;
     max-width: 320px;
     position: absolute;
-    top: 25%; 
+    top: 20%; /* LEBIH ATAS */
     left: 25%; 
     z-index: 5;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -117,31 +117,80 @@ body {
     border-color: #FFDDA9 transparent transparent transparent;
 }
 
-/* ====== TOMBOL FITUR ====== */
-.fitur-section .btn-primary {
-    background: linear-gradient(to right, #001a66, #0033cc);
-    border: none;
-    padding: 15px 20px;
-    font-size: 18px;
-    font-weight: 600;
-    border-radius: 10px;
-    transition: all 0.3s ease;
+/* WRAPPER BOX */
+.dual-container-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 40px;
+    flex-wrap: wrap;
 }
 
-.fitur-section .btn-secondary {
-    background: linear-gradient(to right, #ff6600, #ff8533);
-    border: none;
-    padding: 15px 20px;
-    font-size: 18px;
-    font-weight: 600;
-    border-radius: 10px;
-    transition: all 0.3s ease;
+/* KOTAK FITUR (620 × 512) */
+.fitur-box {
+    background: #0A2568;
+    width: 620px;
+    height: 512px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 60px;
 }
 
-.fitur-section .btn-primary:hover,
-.fitur-section .btn-secondary:hover {
+/* IKON PNG 190×190 */
+.fitur-icon {
+    width: 190px;
+    height: 190px;
+    object-fit: contain;
+    background: transparent; /* sesuai permintaan */
+}
+
+/* TOMBOL (441 × 118) */
+.fitur-btn {
+    width: 441px;
+    height: 118px;
+
+    background: #ff6a00;
+    border-radius: 12px;
+    color: white;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 600;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 4px 14px rgba(255,100,0,0.4);
+    transition: .3s;
+    text-decoration: none;
+}
+
+.fitur-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 22px rgba(255,100,0,0.4);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .fitur-box {
+        width: 100%;
+        max-width: 620px;
+        height: auto;
+        padding: 40px 0;
+    }
+    .fitur-btn {
+        width: 90%;
+        height: 90px;
+        font-size: 22px;
+    }
+    .fitur-icon {
+        width: 150px;
+        height: 150px;
+    }
 }
 
 /* ====== RIWAYAT SECTION ====== */

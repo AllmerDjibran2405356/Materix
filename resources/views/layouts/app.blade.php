@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/css/navbar.css">
     <link href="{{ asset('css/homepage.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/unggah.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/HasilAnalisis.css') }}">
 
 
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/unggah.js'])

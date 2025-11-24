@@ -11,9 +11,7 @@
 
     {{-- Notifikasi sukses --}}
     @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
+        <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
     {{-- Notifikasi error --}}
@@ -21,55 +19,75 @@
         <div class="alert alert-danger">
             <ul>
                 @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
+                <li>{{ $error }}</li>
                 @endforeach
             </ul>
         </div>
     @endif
 
-    <form id="uploadForm" action="{{ route('Unggah.upload') }}" method="POST" enctype="multipart/form-data">
+    {{-- FORM UTAMA (UPLOAD / ANALYZE) --}}
+    <form id="uploadForm"
+          action="{{ session('uploaded_file') ? route('Unggah.analyze') : route('Unggah.upload') }}"
+          method="POST" enctype="multipart/form-data">
         @csrf
 
         <div id="drop-zone">
 
-            {{-- Jika belum upload file --}}
             @if(!session('uploaded_file'))
                 <h4 class="fw-bold">Upload File Desain IFC</h4>
                 <p>Klik tombol atau seret file ke sini</p>
 
-                <input type="file" id="fileInput" name="file" accept=".ifc,.IFC">
+                {{-- 1. Input File (Hidden) --}}
+                <input type="file"
+                       id="fileInput"
+                       name="file"
+                       accept=".ifc,.IFC"
+                       style="display:none;">
 
-                <button type="button" id="triggerInput" class="btn btn-light mt-3">
+                {{-- 2. Label sebagai Tombol (SOLUSI PERMANEN) --}}
+                {{-- Menggunakan 'label for' akan otomatis memicu input tanpa JS --}}
+                <label for="fileInput" class="btn btn-light mt-3" style="cursor: pointer;">
                     Pilih File
-                </button>
+                </label>
 
             @else
-                {{-- Jika file sudah diupload --}}
-                <h4 class="fw-bold">File Berhasil Diupload</h4>
+                <h4 class="fw-bold">File Siap untuk Analisis</h4>
                 <p class="mb-1">{{ session('uploaded_file') }}</p>
 
-                <input type="file" id="fileInput" name="file" accept=".ifc,.IFC">
-
-                <button type="button" id="triggerInput" class="btn btn-warning mt-3">
-                    Ubah File
+                <button type="submit" class="btn btn-success mt-3">
+                    Analisis
                 </button>
             @endif
-
         </div>
     </form>
+
+    {{-- FORM REMOVE DIPISAH --}}
+    @if(session('uploaded_file'))
+    <form action="{{ route('Unggah.remove') }}" method="POST" class="d-inline">
+        @csrf
+        <button type="submit" class="btn btn-danger mt-3 ms-2">
+            Hapus File
+        </button>
+    </form>
+    @endif
 
 </div>
 
 <script>
-// Klik tombol
-document.getElementById('triggerInput').addEventListener('click', () => {
-    document.getElementById('fileInput').click();
-});
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('fileInput');
 
-// Begitu file dipilih -> submit form otomatis
-document.getElementById('fileInput').addEventListener('change', (e) => {
-    if(e.target.files.length > 0){
-        document.getElementById('uploadForm').submit();
+    // Kita TIDAK LAGI butuh listener click untuk tombol trigger
+    // Karena <label> sudah menangani klik secara native.
+
+    if(fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            // Cek apakah user benar-benar memilih file (length > 0)
+            // Jika user tekan Cancel, files.length akan 0 dan form tidak akan di-submit
+            if(this.files && this.files.length > 0) {
+                document.getElementById('uploadForm').submit();
+            }
+        });
     }
 });
 </script>

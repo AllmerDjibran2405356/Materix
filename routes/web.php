@@ -7,8 +7,10 @@ use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KalkulasiController;
 use App\Http\Controllers\HargaBahanController;
+use App\Http\Controllers\HasilAnalisisController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\UnggahController;
+use App\Http\Controllers\DetailProyekController;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
@@ -31,6 +33,7 @@ Route::middleware('auth')->group(function () {
 
     // --- Rute Home Page ---
     Route::get('/HomePage', [HomeController::class, 'index'])->name('HomePage');
+    Route::get('/kalkulasi/{id}', [KalkulasiController::class, 'index'])->name('Kalkulasi.show');
 });
 
 // Rute Kalkulator
@@ -68,7 +71,15 @@ Route::prefix('api')->group(function () {
 // Rute Unggah File
 Route::get('/unggah', [UnggahController::class, 'index'])->name('Unggah.index');
 Route::post('/unggah', [UnggahController::class, 'upload'])->name('Unggah.upload');
+Route::post('/analyze', [UnggahController::class, 'analyze'])->name('Unggah.analyze');
+Route::post('/analisis', [UnggahController::class, 'showJson'])->name('Unggah.showJson');
+Route::post('/unggah/remove', [UnggahController::class, 'remove'])->name('Unggah.remove');
 
 // Upload Gambar
 Route::get('/unggah-gambar', [UnggahController::class, 'unggahGambarForm'])->name('Unggah.gambar.form');
 Route::post('/unggah-desain', [UnggahController::class, 'upload'])->name('unggah.upload');
+
+// Rute Detail Proyek
+Route::get('/proyek/{ID_Desain_Rumah}', [DetailProyekController::class, 'show'])->name('detail_proyek.show');
+// Hasil Analisis
+Route::get('/viewer/{id}', [HasilAnalisisController::class, 'view'])->name('viewer');
