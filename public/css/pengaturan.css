@@ -61,6 +61,17 @@ body {
     margin-left: 10px;
 }
 
+.navbar {
+    position: static !important; /* Ubah dari fixed/absolute ke static */
+    top: auto !important;
+    width: 100%;
+    z-index: auto; /* Optional: turunkan z-index jika perlu */
+}
+
+/* Jika ada wrapper atau container navbar */
+.navbar-container {
+    position: static !important;
+}
 
 /* ====== Section umum ====== */
 .section {
