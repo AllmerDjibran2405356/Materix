@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DataBahanDanProdusenController;
+use App\Http\Controllers\DataProyekController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\HomeController;
@@ -76,7 +78,11 @@ Route::post('/unggah/remove', [UnggahController::class, 'remove'])->name('Unggah
 Route::get('/unggah-gambar', [UnggahController::class, 'unggahGambarForm'])->name('Unggah.gambar.form');
 Route::post('/unggah-desain', [UnggahController::class, 'upload'])->name('unggah.upload');
 
-// Rute Detail Proyek
+//Rute Detail Proyek
 Route::get('/proyek/{ID_Desain_Rumah}', [DetailProyekController::class, 'show'])->name('detail_proyek.show');
-// Hasil Analisis
+
+//Hasil Analisis 3D
 Route::get('/viewer/{id}', [HasilAnalisisController::class, 'view'])->name('viewer');
+
+//
+Route::get('/DataProyek', [DataProyekController::class, 'index'])->name('kalkulasi.bahan');

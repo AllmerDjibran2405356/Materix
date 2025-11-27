@@ -14,7 +14,7 @@ class HasilAnalisisController extends Controller
 
         // 1. Ambil Data JSON (Hasil Analisis Python)
         // Pastikan path ini benar di server/local Anda
-        $jsonPath = "C:\\Users\\allme\\Documents\\python_projects\\ai_engine_materix\\ai_engine_materix\\engine_bim_and_ifc\\data\\processed\\{$desain->Nama_Desain}_ifc_data.json";
+        $jsonPath = "C:\\Materix_Engine\\ai_engine_materix\\engine_bim_and_ifc\\data\\processed\\{$desain->Nama_Desain}_ifc_data.json";
 
         $data = [];
         if (file_exists($jsonPath)) {

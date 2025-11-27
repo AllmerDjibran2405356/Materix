@@ -70,14 +70,14 @@ class UnggahController extends Controller
                 'Nama_File'    => $filePath,
             ]);
 
-            $pythonVenv   = 'C:\\Users\\allme\\Documents\\python_projects\\ai_engine_materix\\venv\\Scripts\\python.exe';
-            $pythonScript = 'C:\\Users\\allme\\Documents\\python_projects\\ai_engine_materix\\ai_engine_materix\\engine_bim_and_ifc\\main\\parser.py';
+            $pythonVenv   = 'C:\\Materix_Engine\\venv\\Scripts\\python.exe';
+            $pythonScript = 'C:\\Materix_Engine\\ai_engine_materix\\engine_bim_and_ifc\\main\\parser.py';
 
             $command = "\"$pythonVenv\" \"$pythonScript\" \"$fullPath\" 2>&1";
             shell_exec($command);
 
             $jsonFileName = pathinfo($fileName, PATHINFO_FILENAME) . '_ifc_data.json';
-            $jsonFilePath = 'C:\\Users\\allme\\Documents\\python_projects\\ai_engine_materix\\ai_engine_materix\\engine_bim_and_ifc\\data\\processed\\' . $jsonFileName;
+            $jsonFilePath = 'C:\\Materix_Engine\\ai_engine_materix\\engine_bim_and_ifc\\data\\processed\\' . $jsonFileName;
 
             if (!file_exists($jsonFilePath)) {
                 throw new \Exception("Gagal generate JSON.");

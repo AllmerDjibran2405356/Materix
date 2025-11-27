@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DesainRumah;
 use Illuminate\Http\Request;
 
 class KalkulasiController extends Controller
 {
-    public function index()
+    public function index($id)
     {
-        return view('Page.Kalkulasi');
+        $project = DesainRumah::findOrFail($id);
+        return view('Page.Kalkulasi', compact('project'));
     }
 }
+
+?>
