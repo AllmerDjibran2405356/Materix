@@ -103,6 +103,8 @@ class UnggahController extends Controller
                 KomponenDesain::create([
                     'ID_Desain_Rumah' => $desain->ID_Desain_Rumah,
                     'Nama_Komponen'   => $item['nama'] ?? 'Tanpa Nama',
+                    'Ifc_Guid'        => $item['guid'],
+                    'Label_Cad'       => $item['label_cad'],
                     'ID_Satuan_Ukur'  => $idSatuan,
                     'ID_Rule'         => $idRule,
                     'Panjang'         => $qty['panjang'] ?? 0,

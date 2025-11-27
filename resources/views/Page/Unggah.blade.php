@@ -24,77 +24,88 @@
         </div>
     @endif
 
-    <!-- LOGO -->
     <div class="unggah-logo-wrapper">
         <img src="{{ asset('images/materixlogos.png') }}" alt="materix logo">
     </div>
 
-    <!-- TITLE -->
     <h1 class="unggah-title">Unggah desain anda.</h1>
 
     <div class="unggah-container">
 
-    <!-- FORM -->
-    <form id="uploadForm"
-          action="{{ session('uploaded_file') ? route('Unggah.analyze') : route('Unggah.upload') }}"
-          method="POST" enctype="multipart/form-data">
-        @csrf
+        {{-- KONDISI 1: BELUM ADA FILE (TAMPILKAN FORM UPLOAD) --}}
+        @if(!session('uploaded_file'))
 
-        <div id="drop-zone">
+            <form id="uploadForm"
+                  action="{{ route('Unggah.upload') }}"
+                  method="POST"
+                  enctype="multipart/form-data">
+                @csrf
 
-            @if(!session('uploaded_file'))
-                <h4 class="unggah-h4">
-                    <span class="orange">Tarik dan letakkan gambar atau </span>
-                    <span class="white"> telusuri berkas untuk mengunggah.</span>
-                </h4>
+                <div id="drop-zone">
+                    <h4 class="unggah-h4">
+                        <span class="orange">Tarik dan letakkan gambar atau </span>
+                        <span class="white"> telusuri berkas untuk mengunggah.</span>
+                    </h4>
 
-                {{-- 1. Input File (Hidden) --}}
-                <input type="file"
-                       id="fileInput"
-                       name="file"
-                       accept=".ifc,.IFC"
-                       style="display:none;">
+                    {{-- Input File (Hidden) --}}
+                    <input type="file"
+                           id="fileInput"
+                           name="file"
+                           accept=".ifc,.IFC"
+                           style="display:none;">
 
-                {{-- 2. Label sebagai Tombol (SOLUSI PERMANEN) --}}
-                {{-- Menggunakan 'label for' akan otomatis memicu input tanpa JS --}}
-                <label for="fileInput" class="btn btn-light mt-3" style="cursor: pointer;">
-                    Unggah berkas.
-                </label>
-                <p class="drop-sub-text">Upload berkas desain IFC anda.</p>
+                    {{-- Label Pemicu Input --}}
+                    <label for="fileInput" class="btn btn-light mt-3" style="cursor: pointer;">
+                        Unggah berkas.
+                    </label>
+                    <p class="drop-sub-text">Upload berkas desain IFC anda.</p>
+                </div>
+            </form>
 
-            @else
-                <h4 class="unggah-h4">
+        {{-- KONDISI 2: FILE SUDAH ADA DI SESSION (TAMPILKAN TOMBOL ANALISIS) --}}
+        @else
+
+            <div id="drop-zone"> <h4 class="unggah-h4">
                     <span class="white"> Berkas siap untuk di Analisis.</span>
                 </h4>
-                <p class="mb-1">{{ session('uploaded_file') }}</p>
+                <p class="mb-1 text-white">{{ session('uploaded_file') }}</p> {{-- Tambah text-white agar terbaca --}}
 
-                <button type="submit" class="btn btn-success mt-3">
-                    Analisis
-                </button>
-            @endif
-        </div>
-    </form>
+                {{-- FORM KHUSUS ANALISIS --}}
+                <form action="{{ route('Unggah.analyze') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-success mt-3">
+                        Analisis
+                    </button>
+                </form>
+            </div>
+
+        @endif
+
+    </div>
+
+    {{-- TOMBOL HAPUS (DIPISAH DILUAR CONTAINER UTAMA) --}}
+    @if(session('uploaded_file'))
+    <div class="hapus-wrapper mt-3 text-center">
+        <form action="{{ route('Unggah.remove') }}" method="POST" class="d-inline">
+            @csrf
+            <button type="submit" class="hapus-btn btn btn-danger">
+                Hapus File / Batal
+            </button>
+        </form>
+    </div>
+    @endif
 
 </div>
-{{-- FORM REMOVE DIPISAH --}}
-@if(session('uploaded_file'))
-<div class="hapus-wrapper">
-    <form action="{{ route('Unggah.remove') }}" method="POST" class="d-inline">
-        @csrf
-        <button type="submit" class="hapus-btn">
-            Hapus File
-        </button>
-    </form>
-</div>
-@endif
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('fileInput');
 
+    // Hanya jalankan listener jika fileInput ada (artinya sedang di mode upload)
     if(fileInput) {
         fileInput.addEventListener('change', function(e) {
             if(this.files && this.files.length > 0) {
+                // Submit form upload secara otomatis saat file dipilih
                 document.getElementById('uploadForm').submit();
             }
         });

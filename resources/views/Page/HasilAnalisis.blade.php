@@ -74,6 +74,11 @@
     function closeProperties() {
         document.getElementById('properties-panel').classList.remove('active');
     }
+
+    window.ID_DESAIN = "{{ $desain->ID_Desain_Rumah }}";
+
+    // ✅ TAMBAHAN PENTING: URL Route Full dari Laravel
+    window.API_SEARCH_URL = "{{ route('api.cari_komponen') }}";
 </script>
 
 {{-- SCRIPT MODULE --}}

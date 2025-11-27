@@ -67,7 +67,7 @@ Route::prefix('api')->group(function () {
     Route::get('/supplier-list', [MaterialController::class, 'getSupplierList'])->name('api.supplier-list');
     Route::post('/bahan/store', [MaterialController::class, 'storeBahan'])->name('api.bahan-store');
     Route::post('/supplier/store', [MaterialController::class, 'storeSupplier'])->name('api.supplier-store');
-    
+
 });
 
 // Rute Unggah File
@@ -87,5 +87,7 @@ Route::get('/proyek/{ID_Desain_Rumah}', [DetailProyekController::class, 'show'])
 //Hasil Analisis 3D
 Route::get('/viewer/{id}', [HasilAnalisisController::class, 'view'])->name('viewer');
 
-//
+//Data Proyek
 Route::get('/DataProyek', [DataProyekController::class, 'index'])->name('kalkulasi.bahan');
+
+Route::get('/api/cari-komponen', [HasilAnalisisController::class, 'cariKomponen'])->name('api.cari_komponen');

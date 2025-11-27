@@ -62,32 +62,19 @@
         @else
             <div class="list-group shadow-sm">
                 @foreach ($projects as $project)
-    <div class="list-group-item list-group-item-action flex-column align-items-start mb-3 shadow-sm">
-
-        <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1 fw-bold text-primary">{{ $project->Nama_desain ?? 'Tanpa Judul' }}</h5>
-            <small class="text-secondary">{{ \Carbon\Carbon::parse($project->Tanggal_dibuat)->format('d M Y') }}</small>
-        </div>
-        <p class="mb-1 text-muted">
-            {{ Str::limit($project->Deskripsi ?? 'Tidak ada deskripsi proyek', 100) }}
-        </p>
-
-        <div class="mt-3">
-            <a href="{{ route('viewer', ['id' => $project->ID_Desain_Rumah]) }}" class="btn btn-sm btn-primary me-2">
-                Lihat Desain
-            </a>
-
-            <a href="{{ route('bahan.create', ['id' => $project->ID_Desain_Rumah]) }}" class="btn btn-sm btn-success me-2">
-                Input Bahan
-            </a>
-
-            <a href="{{ route('laporan.index', ['id' => $project->ID_Desain_Rumah]) }}" class="btn btn-sm btn-info text-white">
-                Laporan
-            </a>
-        </div>
-
-    </div>
-@endforeach
+                    <a href="{{ route('Kalkulasi.show', $project->ID_Desain_Rumah) }}"
+                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1 fw-bold text-primary">{{ $project->Nama_desain ?? 'Tanpa Judul' }}</h5>
+                            <p class="mb-1 text-muted">
+                                {{ Str::limit($project->Deskripsi ?? 'Tidak ada deskripsi proyek', 100) }}
+                            </p>
+                        </div>
+                        <small class="text-secondary">
+                            {{ \Carbon\Carbon::parse($project->Tanggal_dibuat)->format('d M Y') }}
+                        </small>
+                    </a>
+                @endforeach
             </div>
         @endif
     </div>

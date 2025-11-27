@@ -15,12 +15,16 @@ class KomponenDesain extends Model
     protected $fillable = [
         'ID_Desain_Rumah',
         'Nama_Komponen',
+        'Ifc_Guid',
+        'Label_Cad',
         'ID_Satuan_Ukur',
         'ID_Rule',
         'Panjang',
         'Lebar',
         'Tinggi'
     ];
+
+    public $timestamps = false;
 
     public function materials() {
         return $this->hasMany(Material::class, 'ID_Komponen', 'ID_Komponen');
