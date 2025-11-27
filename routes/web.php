@@ -97,3 +97,4 @@ Route::post('/api/remove-job', [HasilAnalisisController::class, 'removeJob'])->n
 // Route View & Search yang sudah ada
 Route::get('/hasil-analisis/{id}', [HasilAnalisisController::class, 'view'])->name('hasil.analisis'); // Sesuaikan nama route view anda
 Route::get('/api/cari-komponen', [HasilAnalisisController::class, 'cariKomponen'])->name('api.cari_komponen');
+Route::post('/api/final-save', [HasilAnalisisController::class, 'finalSave'])->name('api.final_save');

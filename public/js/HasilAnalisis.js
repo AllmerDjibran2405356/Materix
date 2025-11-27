@@ -3,106 +3,130 @@ import * as OBC from 'https://esm.sh/@thatopen/components@2.0.0?deps=three@0.160
 import * as OBCF from 'https://esm.sh/@thatopen/components-front@2.0.0?deps=three@0.160.0,web-ifc@0.0.56,@thatopen/components@2.0.0';
 
 // ==========================================
-// 1. FUNGSI GLOBAL UI & LOGIC
+// 1. FUNGSI GLOBAL & STATE MANAGEMENT
 // ==========================================
 
-// Toggle Dropdown List Pekerjaan
+window.MODIFIED_GUIDS = new Set();
+
 window.toggleJobSection = function() {
     const content = document.getElementById('job-section-content');
     const btn = document.getElementById('btn-toggle-job');
-
     if (content && btn) {
-        if (content.style.display === 'none') {
-            content.style.display = 'block';
-            btn.innerHTML = '−';
-            btn.style.backgroundColor = '#b91c1c'; // Merah
-        } else {
-            content.style.display = 'none';
-            btn.innerHTML = '+';
-            btn.style.backgroundColor = '#166534'; // Hijau
-        }
+        const isClosed = content.style.display === 'none';
+        content.style.display = isClosed ? 'block' : 'none';
+        btn.innerHTML = isClosed ? '−' : '+';
+        btn.style.backgroundColor = isClosed ? '#b91c1c' : '#166534';
     }
 };
 
-// Fungsi Memilih Pekerjaan (Save to Session)
 window.handleSelectJob = async function(guid, namaPekerjaan) {
-    if(!guid || guid === '-') return alert("Silakan pilih objek yang valid terlebih dahulu.");
+    if(!guid || guid === '-') return alert("Silakan pilih objek yang valid.");
 
-    // Tampilkan loading kecil/feedback (opsional)
+    // Tandai sebagai berubah
+    window.MODIFIED_GUIDS.add(guid);
+
     const listContainer = document.getElementById('selected-jobs-list');
-    if(listContainer) listContainer.innerHTML = '<div class="loader-spinner" style="width:15px; height:15px; border-width:2px; margin: 0 auto;"></div>';
+    if(listContainer) listContainer.innerHTML = '<div class="loader-spinner" style="width:15px; height:15px; border-width:2px; margin:0 auto;"></div>';
 
     try {
         const response = await fetch(window.API_SAVE_JOB, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': window.CSRF_TOKEN // Token keamanan Laravel
-            },
-            body: JSON.stringify({
-                guid: guid,
-                job: { Nama_Pekerjaan: namaPekerjaan }
-            })
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': window.CSRF_TOKEN },
+            body: JSON.stringify({ guid: guid, job: { Nama_Pekerjaan: namaPekerjaan } })
         });
-
         const result = await response.json();
-        if(result.status === 'success') {
-            // Render ulang list terpilih berdasarkan data terbaru dari server
-            renderSelectedJobsList(result.data, guid);
-        }
+
+        const data = result.status === 'success' ? result.data : [];
+        renderSelectedJobsList(data, guid);
+
     } catch (error) {
-        console.error("Gagal menyimpan:", error);
-        alert("Gagal menyimpan pekerjaan. Cek console.");
+        console.error("Save error:", error);
+        alert("Gagal menambahkan pekerjaan.");
+        renderSelectedJobsList([], guid);
     }
 };
 
-// Fungsi Hapus Pekerjaan
-window.handleRemoveJob = async function(guid, namaPekerjaan) {
-    if(!confirm("Hapus pekerjaan ini dari list?")) return;
+// --- PERBAIKAN UTAMA ADA DI SINI ---
+window.handleRemoveJob = async function(guid, index) {
+    // ✅ TAMBAHAN PENTING:
+    // Menghapus juga dianggap sebagai "Perubahan", jadi harus dicatat
+    // agar saat Final Save, controller tahu bahwa komponen ini harus diupdate (dikosongkan).
+    window.MODIFIED_GUIDS.add(guid);
 
     try {
         const response = await fetch(window.API_REMOVE_JOB, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': window.CSRF_TOKEN
-            },
-            body: JSON.stringify({
-                guid: guid,
-                job_name: namaPekerjaan
-            })
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': window.CSRF_TOKEN },
+            body: JSON.stringify({ guid: guid, index: index })
+        });
+        const result = await response.json();
+
+        const data = result.status === 'success' ? result.data : [];
+        renderSelectedJobsList(data, guid);
+
+    } catch (error) {
+        console.error("Delete error:", error);
+    }
+};
+
+window.triggerFinalSave = async function() {
+    // Pengecekan
+    if (window.MODIFIED_GUIDS.size === 0) return alert("Simpan Berhasil (Tidak ada perubahan baru).");
+
+    if(!confirm("Konfirmasi simpan perubahan ke database?")) return;
+
+    document.body.style.cursor = 'wait';
+    try {
+        const payload = {
+            desain_id: window.ID_DESAIN,
+            guids: Array.from(window.MODIFIED_GUIDS)
+        };
+
+        const response = await fetch(window.API_FINAL_SAVE, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': window.CSRF_TOKEN },
+            body: JSON.stringify(payload)
         });
 
         const result = await response.json();
         if(result.status === 'success') {
-            renderSelectedJobsList(result.data, guid);
+            alert("Simpan berhasil");
+            window.MODIFIED_GUIDS.clear(); // Reset setelah berhasil
+        } else {
+            alert("Simpan gagal");
         }
     } catch (error) {
-        console.error("Gagal menghapus:", error);
+        console.error("Final Save Error:", error);
+        alert("Simpan gagal");
+    } finally {
+        document.body.style.cursor = 'default';
     }
 };
 
-// Helper Render List Terpilih
 function renderSelectedJobsList(jobs, guid) {
     const container = document.getElementById('selected-jobs-list');
     if (!container) return;
 
-    if (!jobs || jobs.length === 0) {
-        container.innerHTML = '<div style="font-style:italic; color:#9ca3af; font-size:12px;">Belum ada pekerjaan dipilih.</div>';
+    const safeJobs = Array.isArray(jobs) ? jobs : [];
+
+    if (safeJobs.length === 0) {
+        container.innerHTML = '<div style="font-style:italic; color:#9ca3af; font-size:12px; text-align:center;">Belum ada pekerjaan dipilih.</div>';
         return;
     }
 
-    container.innerHTML = jobs.map(job => `
-        <div style="background: #ecfdf5; border: 1px solid #6ee7b7; border-radius: 6px; padding: 8px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 13px; color: #065f46; font-weight: 500;">${job.Nama_Pekerjaan}</span>
-            <button onclick="window.handleRemoveJob('${guid}', '${job.Nama_Pekerjaan}')"
-                    style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px; padding: 0 5px; font-weight:bold;"
+    container.innerHTML = safeJobs.map((job, index) => `
+        <div style="background:#ecfdf5; border:1px solid #6ee7b7; border-radius:6px; padding:8px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:13px; color:#065f46; font-weight:500;">${job.Nama_Pekerjaan}</span>
+            <button onclick="window.handleRemoveJob('${guid}', ${index})"
+                    style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:bold; font-size:14px; padding:0 5px;"
                     title="Hapus">✕</button>
         </div>
     `).join('');
 }
 
-
+// ==========================================
+// 2. MAIN FUNCTION (VIEWER 3D)
+// ==========================================
 async function main() {
     const container = document.getElementById('viewer-container');
     const loadingOverlay = document.getElementById('loading-overlay');
@@ -111,30 +135,27 @@ async function main() {
     const propContent = document.getElementById('properties-content');
 
     if (!container) return;
-
-    const updateStatus = (msg) => {
-        if(loadingText) loadingText.innerText = msg;
-        console.log(`[Viewer] ${msg}`);
-    };
+    const updateStatus = (msg) => { if(loadingText) loadingText.innerText = msg; };
 
     try {
-        // ... (SETUP ENGINE & LOADER) ...
         updateStatus("Inisialisasi Engine 3D...");
         const components = new OBC.Components();
         const worlds = components.get(OBC.Worlds);
         const world = worlds.create();
+
         world.scene = new OBC.SimpleScene(components);
         world.renderer = new OBCF.PostproductionRenderer(components, container);
         world.camera = new OBC.OrthoPerspectiveCamera(components);
         components.init();
+
         world.scene.three.background = new THREE.Color(0xf9fafb);
         components.get(OBC.Grids).create(world);
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        world.scene.three.add(ambientLight);
+        world.scene.three.add(new THREE.AmbientLight(0xffffff, 0.6));
         const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
         dirLight.position.set(20, 50, 20);
         world.scene.three.add(dirLight);
-        const pivotMarker = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), new THREE.MeshBasicMaterial({ color: 0xff0000, depthTest: false, opacity: 0.6, transparent: true }));
+
+        const pivotMarker = new THREE.Mesh(new THREE.SphereGeometry(0.15), new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.6, transparent: true }));
         pivotMarker.renderOrder = 999;
         world.scene.three.add(pivotMarker);
 
@@ -146,255 +167,180 @@ async function main() {
         highlighter.setup({ world });
         highlighter.zoomToSelection = true;
 
-        if (!window.IFC_URL) throw new Error("URL IFC tidak ditemukan");
+        if (!window.IFC_URL) throw new Error("URL IFC Missing");
         updateStatus("Mengunduh Model...");
-        const response = await fetch(window.IFC_URL);
-        const buffer = await response.arrayBuffer();
-        const data = new Uint8Array(buffer);
-        updateStatus("Merender Geometri...");
+        const res = await fetch(window.IFC_URL);
+        const data = new Uint8Array(await res.arrayBuffer());
         const model = await fragmentIfcLoader.load(data);
         world.scene.three.add(model);
 
-        // --- INTERAKSI KLIK ---
         highlighter.events.select.onHighlight.add(async (fragmentIdMap) => {
             if(propPanel) propPanel.classList.add('active');
-            if(propContent) propContent.innerHTML = '<div class="loader-spinner" style="width:20px; height:20px; border-width:2px; margin: 20px auto;"></div>';
+            if(container) container.classList.add('panel-open');
+            if(propContent) propContent.innerHTML = '<div class="loader-spinner" style="margin:20px auto;"></div>';
 
             let expressID = null;
             for (const fragID in fragmentIdMap) {
                 const ids = fragmentIdMap[fragID];
-                if (ids.size > 0) {
-                    expressID = [...ids][0];
-                    break;
-                }
+                if (ids.size > 0) { expressID = [...ids][0]; break; }
             }
+
             if (expressID) await displayProperties(model, expressID);
-            else if(propPanel) propPanel.classList.remove('active');
+            else {
+                if(propPanel) propPanel.classList.remove('active');
+                if(container) container.classList.remove('panel-open');
+            }
         });
 
-        // ... (KONTROL KAMERA) ...
-        const keyStates = { w: false, a: false, s: false, d: false, shift: false };
-        document.addEventListener('keydown', (e) => {
-            const key = e.key.toLowerCase();
-            if (keyStates.hasOwnProperty(key)) keyStates[key] = true;
-            if (e.key === 'Shift') keyStates.shift = true;
-        });
-        document.addEventListener('keyup', (e) => {
-            const key = e.key.toLowerCase();
-            if (keyStates.hasOwnProperty(key)) keyStates[key] = false;
-            if (e.key === 'Shift') keyStates.shift = false;
-        });
-        const targetVector = new THREE.Vector3();
-        function animateCamera() {
-            const controls = world.camera.controls;
-            const baseSpeed = 0.5;
-            const speed = keyStates.shift ? baseSpeed * 3 : baseSpeed;
-            if (keyStates.w) controls.forward(speed, true);
-            if (keyStates.s) controls.forward(-speed, true);
-            if (keyStates.a) controls.truck(-speed, 0, true);
-            if (keyStates.d) controls.truck(speed, 0, true);
-            controls.getTarget(targetVector);
-            pivotMarker.position.copy(targetVector);
-            requestAnimationFrame(animateCamera);
-        }
-        animateCamera();
-
-        // =========================================================
-        // 🛠️ LOGIKA UTAMA: DISPLAY PROPERTIES
-        // =========================================================
         async function displayProperties(model, expressID) {
-            console.group("🔍 [DEBUG] Analisis Klik Objek ID: " + expressID);
             try {
                 const props = await model.getProperties(expressID);
-                if (!props) {
-                    propContent.innerHTML = "<p>Data properti tidak ditemukan.</p>";
-                    console.groupEnd(); return;
-                }
+                if (!props) { propContent.innerHTML = "<p>No Data.</p>"; return; }
 
-                const ifcGuid = props.GlobalId ? props.GlobalId.value : null;
-                const name = props.Name ? props.Name.value : 'Unnamed';
-                const type = props.ObjectType ? props.ObjectType.value : 'Unknown Type';
+                const ifcGuid = props.GlobalId?.value;
+                const name = props.Name?.value || 'Unnamed';
+                const type = props.ObjectType?.value || 'Unknown';
                 const displayGuid = ifcGuid || '-';
 
-                let analysisItem = null;
-                if (ifcGuid && window.ANALYSIS_DATA) {
-                    analysisItem = window.ANALYSIS_DATA.find(item => item.guid === ifcGuid);
-                }
+                let analysisItem = window.ANALYSIS_DATA?.find(item => item.guid === ifcGuid);
+                let dbId = '<span style="color:orange;">Checking...</span>';
 
-                let dbId = '<span style="color:orange;">⏳ Mencari...</span>';
+                renderHTML(name, type, displayGuid, analysisItem, dbId);
 
-                // 1. Render Struktur Awal
-                // (Bagian Selected Jobs akan dirender kosong dulu)
-                renderHTML(expressID, name, type, displayGuid, analysisItem, dbId);
-
-                // 2. FETCH SESSION JOBS (Ambil data pekerjaan yang sudah tersimpan di server)
                 if (ifcGuid) {
-                    try {
-                        const resSession = await fetch(`${window.API_GET_JOBS}?guid=${ifcGuid}`);
-                        const sessionData = await resSession.json();
-                        if(sessionData.status === 'success') {
-                            renderSelectedJobsList(sessionData.data, ifcGuid);
-                        }
-                    } catch (e) {
-                        console.error("Gagal load session jobs", e);
-                    }
+                    fetch(`${window.API_GET_JOBS}?guid=${ifcGuid}`)
+                        .then(r => r.json())
+                        .then(res => {
+                            const data = (res.status === 'success') ? res.data : [];
+                            renderSelectedJobsList(data, ifcGuid);
+                        })
+                        .catch(err => {
+                            console.error("Gagal load session jobs", err);
+                            renderSelectedJobsList([], ifcGuid);
+                        });
+                } else {
+                    renderSelectedJobsList([], null);
                 }
 
-                // 3. Live Fetch status sinkronisasi Database
-                if (window.ID_DESAIN && window.API_SEARCH_URL && analysisItem) {
-                    try {
-                        const params = new URLSearchParams({
-                            nama: name, desain_id: window.ID_DESAIN,
-                            label_cad: analysisItem.label_cad || '', guid: analysisItem.guid || ''
+                if (window.ID_DESAIN && analysisItem) {
+                    const params = new URLSearchParams({ nama: name, desain_id: window.ID_DESAIN, label_cad: analysisItem.label_cad, guid: analysisItem.guid });
+                    fetch(`${window.API_SEARCH_URL}?${params}`)
+                        .then(r => r.json())
+                        .then(res => {
+                            dbId = res.status === 'found' ? `<span style="color:green;font-weight:bold;">${res.id_komponen}</span>` : `<span style="color:grey;">Belum Disinkron</span>`;
+                            const el = document.getElementById(`db-id`);
+                            if(el) el.innerHTML = dbId;
+                        })
+                        .catch(() => {
+                            const el = document.getElementById(`db-id`);
+                            if(el) el.innerHTML = '<span style="color:red; font-size:0.8em">Gagal</span>';
                         });
-                        const response = await fetch(`${window.API_SEARCH_URL}?${params.toString()}`);
-                        const result = await response.json();
-                        if (result.status === 'found') dbId = `<span style="color:green; font-weight:bold;">${result.id_komponen}</span>`;
-                        else if (result.status === 'not_found') dbId = `<span style="color:grey;">Belum Disinkron</span>`;
-                        else dbId = `<span style="color:red;">Error</span>`;
-                    } catch (err) { dbId = `<span style="color:red; font-size:0.8em;">Gagal Koneksi</span>`; }
-
-                    // Update DOM ID saja (agar dropdown tidak reset)
-                    const dbIdEl = document.getElementById(`db-id-${expressID}`);
-                    if(dbIdEl) dbIdEl.innerHTML = dbId;
                 } else {
-                    if(!analysisItem) dbId = '<span style="color:grey;">-</span>';
-                    const dbIdEl = document.getElementById(`db-id-${expressID}`);
-                    if(dbIdEl) dbIdEl.innerHTML = dbId;
+                    const el = document.getElementById(`db-id`);
+                    if(el) el.innerHTML = '<span style="color:grey;">-</span>';
                 }
 
             } catch (e) {
-                console.error("Error Global:", e);
-                propContent.innerHTML = `<div style="color:red;">Error: ${e.message}</div>`;
+                console.error(e);
+                propContent.innerHTML = `<div style="padding:20px; color:red;">Error: ${e.message}</div>`;
             }
-            console.groupEnd();
         }
 
-        // =========================================================
-        // 🎨 FUNGSI RENDER HTML
-        // =========================================================
-        function renderHTML(expressID, name, type, displayGuid, analysisItem, dbId) {
-            let html = '';
-
-            // --- 1. Hasil Analisis AI ---
-            if (analysisItem) {
-                html += `
-                    <div class="analysis-box" style="position: relative; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
-                        <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 3px solid #bbf7d0;">
-                            <div class="analysis-title" style="font-weight: bold; color: #166534; display:flex; align-items:center; gap:5px;">
-                                <span>🤖</span> Hasil Analisis
-                            </div>
+        function renderHTML(name, type, guid, analysisItem, dbId) {
+            let analysisHtml = analysisItem ? `
+                <div class="analysis-box" style="position: relative; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                    <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 3px solid #bbf7d0;">
+                        <div class="analysis-title" style="font-weight: bold; color: #166534; display:flex; align-items:center; gap:5px;">
+                            <span>🤖</span> Hasil Analisis
                         </div>
-                        <table class="prop-table" style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
-                            <tr style="border-bottom: 1px solid #dcfce7;"><th style="text-align: left; padding: 5px; color: #555;">Kategori</th><td style="text-align: right; padding: 5px; font-weight:600;">${analysisItem.label_cad || '-'}</td></tr>
-                            <tr style="border-bottom: 1px solid #dcfce7;"><th style="text-align: left; padding: 5px; color: #555;">Volume</th><td style="text-align: right; padding: 5px; font-weight: bold; color: #14532d;">${formatNum(analysisItem.kuantitas.volume_m3)} m³</td></tr>
-                        </table>
-                    </div>`;
-            } else {
-                html += `<div style="padding:12px; background:#fff7ed; border:1px solid #ffedd5; color:#9a3412; border-radius:8px; margin-bottom:15px; font-size:0.9em;">⚠️ Data analisis tidak tersedia.</div>`;
-            }
+                    </div>
+                    <table class="prop-table" style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                        <tr style="border-bottom: 1px solid #dcfce7;"><th style="text-align: left; padding: 5px; color: #555;">Kategori</th><td style="text-align: right; padding: 5px; font-weight:600;">${analysisItem.label_cad || '-'}</td></tr>
+                        <tr style="border-bottom: 1px solid #dcfce7;"><th style="text-align: left; padding: 5px; color: #555;">Volume</th><td style="text-align: right; padding: 5px; font-weight: bold; color: #14532d;">${Number(analysisItem.kuantitas.volume_m3).toLocaleString('id-ID')} m³</td></tr>
+                    </table>
+                </div>` : `<div style="padding:10px;background:#fff7ed;border-radius:6px;margin-bottom:15px;font-size:0.9em;">⚠️ Data analisis tidak tersedia.</div>`;
 
-            // --- 2. Properti Asli IFC ---
-            html += `
+            const worksList = window.WORKS_DATA || [];
+            const listItems = worksList.map(work => `
+                <div onclick="window.handleSelectJob('${guid}', '${work.Nama_Pekerjaan}')" class="dropdown-item" style="padding: 10px; border-bottom: 1px solid #f3f4f6; cursor: pointer; display: flex; justify-content: space-between; font-size: 13px; color: #374151;">
+                    <span>${work.Nama_Pekerjaan}</span><span style="color:#10b981;font-weight:bold;">+</span>
+                </div>`).join('');
+
+            const html = `
+                ${analysisHtml}
                 <div class="std-props" style="margin-bottom: 20px;">
                     <h5 style="margin: 0 0 10px 0; font-size: 14px; border-bottom: 2px solid #eee; padding-bottom: 5px;">Properti Asli IFC</h5>
                     <table class="prop-table" style="width:100%; font-size:0.85em; color:#666;">
-                        <tr style="background-color: #f9f9f9;"><td style="padding:3px 0;"><strong>ID Database:</strong></td><td style="text-align:right;" id="db-id-${expressID}">${dbId}</td></tr>
+                        <tr style="background-color: #f9f9f9;"><td style="padding:3px 0;"><strong>ID Database:</strong></td><td style="text-align:right;" id="db-id">${dbId}</td></tr>
                         <tr><td style="padding:3px 0;"><strong>Name:</strong></td><td style="text-align:right;">${name}</td></tr>
                         <tr><td style="padding:3px 0;"><strong>Type:</strong></td><td style="text-align:right;">${type}</td></tr>
-                        <tr><td style="padding:3px 0;"><strong>GUID:</strong></td><td style="text-align:right; font-family:monospace; font-size:0.9em;">${displayGuid}</td></tr>
+                        <tr><td style="padding:3px 0;"><strong>GUID:</strong></td><td style="text-align:right; font-family:monospace; font-size:0.9em;">${guid}</td></tr>
                     </table>
-                </div>`;
+                </div>
 
-            // --- 3. PEKERJAAN TERPILIH (CONTAINER) ---
-            html += `
-                <div style="margin-bottom: 20px;">
-                    <h5 style="margin: 0 0 10px 0; font-size: 14px; color: #1f2937; font-weight:700;">✅ Pekerjaan Terpilih</h5>
+                <div style="margin-bottom:20px;">
+                    <h5 style="color:#1f2937;font-weight:700;margin-bottom:10px;font-size:14px;">✅ Pekerjaan Terpilih</h5>
                     <div id="selected-jobs-list">
-                        <div class="loader-spinner" style="width:15px; height:15px; border-width:2px; margin: 0 auto;"></div>
+                        <div class="loader-spinner" style="width:15px;height:15px;border-width:2px;margin:0 auto;"></div>
                     </div>
                 </div>
-            `;
 
-            // --- 4. PILIH PEKERJAAN (Dropdown + List) ---
-            const worksList = window.WORKS_DATA || [];
-
-            const generateListHTML = (items) => {
-                if(items.length > 0) {
-                    return items.map(work => `
-                        <div style="padding: 10px; border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background 0.2s; display:flex; justify-content:space-between; align-items:center;"
-                             onmouseover="this.style.backgroundColor='#f9fafb'"
-                             onmouseout="this.style.backgroundColor='transparent'"
-                             onclick="window.handleSelectJob('${displayGuid}', '${work.Nama_Pekerjaan}')">
-                            <div style="font-size: 13px; font-weight: 500; color: #374151; line-height: 1.4;">${work.Nama_Pekerjaan}</div>
-                            <span style="font-size:18px; color:#10b981;">+</span>
-                        </div>
-                    `).join('');
-                } else {
-                    return '<div style="padding:20px; color:#9ca3af; text-align:center; font-size:13px;">Pekerjaan tidak ditemukan.</div>';
-                }
-            };
-
-            html += `
-                <div class="pilih-pekerjaan-container" style="border-top: 4px solid #f3f4f6; padding-top: 15px; margin-top: 10px;">
+                <div class="pilih-pekerjaan-container" style="border-top:4px solid #f3f4f6; padding-top:15px; margin-top:10px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <div style="display:flex; align-items:center; gap: 8px;">
-                            <h5 style="margin: 0; font-size: 14px; color: #1f2937; font-weight:700;">📋 Tambah Pekerjaan</h5>
-                            <span id="job-counter" style="font-size: 11px; background: #e5e7eb; padding: 2px 6px; border-radius: 4px; color: #4b5563;">${worksList.length}</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <h5 style="margin:0; font-weight:700; font-size:14px; color:#1f2937;">📋 Tambah Pekerjaan</h5>
+                            <span id="job-counter" style="font-size:11px; background:#e5e7eb; padding:2px 6px; border-radius:4px; color:#4b5563;">${worksList.length}</span>
                         </div>
-                        <button id="btn-toggle-job" onclick="window.toggleJobSection()"
-                                style="width: 30px; height: 30px; border-radius: 50%; background-color: #166534; color: white; border: none; font-size: 20px; font-weight:bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            +
-                        </button>
+                        <button id="btn-toggle-job" onclick="window.toggleJobSection()" style="width:30px; height:30px; border-radius:50%; background:#166534; color:white; border:none; font-weight:bold; cursor:pointer; font-size:20px;">+</button>
                     </div>
 
-                    <div id="job-section-content" style="display: none; animation: fadeIn 0.3s ease-in-out;">
+                    <div id="job-section-content" style="display:none; animation:fadeIn 0.3s ease-in-out;">
                         <div style="margin-bottom: 10px; position: relative;">
-                            <input type="text" id="job-search-input" placeholder="Cari pekerjaan..."
-                                   style="width: 100%; padding: 8px 10px 8px 30px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; outline: none; transition: border-color 0.2s; box-sizing: border-box;">
+                            <input type="text" id="job-search-input" placeholder="Cari..." style="width: 100%; padding: 8px 10px 8px 30px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; font-size:13px;">
                             <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 14px; color: #9ca3af;">🔍</span>
                         </div>
-                        <div id="job-list-container" class="list-wrapper" style="max-height: 35vh; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);">
-                            ${generateListHTML(worksList)}
-                        </div>
-                        <div style="text-align:center; font-size:10px; color:#ccc; margin-top:5px;">End of list</div>
+                        <div id="job-list-container" class="list-wrapper" style="max-height:30vh; overflow-y:auto; border:1px solid #e5e7eb; border-radius:6px;">${listItems}</div>
                     </div>
-                </div>
-            `;
+                </div>`;
 
-            // --- FINAL RENDER ---
-            const propContent = document.getElementById('properties-content');
             if(propContent) {
                 propContent.innerHTML = html;
+                const search = document.getElementById('job-search-input');
+                const list = document.getElementById('job-list-container');
+                const badge = document.getElementById('job-counter');
 
-                // Event Listener Search
-                const searchInput = document.getElementById('job-search-input');
-                const listContainer = document.getElementById('job-list-container');
-                const counterBadge = document.getElementById('job-counter');
-
-                if(searchInput && listContainer) {
-                    searchInput.addEventListener('input', function(e) {
-                        const searchTerm = e.target.value.toLowerCase();
-                        const filteredWorks = worksList.filter(work => work.Nama_Pekerjaan.toLowerCase().includes(searchTerm));
-                        listContainer.innerHTML = generateListHTML(filteredWorks);
-                        if(counterBadge) counterBadge.innerText = filteredWorks.length;
+                if(search && list) {
+                    search.addEventListener('input', (e) => {
+                        const term = e.target.value.toLowerCase();
+                        const filtered = worksList.filter(w => w.Nama_Pekerjaan.toLowerCase().includes(term));
+                        list.innerHTML = filtered.map(work => `
+                            <div onclick="window.handleSelectJob('${guid}', '${work.Nama_Pekerjaan}')" class="dropdown-item" style="padding: 10px; border-bottom: 1px solid #f3f4f6; cursor: pointer; display: flex; justify-content: space-between; font-size: 13px; color: #374151;">
+                                <span>${work.Nama_Pekerjaan}</span><span style="color:#10b981;font-weight:bold;">+</span>
+                            </div>`).join('');
+                        if(badge) badge.innerText = filtered.length;
                     });
                 }
             }
         }
 
-        function formatNum(num) {
-            if (num === undefined || num === null) return '0';
-            return Number(num).toLocaleString('id-ID', { maximumFractionDigits: 3 });
+        const keyStates = { w: false, a: false, s: false, d: false, shift: false };
+        document.addEventListener('keydown', (e) => { if(keyStates.hasOwnProperty(e.key.toLowerCase())) keyStates[e.key.toLowerCase()] = true; if(e.key === 'Shift') keyStates.shift = true; });
+        document.addEventListener('keyup', (e) => { if(keyStates.hasOwnProperty(e.key.toLowerCase())) keyStates[e.key.toLowerCase()] = false; if(e.key === 'Shift') keyStates.shift = false; });
+        function animate() {
+            const speed = keyStates.shift ? 1.5 : 0.5;
+            if(keyStates.w) world.camera.controls.forward(speed, true);
+            if(keyStates.s) world.camera.controls.forward(-speed, true);
+            if(keyStates.a) world.camera.controls.truck(-speed, 0, true);
+            if(keyStates.d) world.camera.controls.truck(speed, 0, true);
+            pivotMarker.position.copy(world.camera.controls.getTarget(new THREE.Vector3()));
+            requestAnimationFrame(animate);
         }
+        animate();
 
         updateStatus("Selesai!");
         if(loadingOverlay) { loadingOverlay.style.opacity = '0'; setTimeout(() => loadingOverlay.remove(), 500); }
         if(model.bbox) world.camera.controls.fitToBox(model.bbox, true);
 
-    } catch (error) {
-        console.error(error);
-        if(loadingText) loadingText.innerHTML = `Gagal: ${error.message}`;
-    }
+    } catch (e) { console.error(e); updateStatus("Error: " + e.message); }
 }
 main();

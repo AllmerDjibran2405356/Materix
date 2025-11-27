@@ -1,7 +1,9 @@
-/* --- 1. Viewer Container (Full Screen di bawah Navbar) --- */
+/* =========================================
+   1. VIEWER CONTAINER (CANVAS)
+   ========================================= */
 #viewer-container {
     position: fixed;
-    top: 64px; /* SESUAIKAN dengan tinggi Navbar web Anda */
+    top: 64px; /* Sesuaikan dengan tinggi Navbar */
     left: 0;
     right: 0;
     bottom: 0;
@@ -10,23 +12,44 @@
     background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
     overflow: hidden;
     z-index: 1;
+    cursor: default; /* Pastikan cursor default */
 }
 
-/* --- 2. Overlay Controls (Pojok Kiri Bawah - Transparan) --- */
+/* =========================================
+   2. OVERLAYS (JUDUL & KONTROL)
+   ========================================= */
+/* Title Overlay (Kiri Atas) */
+.title-overlay {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 20;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    pointer-events: none;
+}
+.title-overlay h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1f2937;
+    font-weight: 700;
+}
+
+/* Controls Overlay (Kiri Bawah) */
 .controls-overlay {
     position: absolute;
     bottom: 20px;
     left: 20px;
     z-index: 20;
-
-    /* Styling Transparan (Glassmorphism) */
-    background: rgba(0, 0, 0, 0.6); /* Hitam transparan */
-    backdrop-filter: blur(4px);      /* Efek blur di belakangnya */
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
     padding: 15px;
     border-radius: 10px;
     color: white;
     font-family: sans-serif;
-    pointer-events: none; /* Agar klik tembus ke model, kecuali pas di text */
+    pointer-events: none;
     user-select: none;
     min-width: 200px;
 }
@@ -36,7 +59,7 @@
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #fbbf24; /* Warna emas/kuning agar kontras */
+    color: #fbbf24;
     border-bottom: 1px solid rgba(255,255,255,0.2);
     padding-bottom: 5px;
 }
@@ -56,26 +79,9 @@
     font-size: 1rem;
 }
 
-/* --- 3. Overlay Title (Pojok Kiri Atas) --- */
-.title-overlay {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 20;
-    background: rgba(255, 255, 255, 0.85);
-    padding: 10px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    pointer-events: none;
-}
-.title-overlay h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    color: #1f2937;
-    font-weight: 700;
-}
-
-/* --- 4. Loading Screen --- */
+/* =========================================
+   3. LOADING SCREEN
+   ========================================= */
 #loading-overlay {
     position: absolute;
     inset: 0;
@@ -100,7 +106,9 @@
 
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* --- 5. Sidebar Properti (Kanan - Slide in) --- */
+/* =========================================
+   4. SIDEBAR PROPERTI (KANAN)
+   ========================================= */
 #properties-panel {
     position: absolute;
     top: 0;
@@ -128,111 +136,166 @@
     background: #fff;
 }
 .prop-header h4 { margin: 0; font-size: 1rem; color: #1f2937; }
+
 .close-btn {
     background: none; border: none; font-size: 1.5rem; color: #9ca3af; cursor: pointer;
 }
 .close-btn:hover { color: #ef4444; }
+
 .prop-content { padding: 20px; overflow-y: auto; flex: 1; }
 
-/* Table & Box Analysis Styles */
+/* Table & Styles dalam Sidebar */
 .prop-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 20px; }
 .prop-table th, .prop-table td { padding: 8px 0; border-bottom: 1px solid #f3f4f6; text-align: left; }
 .prop-table th { color: #6b7280; width: 40%; }
+
 .analysis-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
 .analysis-title { color: #166534; font-weight: 700; margin-bottom: 10px; border-bottom: 1px solid #bbf7d0; padding-bottom: 8px; }
-/* ... CSS yang sebelumnya ... */
 
-/* --- Container Utama Viewer --- */
-#viewer-container {
-    /* Pastikan cursor defaultnya crosshair atau default */
-    cursor: default;
-    /* ... sisa style viewer-container tetap sama ... */
+/* Formulir dalam Sidebar */
+.analysis-form { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #bbf7d0; }
+.form-label { display: block; font-size: 0.8rem; font-weight: 600; color: #166534; margin-bottom: 5px; }
+.form-input {
+    width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #bbf7d0;
+    border-radius: 6px; font-size: 0.85rem; background-color: #ffffff;
+    color: #1f2937; outline: none; transition: border-color 0.2s;
+    box-sizing: border-box; /* Tambahan agar padding tidak merusak width */
 }
+.form-input:focus { border-color: #166534; box-shadow: 0 0 0 2px rgba(22, 101, 52, 0.1); }
 
-/* --- TITIK PIVOT / CROSSHAIR (BARU) --- */
+/* Tombol kecil di dalam sidebar (jika ada) */
+.btn-save {
+    width: 100%; padding: 8px; background-color: #166534; color: white;
+    border: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s;
+    display: flex; justify-content: center; align-items: center; gap: 5px;
+}
+.btn-save:hover { background-color: #14532d; }
+.btn-save:active { transform: scale(0.98); }
+
+/* =========================================
+   5. CROSSHAIR (TITIK TENGAH)
+   ========================================= */
 #pivot-crosshair {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    /* Menggeser -50% agar benar-benar di titik tengah center */
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-
-    /* Ukuran titik */
-    width: 10px;
-    height: 10px;
-
-    /* Warna: Putih semi-transparan dengan border halus agar terlihat di background gelap/terang */
+    width: 10px; height: 10px;
     background-color: rgba(255, 255, 255, 0.8);
     border: 2px solid rgba(0, 0, 0, 0.2);
-
-    /* Bentuk bulat */
     border-radius: 50%;
-
-    /* Efek shadow agar kontras */
     box-shadow: 0 0 4px rgba(0,0,0,0.3);
-
-    /* PENTING: Agar klik tembus ke model 3D di belakangnya */
     pointer-events: none;
-    z-index: 30; /* Di atas model, di bawah loading screen */
+    z-index: 30;
 }
 
-/* ... sisa style lainnya (controls-overlay, loading, dll) tetap sama ... */
-/* ... CSS sebelumnya ... */
+/* =========================================
+   6. TOMBOL SIMPAN FLOATING (POJOK KANAN BAWAH)
+   ========================================= */
+.btn-save-floating {
+    /* Posisi Absolut relatif terhadap viewer-container */
+    position: absolute;
+    bottom: 30px;  /* Jarak dari bawah */
+    right: 30px;   /* Jarak dari kanan */
 
-/* --- FORMULIR DALAM SIDEBAR --- */
-.analysis-form {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px dashed #bbf7d0; /* Garis pemisah putus-putus */
-}
+    /* Agar tombol muncul di atas canvas 3D */
+    z-index: 90;
 
-.form-label {
-    display: block;
-    font-size: 0.8rem;
+    /* Styling Tampilan */
+    background-color: #166534; /* Hijau gelap */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50px; /* Bentuk Pill/Lonjong */
+    font-family: sans-serif;
     font-weight: 600;
-    color: #166534;
-    margin-bottom: 5px;
+    font-size: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* Bayangan */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.form-input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #bbf7d0;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    background-color: #ffffff;
-    color: #1f2937;
-    outline: none;
-    transition: border-color 0.2s;
+/* Efek saat mouse diarahkan (Hover) */
+.btn-save-floating:hover {
+    background-color: #14532d;
+    transform: translateY(-4px); /* Tombol naik sedikit */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
 
-.form-input:focus {
-    border-color: #166534;
-    box-shadow: 0 0 0 2px rgba(22, 101, 52, 0.1);
+/* Efek saat diklik */
+.btn-save-floating:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-.btn-save {
-    width: 100%;
-    padding: 8px;
+/* Responsif di layar HP */
+@media (max-width: 768px) {
+    .btn-save-floating {
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+}
+
+/* =========================================
+   6. TOMBOL SIMPAN FLOATING (POJOK KANAN BAWAH)
+   ========================================= */
+.btn-save-floating {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;   /* Posisi Awal */
+    z-index: 90;
+
     background-color: #166534;
     color: white;
     border: none;
-    border-radius: 6px;
-    font-size: 0.85rem;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-family: sans-serif;
     font-weight: 600;
+    font-size: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     cursor: pointer;
-    transition: background 0.2s;
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 5px;
+    gap: 10px;
+
+    /* PENTING: Transisi agar gesernya halus */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-save:hover {
+.btn-save-floating:hover {
     background-color: #14532d;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
 
-.btn-save:active {
-    transform: scale(0.98);
+.btn-save-floating:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* --- LOGIKA PERGESERAN (BARU) --- */
+/* Jika container punya class .panel-open, geser tombol ke kiri */
+#viewer-container.panel-open .btn-save-floating {
+    right: 350px; /* 320px (Lebar Sidebar) + 30px (Margin Awal) */
+}
+
+/* Responsif HP: Geser full ke atas atau tetap (opsional) */
+@media (max-width: 768px) {
+    .btn-save-floating {
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+    /* Di HP sidebar biasanya full screen, tombol mungkin perlu disembunyikan atau digeser beda */
+    #viewer-container.panel-open .btn-save-floating {
+        right: 20px; /* Di HP mungkin tertutup sidebar, atau biarkan default */
+        z-index: 40; /* Sembunyikan di bawah sidebar */
+    }
 }
