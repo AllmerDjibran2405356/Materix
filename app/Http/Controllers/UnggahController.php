@@ -98,15 +98,12 @@ class UnggahController extends Controller
                     $idSatuan = 8;
                 }
 
-                $idRule = 1;
-
                 KomponenDesain::create([
                     'ID_Desain_Rumah' => $desain->ID_Desain_Rumah,
                     'Nama_Komponen'   => $item['nama'] ?? 'Tanpa Nama',
                     'Ifc_Guid'        => $item['guid'],
                     'Label_Cad'       => $item['label_cad'],
                     'ID_Satuan_Ukur'  => $idSatuan,
-                    'ID_Rule'         => $idRule,
                     'Panjang'         => $qty['panjang'] ?? 0,
                     'Lebar'           => $qty['tebal'] ?? 0,
                     'Tinggi'          => $qty['tinggi'] ?? 0

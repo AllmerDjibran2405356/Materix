@@ -18,7 +18,6 @@ class KomponenDesain extends Model
         'Ifc_Guid',
         'Label_Cad',
         'ID_Satuan_Ukur',
-        'ID_Rule',
         'Panjang',
         'Lebar',
         'Tinggi'
