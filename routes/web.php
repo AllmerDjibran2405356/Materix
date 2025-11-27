@@ -90,4 +90,10 @@ Route::get('/viewer/{id}', [HasilAnalisisController::class, 'view'])->name('view
 //Data Proyek
 Route::get('/DataProyek', [DataProyekController::class, 'index'])->name('kalkulasi.bahan');
 
+Route::get('/api/get-jobs', [HasilAnalisisController::class, 'getJobs'])->name('api.get_jobs');
+Route::post('/api/save-job', [HasilAnalisisController::class, 'saveJob'])->name('api.save_job');
+Route::post('/api/remove-job', [HasilAnalisisController::class, 'removeJob'])->name('api.remove_job');
+
+// Route View & Search yang sudah ada
+Route::get('/hasil-analisis/{id}', [HasilAnalisisController::class, 'view'])->name('hasil.analisis'); // Sesuaikan nama route view anda
 Route::get('/api/cari-komponen', [HasilAnalisisController::class, 'cariKomponen'])->name('api.cari_komponen');

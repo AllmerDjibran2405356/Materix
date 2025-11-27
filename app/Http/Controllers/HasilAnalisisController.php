@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\DesainRumah;
 use App\Models\KomponenDesain;
+use App\Models\ListPekerjaan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,9 +14,11 @@ class HasilAnalisisController extends Controller
     public function view($id)
     {
         $desain = DesainRumah::where('ID_Desain_Rumah', $id)->firstOrFail();
+        $works = ListPekerjaan::all();
 
-        // 1. Ambil Data JSON (Hasil Analisis Python)
-        // Pastikan path ini benar di server/local Anda
+        // 1. Ambil Data JSON
+        // Gunakan path yang dinamis agar aman saat deploy
+        // Jika di windows local:
         $jsonPath = "C:\\Materix_Engine\\ai_engine_materix\\engine_bim_and_ifc\\data\\processed\\{$desain->Nama_Desain}_ifc_data.json";
 
         $data = [];
@@ -24,7 +27,7 @@ class HasilAnalisisController extends Controller
             $data = json_decode($jsonContent, true);
         }
 
-        // 2. Ambil File IFC (Model 3D)
+        // 2. Ambil File IFC
         $filename = $desain->Nama_Desain . '.ifc';
         $publicPath = public_path('uploads/ifc/' . $filename);
 
@@ -33,53 +36,30 @@ class HasilAnalisisController extends Controller
             $ifcUrl = asset('uploads/ifc/' . $filename);
         }
 
-        // Kirim $data (JSON) dan $ifcUrl ke View
-        return view('Page.HasilAnalisis', compact('desain', 'data', 'ifcUrl'));
+        return view('Page.HasilAnalisis', compact('desain', 'data', 'ifcUrl', 'works'));
     }
 
-    // Di HasilAnalisisController.php
     public function cariKomponen(Request $request)
     {
         try {
-            // 1. Ambil Parameter
             $desainId = $request->query('desain_id');
             $nama     = $request->query('nama');
             $labelCad = $request->query('label_cad');
             $guid     = $request->query('guid');
 
-            // Validasi: Pastikan semua data dikirim oleh Frontend
-            // Karena ini Strict AND, jika salah satu kosong, query kemungkinan besar gagal/tidak valid
-            if (!$desainId) {
+            if (!$desainId || !$nama || !$labelCad || !$guid) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'parameter desainid kosong'
-                ]);
-            }else if (!$nama) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'paremeter nama kosong'
-                ]);
-            }else if (!$labelCad) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'parameter labelcad kosong'
-                ]);
-            }else if (!$guid) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'parameter guid kosong'
+                    'message' => 'Parameter tidak lengkap'
                 ]);
             }
 
-            // 2. Query STRICT AND
-            // Semua ->where() dirangkai, artinya semua syarat WAJIB terpenuhi.
             $komponen = KomponenDesain::where('ID_Desain_Rumah', $desainId)
                         ->where('Nama_Komponen', $nama)
                         ->where('Label_Cad', $labelCad)
                         ->where('Ifc_Guid', $guid)
                         ->first();
 
-            // 3. Return Hasil
             if ($komponen) {
                 return response()->json([
                     'status'      => 'found',
@@ -89,12 +69,80 @@ class HasilAnalisisController extends Controller
             } else {
                 return response()->json([
                     'status'  => 'not_found',
-                    'message' => 'Data tidak ditemukan (Cek kesesuaian Nama/Label/GUID)'
+                    'message' => 'Data tidak ditemukan'
                 ]);
             }
 
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
+    }
+
+    // ==========================================
+    // LOGIKA BARU: SESSION MANAGEMENT PEKERJAAN
+    // ==========================================
+
+    public function getJobs(Request $request)
+    {
+        $guid = $request->query('guid');
+        // Ambil data dari session berdasarkan GUID objek
+        $savedJobs = session()->get('pekerjaan_terpilih.' . $guid, []);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $savedJobs
+        ]);
+    }
+
+    public function saveJob(Request $request)
+    {
+        $guid = $request->input('guid');
+        $job = $request->input('job'); // Array: {Nama_Pekerjaan: "..."}
+
+        $sessionKey = 'pekerjaan_terpilih.' . $guid;
+        $currentJobs = session()->get($sessionKey, []);
+
+        // Cek Duplikasi
+        $exists = false;
+        foreach ($currentJobs as $existingJob) {
+            if ($existingJob['Nama_Pekerjaan'] === $job['Nama_Pekerjaan']) {
+                $exists = true;
+                break;
+            }
+        }
+
+        if (!$exists) {
+            $currentJobs[] = $job;
+            session()->put($sessionKey, $currentJobs);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $currentJobs
+        ]);
+    }
+
+    public function removeJob(Request $request)
+    {
+        $guid = $request->input('guid');
+        $jobName = $request->input('job_name');
+        $sessionKey = 'pekerjaan_terpilih.' . $guid;
+
+        $currentJobs = session()->get($sessionKey, []);
+
+        // Hapus item array berdasarkan nama
+        $updatedJobs = array_filter($currentJobs, function($job) use ($jobName) {
+            return $job['Nama_Pekerjaan'] !== $jobName;
+        });
+
+        // Re-index array agar urut (0, 1, 2...)
+        $updatedJobs = array_values($updatedJobs);
+
+        session()->put($sessionKey, $updatedJobs);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $updatedJobs
+        ]);
     }
 }
