@@ -1,13 +1,8 @@
-/* =========================================
-Hide original file input
-========================================= */
+/* Hide original file input */
 #fileInput {
     display: none !important;
 }
 
-/* ================================
-Halaman Wrapper + Background
-================================ */
 .unggah-page-wrapper {
     background: url("../images/materix-background.png") center top no-repeat;
     background-size: contain;
@@ -17,9 +12,6 @@ Halaman Wrapper + Background
     padding-bottom: 120px;
 }
 
-/* ================================
-Logo
-================================ */
 .unggah-logo-wrapper {
     text-align: center;
     margin-bottom: 10px;
@@ -31,9 +23,6 @@ Logo
     opacity: 0.8;
 }
 
-/* ================================
-Title
-================================ */
 .unggah-title {
     text-align: center;
     font-size: 42px;
@@ -42,57 +31,104 @@ Title
     margin-bottom: 40px;
 }
 
-/* ================================
-Container Unggah
-================================ */
 .unggah-container {
     display: flex;
     justify-content: center;
 }
 
-/* ================================
-Drop Zone (Mirip gambar)
-================================ */
 #drop-zone {
-    width: 100%;
-    min-height: 200px; /* dari Blade style sebelumnya */
-    background: #007bff;
-    border-radius: 10px;
-    border: 2px dashed rgba(255, 255, 255, 0.6);
+    width: 800px;
+    height: 420px;
+    background: #002060;
+    border-radius: 22px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #ffffff;
+    flex-direction: column;
     cursor: pointer;
     text-align: center;
-    padding: 20px; /* dari Blade style sebelumnya */
-    transition: 0.3s;
+    padding: 40px;
+    position: relative;
+    box-shadow: 0px 12px 40px rgba(0,0,0,0.18);
 }
 
-#drop-zone:hover {
-    background: #0066d4;
+#drop-zone::before {
+    content:"";
+    position:absolute;
+    inset:30px;
+    border:4px dashed #ffffff;
+    border-radius:16px;
+    pointer-events:none;
 }
 
-/* Text inside drop zone */
-#drop-zone h4,
+#drop-zone button,
+#drop-zone label {
+    background:#ff6a00;
+    color:white;
+    font-size:25px;
+    font-weight:600;
+    padding:13px 37px;
+    border-radius:25px;
+    border:none;
+    margin-top: 25px;
+    cursor:pointer;
+    transition:.25s;
+}
+
+#drop-zone button:hover,
+#drop-zone label:hover {
+    transform:translateY(-3px);
+    box-shadow:0px 10px 24px rgba(255,100,0,0.45);
+}
+
+.unggah-h4 {
+    font-size:28px;
+    font-weight:700;
+    line-height:1.35;
+    text-align:center;
+    margin-bottom: 37px;
+}
+
+.orange { color:#ff6a00; font-weight:700; }
+.white  { color:white;  font-weight:700; }
+.unggah-h4 span { display:inline-block; }
+
 #drop-zone p {
-    margin: 0; /* dari Blade style sebelumnya */
+    font-size:15px;
+    margin-top:10px;
+    color:rgb(216, 209, 209);
 }
 
-.drop-sub-text {
-    opacity: 0.8;
-    margin-top: -5px;
+.hapus-wrapper {
+    text-align:center;
+    margin-top:25px;
 }
 
-/* Buttons inside dropzone */
-#drop-zone button {
-    margin-top: 8px;
+.hapus-btn {
+    background:#ff3b3b;
+    color:white;
+    font-weight:600;
+    font-size:18px;
+    padding:14px 35px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    transition:.25s;
 }
 
-/* Button hover animation */
-#drop-zone button:hover {
-    opacity: 0.9;
+.hapus-btn:hover {
+    transform:translateY(-3px);
+    box-shadow:0px 10px 24px rgba(255,0,0,0.35);
+}
+
+/* Responsive */
+@media (max-width: 768px){
+    #drop-zone {
+        width:95%;
+        height:auto;
+        padding:30px;
+    }
+    #drop-zone::before { inset:20px; }
 }
 
 /* Alert spacing consistency */
@@ -100,12 +136,3 @@ Drop Zone (Mirip gambar)
     margin-bottom: 20px;
 }
 
-/* =========================================
-Responsive Behavior
-========================================= */
-@media (max-width: 576px) {
-    #drop-zone {
-        height: 180px;
-        font-size: 14px;
-    }
-}

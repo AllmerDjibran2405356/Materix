@@ -65,6 +65,9 @@ Route::prefix('api')->group(function () {
     Route::get('/bahan-list', [MaterialController::class, 'getBahanList'])->name('api.bahan-list');
     Route::get('/komponen-list', [MaterialController::class, 'getKomponenList'])->name('api.komponen-list');
     Route::get('/supplier-list', [MaterialController::class, 'getSupplierList'])->name('api.supplier-list');
+    Route::post('/bahan/store', [MaterialController::class, 'storeBahan'])->name('api.bahan-store');
+    Route::post('/supplier/store', [MaterialController::class, 'storeSupplier'])->name('api.supplier-store');
+    
 });
 
 // Rute Unggah File

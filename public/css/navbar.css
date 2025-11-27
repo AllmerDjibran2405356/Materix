@@ -8,17 +8,14 @@
 /* Logo dan Teks Gabungan - PERBAIKAN */
 .navbar-brand {
     display: flex;
-    align-items: center; /* TETAP PAKAI CENTER */
+    align-items: center; 
     font-family: 'Poppins', sans-serif;
     font-weight: 700 !important;
     font-size: 1.8rem !important;
     color: white !important;
     text-decoration: none;
     transition: all 0.3s ease;
-    
-    /* Kurangi jarak agar lebih menempel seperti di Figma */
     gap: 1px; 
-    
     height: 40px; 
 }
 
@@ -49,7 +46,6 @@
     font-size: 1.6rem;
     display: block;
     margin-top: 4px; 
-    /* HAPUS 'align-self: center;' karena sudah diatur di parent */
 }
 
 .navbar-brand:hover .logo-text {

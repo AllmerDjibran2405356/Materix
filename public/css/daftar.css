@@ -10,11 +10,10 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
-/* ▲▲▲ PERBAIKI: GUNAKAN register-container SESUAI HTML ▲▲▲ */
 .register-container {
     display: flex;
-    min-height: 100vh; /* ▲▲▲ KEMBALIKAN KE min-height ▲▲▲ */
-    padding: 20px; /* ▲▲▲ TAMBAH PADDING ▲▲▲ */
+    min-height: 100vh; 
+    padding: 20px; 
     box-sizing: border-box;
     align-items: center; 
     justify-content: center;
@@ -33,7 +32,7 @@ body {
 .form-section {
     flex-basis: 50%;
     background-color: #0A2568; 
-    padding: 40px; /* ▲▲▲ TAMBAH PADDING ▲▲▲ */
+    padding: 40px; 
     display: flex;
     flex-direction: column;
     color: white;
@@ -49,7 +48,7 @@ body {
 .image-section {
     flex-basis: 50%;
     overflow: hidden; 
-    padding: 40px; /* ▲▲▲ TAMBAH PADDING ▲▲▲ */
+    padding: 40px; 
     display: flex; 
     align-items: center; 
     justify-content: center;
@@ -57,7 +56,7 @@ body {
 }
 
 h2 {
-    font-size: 2.5rem; /* ▲▲▲ KEMBALIKAN KE NORMAL ▲▲▲ */
+    font-size: 2.5rem; 
     font-weight: bold;
     margin-bottom: 30px; 
     font-family: 'Alte Haas Grotesk', sans-serif; 
@@ -65,24 +64,24 @@ h2 {
 
 .form-row {
     display: flex;
-    gap: 20px; /* ▲▲▲ KEMBALIKAN KE NORMAL ▲▲▲ */
-    margin-bottom: 20px; /* ▲▲▲ KEMBALIKAN KE NORMAL ▲▲▲ */
+    gap: 20px; 
+    margin-bottom: 20px; 
 }
 
 .form-group {
-    margin-bottom: 20px; /* ▲▲▲ KEMBALIKAN KE NORMAL ▲▲▲ */
+    margin-bottom: 20px; 
 }
 
 .btn-buat-akun {
     background-color: white;
     color: #0b1c3d;
     font-weight: bold;
-    padding: 12px 0; /* ▲▲▲ TAMBAH PADDING ▲▲▲ */
+    padding: 12px 0; 
     border: none;
     border-radius: 5px;
     width: 100%;
-    margin-top: 30px; /* ▲▲▲ KEMBALIKAN KE NORMAL ▲▲▲ */
-    margin-bottom: 20px; /* ▲▲▲ KEMBALIKAN KE NORMAL ▲▲▲ */
+    margin-top: 30px; 
+    margin-bottom: 20px; 
     cursor: pointer;
     transition: background-color 0.3s;
     font-family: 'Poppins', sans-serif;
@@ -91,14 +90,14 @@ h2 {
 .login-prompt {
     display: flex;
     justify-content: center;
-    margin-top: 20px; /* ▲▲▲ KEMBALIKAN KE NORMAL ▲▲▲ */
+    margin-top: 20px; 
 }
 
 
 /* Sisanya tetap sama... */
 .form-group label {
     font-weight: 600;
-    margin-bottom: 8px; /* ▲▲▲ TAMBAH SEDIKIT ▲▲▲ */
+    margin-bottom: 8px; 
     color: #ddd;
 }
 
@@ -107,7 +106,7 @@ h2 {
     color: white;
     border: 1px solid #1a3461;
     border-radius: 5px;
-    padding: 10px 15px; /* ▲▲▲ TAMBAH PADDING ▲▲▲ */
+    padding: 10px 15px; 
     width: 100%;
     box-sizing: border-box;
     transition: border-color 0.3s;
@@ -162,7 +161,7 @@ h2 {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 8px; /* ▲▲▲ KEMBALIKAN KE NORMAL ▲▲▲ */
+    border-radius: 8px; 
 }
 
 .carousel {

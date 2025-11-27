@@ -262,11 +262,57 @@ function hapusMaterial(id) {
 }
 
 function simpanBahan() {
-    alert('Fitur tambah bahan akan segera tersedia');
+    const formData = new FormData(document.getElementById('formTambahBahan'));
+    
+    fetch('/api/bahan/store', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Bahan berhasil ditambahkan');
+            $('#tambahBahanModal').modal('hide');
+            document.getElementById('formTambahBahan').reset();
+            loadDropdownData(); // Reload dropdown bahan
+        } else {
+            alert('Gagal menambahkan bahan: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error menambahkan bahan');
+    });
 }
 
 function simpanSupplier() {
-    alert('Fitur tambah supplier akan segera tersedia');
+    const formData = new FormData(document.getElementById('formTambahSupplier'));
+    
+    fetch('/api/supplier/store', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Supplier berhasil ditambahkan');
+            $('#tambahSupplierModal').modal('hide');
+            document.getElementById('formTambahSupplier').reset();
+            loadDropdownData(); // Reload dropdown supplier
+        } else {
+            alert('Gagal menambahkan supplier: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error menambahkan supplier');
+    });
 }
 
 // Initialize event listeners ketika DOM ready

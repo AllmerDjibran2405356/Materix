@@ -116,4 +116,36 @@ class MaterialController extends Controller
         $supplier = Supplier::all();
         return response()->json($supplier);
     }
+
+     public function storeBahan(Request $request) {
+        $request->validate([
+            'nama_bahan' => 'required|string|max:255',
+            'kategori_id' => 'required|exists:list_kategori_bahan,ID_Kelompok_Bahan',
+            'satuan_id' => 'required|exists:list_satuan_ukur,ID_Satuan'
+        ]);
+
+        Bahan::create([
+            'Nama_Bahan' => $request->nama_bahan,
+            'ID_Kelompok_Bahan' => $request->kategori_id,
+            'ID_Satuan' => $request->satuan_id
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Bahan berhasil ditambahkan']);
+    }
+
+    public function storeSupplier(Request $request) {
+        $request->validate([
+            'nama_supplier' => 'required|string|max:255',
+            'alamat_supplier' => 'nullable|string',
+            'kontak_supplier' => 'nullable|string'
+        ]);
+
+        Supplier::create([
+            'Nama_Supplier' => $request->nama_supplier,
+            'Alamat_Supplier' => $request->alamat_supplier,
+            'Kontak_Supplier' => $request->kontak_supplier
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Supplier berhasil ditambahkan']);
+    }
 }

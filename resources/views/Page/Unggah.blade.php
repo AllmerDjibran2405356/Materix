@@ -7,8 +7,7 @@
 
 @section('content')
 
-<div class="container mt-5 pt-4">
-
+<div class="unggah-page-wrapper">
     {{-- Notifikasi sukses --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -25,7 +24,17 @@
         </div>
     @endif
 
-    {{-- FORM UTAMA (UPLOAD / ANALYZE) --}}
+    <!-- LOGO -->
+    <div class="unggah-logo-wrapper">
+        <img src="{{ asset('images/materixlogos.png') }}" alt="materix logo">
+    </div>
+
+    <!-- TITLE -->
+    <h1 class="unggah-title">Unggah desain anda.</h1>
+
+    <div class="unggah-container">
+
+    <!-- FORM -->
     <form id="uploadForm"
           action="{{ session('uploaded_file') ? route('Unggah.analyze') : route('Unggah.upload') }}"
           method="POST" enctype="multipart/form-data">
@@ -34,8 +43,10 @@
         <div id="drop-zone">
 
             @if(!session('uploaded_file'))
-                <h4 class="fw-bold">Upload File Desain IFC</h4>
-                <p>Klik tombol atau seret file ke sini</p>
+                <h4 class="unggah-h4">
+                    <span class="orange">Tarik dan letakkan gambar atau </span>
+                    <span class="white"> telusuri berkas untuk mengunggah.</span>
+                </h4>
 
                 {{-- 1. Input File (Hidden) --}}
                 <input type="file"
@@ -47,11 +58,14 @@
                 {{-- 2. Label sebagai Tombol (SOLUSI PERMANEN) --}}
                 {{-- Menggunakan 'label for' akan otomatis memicu input tanpa JS --}}
                 <label for="fileInput" class="btn btn-light mt-3" style="cursor: pointer;">
-                    Pilih File
+                    Unggah berkas.
                 </label>
+                <p class="drop-sub-text">Upload berkas desain IFC anda.</p>
 
             @else
-                <h4 class="fw-bold">File Siap untuk Analisis</h4>
+                <h4 class="unggah-h4">
+                    <span class="white"> Berkas siap untuk di Analisis.</span>
+                </h4>
                 <p class="mb-1">{{ session('uploaded_file') }}</p>
 
                 <button type="submit" class="btn btn-success mt-3">
@@ -61,29 +75,25 @@
         </div>
     </form>
 
-    {{-- FORM REMOVE DIPISAH --}}
-    @if(session('uploaded_file'))
+</div>
+{{-- FORM REMOVE DIPISAH --}}
+@if(session('uploaded_file'))
+<div class="hapus-wrapper">
     <form action="{{ route('Unggah.remove') }}" method="POST" class="d-inline">
         @csrf
-        <button type="submit" class="btn btn-danger mt-3 ms-2">
+        <button type="submit" class="hapus-btn">
             Hapus File
         </button>
     </form>
-    @endif
-
 </div>
+@endif
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('fileInput');
 
-    // Kita TIDAK LAGI butuh listener click untuk tombol trigger
-    // Karena <label> sudah menangani klik secara native.
-
     if(fileInput) {
         fileInput.addEventListener('change', function(e) {
-            // Cek apakah user benar-benar memilih file (length > 0)
-            // Jika user tekan Cancel, files.length akan 0 dan form tidak akan di-submit
             if(this.files && this.files.length > 0) {
                 document.getElementById('uploadForm').submit();
             }

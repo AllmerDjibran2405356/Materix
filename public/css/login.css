@@ -13,9 +13,10 @@ body {
 
 /*  MAIN WHITE CONTAINER  */
 .main-container {
-    width: 1800px;
-    min-height: 100vh; 
+    max-width: 1200px;
+    width: 95%; 
     background-color: #ffffff;
+    border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -26,15 +27,16 @@ body {
 /*   FRAME DALAM (2 BAGIAN)   */
 .c_login-frame {
     display: flex;
-    gap: 30px;
+    gap: 20px;
     align-items: center;
     justify-content: center;
+    padding: 30px;
 }
 
 /*   LEFT IMAGE CONTAINER   */
 .c_login-left {
-    width: 835px;
-    height: 900px;
+    width: 550px;
+    height: 670px;
     background: url("../images/materix.jpg") center center / cover no-repeat;    
     border-radius: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -42,8 +44,8 @@ body {
 
 /*   RIGHT FORM CONTAINER   */
 .c_login-right {
-    width: 835px;
-    height: 900px;
+    width: 550px;
+    height: 670px;
     background-color: #FF5E16;
     border-radius: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -56,7 +58,7 @@ body {
 }
 
 .c_login-right h1 {
-    font-size: 70px;
+    font-size: 67px;
     font-weight: 700;
     margin-bottom: 90px;
     text-align: center;
