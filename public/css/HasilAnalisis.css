@@ -1,14 +1,238 @@
+/* --- 1. Viewer Container (Full Screen di bawah Navbar) --- */
 #viewer-container {
-    position: relative;
-    width: 100%;
-    height: 80vh; /* Tinggi wajib ada */
-    background-color: #f0f0f0; /* Abu-abu muda saat loading */
+    position: fixed;
+    top: 64px; /* SESUAIKAN dengan tinggi Navbar web Anda */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: auto;
+    background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
     overflow: hidden;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 1;
 }
 
-h3 {
-    margin-bottom: 20px;
-    color: #333;
+/* --- 2. Overlay Controls (Pojok Kiri Bawah - Transparan) --- */
+.controls-overlay {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 20;
+
+    /* Styling Transparan (Glassmorphism) */
+    background: rgba(0, 0, 0, 0.6); /* Hitam transparan */
+    backdrop-filter: blur(4px);      /* Efek blur di belakangnya */
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+    font-family: sans-serif;
+    pointer-events: none; /* Agar klik tembus ke model, kecuali pas di text */
+    user-select: none;
+    min-width: 200px;
+}
+
+.controls-overlay h5 {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #fbbf24; /* Warna emas/kuning agar kontras */
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 5px;
+}
+
+.control-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+    color: #e5e7eb;
+}
+
+.control-icon {
+    width: 24px;
+    text-align: center;
+    margin-right: 10px;
+    font-size: 1rem;
+}
+
+/* --- 3. Overlay Title (Pojok Kiri Atas) --- */
+.title-overlay {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 20;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    pointer-events: none;
+}
+.title-overlay h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1f2937;
+    font-weight: 700;
+}
+
+/* --- 4. Loading Screen --- */
+#loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: opacity 0.5s ease;
+}
+
+.loader-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e5e7eb;
+    border-top: 4px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* --- 5. Sidebar Properti (Kanan - Slide in) --- */
+#properties-panel {
+    position: absolute;
+    top: 0;
+    right: -350px;
+    width: 320px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid rgba(0,0,0,0.05);
+}
+
+#properties-panel.active { right: 0; }
+
+.prop-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+}
+.prop-header h4 { margin: 0; font-size: 1rem; color: #1f2937; }
+.close-btn {
+    background: none; border: none; font-size: 1.5rem; color: #9ca3af; cursor: pointer;
+}
+.close-btn:hover { color: #ef4444; }
+.prop-content { padding: 20px; overflow-y: auto; flex: 1; }
+
+/* Table & Box Analysis Styles */
+.prop-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 20px; }
+.prop-table th, .prop-table td { padding: 8px 0; border-bottom: 1px solid #f3f4f6; text-align: left; }
+.prop-table th { color: #6b7280; width: 40%; }
+.analysis-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+.analysis-title { color: #166534; font-weight: 700; margin-bottom: 10px; border-bottom: 1px solid #bbf7d0; padding-bottom: 8px; }
+/* ... CSS yang sebelumnya ... */
+
+/* --- Container Utama Viewer --- */
+#viewer-container {
+    /* Pastikan cursor defaultnya crosshair atau default */
+    cursor: default;
+    /* ... sisa style viewer-container tetap sama ... */
+}
+
+/* --- TITIK PIVOT / CROSSHAIR (BARU) --- */
+#pivot-crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Menggeser -50% agar benar-benar di titik tengah center */
+    transform: translate(-50%, -50%);
+
+    /* Ukuran titik */
+    width: 10px;
+    height: 10px;
+
+    /* Warna: Putih semi-transparan dengan border halus agar terlihat di background gelap/terang */
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 2px solid rgba(0, 0, 0, 0.2);
+
+    /* Bentuk bulat */
+    border-radius: 50%;
+
+    /* Efek shadow agar kontras */
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+
+    /* PENTING: Agar klik tembus ke model 3D di belakangnya */
+    pointer-events: none;
+    z-index: 30; /* Di atas model, di bawah loading screen */
+}
+
+/* ... sisa style lainnya (controls-overlay, loading, dll) tetap sama ... */
+/* ... CSS sebelumnya ... */
+
+/* --- FORMULIR DALAM SIDEBAR --- */
+.analysis-form {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #bbf7d0; /* Garis pemisah putus-putus */
+}
+
+.form-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #166534;
+    margin-bottom: 5px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #bbf7d0;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    background-color: #ffffff;
+    color: #1f2937;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus {
+    border-color: #166534;
+    box-shadow: 0 0 0 2px rgba(22, 101, 52, 0.1);
+}
+
+.btn-save {
+    width: 100%;
+    padding: 8px;
+    background-color: #166534;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-save:hover {
+    background-color: #14532d;
+}
+
+.btn-save:active {
+    transform: scale(0.98);
 }

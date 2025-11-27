@@ -11,12 +11,15 @@ class KomponenDesain extends Model
 
     protected $table = 'list_komponen_desain';
     protected $primaryKey = 'ID_Komponen';
-    
+
     protected $fillable = [
         'ID_Desain_Rumah',
         'Nama_Komponen',
-        'Ukuran_Komponen',
-        'ID_Satuan_Ukur'
+        'ID_Satuan_Ukur',
+        'ID_Rule',
+        'Panjang',
+        'Lebar',
+        'Tinggi'
     ];
 
     public function materials() {
