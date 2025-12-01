@@ -24,11 +24,4 @@ class DaftarProyekController extends Controller
 
         return view('Page.DaftarProyek', compact('user', 'projects', 'message'));
     }
-
-    public function show($id)
-    {
-        $projects = DesainRumah::findOrFail($id);
-
-        return view('Kalkulasi.show', compact('projects'));
-    }
 }
