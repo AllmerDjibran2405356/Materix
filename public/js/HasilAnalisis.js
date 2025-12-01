@@ -194,6 +194,7 @@ async function main() {
 
         async function displayProperties(model, expressID) {
             try {
+                // ... (Kode sebelumnya: ambil props, guid, name, type) ...
                 const props = await model.getProperties(expressID);
                 if (!props) { propContent.innerHTML = "<p>No Data.</p>"; return; }
 
@@ -207,21 +208,26 @@ async function main() {
 
                 renderHTML(name, type, displayGuid, analysisItem, dbId);
 
+                // --- PERBAIKAN DI SINI ---
                 if (ifcGuid) {
-                    fetch(`${window.API_GET_JOBS}?guid=${ifcGuid}`)
+                    // Kita kirim desain_id agar server mengambil data DB yang benar
+                    const url = `${window.API_GET_JOBS}?guid=${ifcGuid}&desain_id=${window.ID_DESAIN}`;
+
+                    fetch(url)
                         .then(r => r.json())
                         .then(res => {
                             const data = (res.status === 'success') ? res.data : [];
                             renderSelectedJobsList(data, ifcGuid);
                         })
                         .catch(err => {
-                            console.error("Gagal load session jobs", err);
                             renderSelectedJobsList([], ifcGuid);
                         });
                 } else {
                     renderSelectedJobsList([], null);
                 }
+                // -------------------------
 
+                // ... (Sisa kode fetch status DB & renderHTML tetap sama) ...
                 if (window.ID_DESAIN && analysisItem) {
                     const params = new URLSearchParams({ nama: name, desain_id: window.ID_DESAIN, label_cad: analysisItem.label_cad, guid: analysisItem.guid });
                     fetch(`${window.API_SEARCH_URL}?${params}`)
@@ -240,10 +246,7 @@ async function main() {
                     if(el) el.innerHTML = '<span style="color:grey;">-</span>';
                 }
 
-            } catch (e) {
-                console.error(e);
-                propContent.innerHTML = `<div style="padding:20px; color:red;">Error: ${e.message}</div>`;
-            }
+            } catch (e) { console.error(e); }
         }
 
         function renderHTML(name, type, guid, analysisItem, dbId) {

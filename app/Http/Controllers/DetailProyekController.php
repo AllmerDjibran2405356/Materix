@@ -18,4 +18,3 @@ class DetailProyekController extends Controller
 
 }
 
-    

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DaftarProyekController;
 use App\Http\Controllers\DataBahanDanProdusenController;
 use App\Http\Controllers\DataProyekController;
 use App\Http\Controllers\LandingController;
@@ -36,10 +37,13 @@ Route::middleware('auth')->group(function () {
     // --- Rute Home Page ---
     Route::get('/HomePage', [HomeController::class, 'index'])->name('HomePage');
     Route::get('/kalkulasi/{id}', [KalkulasiController::class, 'index'])->name('Kalkulasi.show');
+    Route::get('/daftarProyek', [DaftarProyekController::class, 'index'])->name('DaftarProyek.index');
 });
 
+Route::get('/daftarProyek/{id}', [DaftarProyekController::class, 'show'])->name('DaftarProyek.show');
+
 // Rute Kalkulator
-Route::get('/kalkulator', [KalkulasiController::class, 'index'])->name('Kalkulasi.index');
+Route::get('/Kalkulasi', [KalkulasiController::class, 'index'])->name('Kalkulasi.index');
 
 // --- Rute Harga Bahan ---
 Route::get('/harga-bahan', [HargaBahanController::class, 'index'])->name('Bahan.index');

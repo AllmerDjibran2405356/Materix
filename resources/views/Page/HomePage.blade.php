@@ -31,7 +31,7 @@
 
             <div class="fitur-box">
                 <img src="../images/icon-kalkulasi.png" alt="icon" class="fitur-icon">
-                <a href="{{ route('Kalkulasi.index') }}" class="fitur-btn">
+                <a href="{{ route('DaftarProyek.index') }}" class="fitur-btn">
                     Kalkulasi Material
                 </a>
             </div>
@@ -63,7 +63,7 @@
             <div class="list-group shadow-sm">
                 @foreach ($projects as $project)
                     <a href="{{ route('Kalkulasi.show', $project->ID_Desain_Rumah) }}"
-                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-1 fw-bold text-primary">{{ $project->Nama_desain ?? 'Tanpa Judul' }}</h5>
                             <p class="mb-1 text-muted">
