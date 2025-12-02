@@ -10,7 +10,7 @@
 
 @if(empty($ifcUrl))
     <div class="container mt-5">
-        <div class="alert alert-danger">Error: File IFC tidak ditemukan.</div>
+        <div class="alert alert-danger">Error: File IFC tidak ditemukan di server.</div>
     </div>
 @else
     <div id="viewer-container">
@@ -34,10 +34,13 @@
 @endif
 
 <script>
+    // INJECT DATA DARI LARAVEL KE JAVASCRIPT
     window.IFC_URL = "{{ $ifcUrl ?? '' }}";
-    window.ANALYSIS_DATA = @json($data);
+    window.ANALYSIS_DATA = @json($data); // Data JSON dikirim di sini
     window.WORKS_DATA = @json($works);
     window.ID_DESAIN = "{{ $desain->ID_Desain_Rumah }}";
+
+    // ROUTE API
     window.API_SEARCH_URL = "{{ route('api.cari_komponen') }}";
     window.API_GET_JOBS = "{{ route('api.get_jobs') }}";
     window.API_SAVE_JOB = "{{ route('api.save_job') }}";
@@ -54,5 +57,6 @@
         if (typeof window.triggerFinalSave === 'function') window.triggerFinalSave();
     }
 </script>
+
 <script type="module" src="{{ asset('js/HasilAnalisis.js') }}?v={{ time() }}"></script>
 @endsection

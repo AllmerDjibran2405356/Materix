@@ -3,11 +3,12 @@ import * as OBC from 'https://esm.sh/@thatopen/components@2.0.0?deps=three@0.160
 import * as OBCF from 'https://esm.sh/@thatopen/components-front@2.0.0?deps=three@0.160.0,web-ifc@0.0.56,@thatopen/components@2.0.0';
 
 // ==========================================
-// 1. FUNGSI GLOBAL & STATE MANAGEMENT
+// 1. STATE & API HANDLING
 // ==========================================
 
 window.MODIFIED_GUIDS = new Set();
 
+// Toggle Dropdown Daftar Pekerjaan
 window.toggleJobSection = function() {
     const content = document.getElementById('job-section-content');
     const btn = document.getElementById('btn-toggle-job');
@@ -19,11 +20,11 @@ window.toggleJobSection = function() {
     }
 };
 
+// Handle User Memilih Pekerjaan Baru
 window.handleSelectJob = async function(guid, namaPekerjaan) {
     if(!guid || guid === '-') return alert("Silakan pilih objek yang valid.");
 
-    // Tandai sebagai berubah
-    window.MODIFIED_GUIDS.add(guid);
+    window.MODIFIED_GUIDS.add(guid); // Tandai sebagai 'perlu disimpan'
 
     const listContainer = document.getElementById('selected-jobs-list');
     if(listContainer) listContainer.innerHTML = '<div class="loader-spinner" style="width:15px; height:15px; border-width:2px; margin:0 auto;"></div>';
@@ -35,10 +36,8 @@ window.handleSelectJob = async function(guid, namaPekerjaan) {
             body: JSON.stringify({ guid: guid, job: { Nama_Pekerjaan: namaPekerjaan } })
         });
         const result = await response.json();
-
         const data = result.status === 'success' ? result.data : [];
         renderSelectedJobsList(data, guid);
-
     } catch (error) {
         console.error("Save error:", error);
         alert("Gagal menambahkan pekerjaan.");
@@ -46,12 +45,9 @@ window.handleSelectJob = async function(guid, namaPekerjaan) {
     }
 };
 
-// --- PERBAIKAN UTAMA ADA DI SINI ---
+// Handle Hapus Pekerjaan
 window.handleRemoveJob = async function(guid, index) {
-    // ✅ TAMBAHAN PENTING:
-    // Menghapus juga dianggap sebagai "Perubahan", jadi harus dicatat
-    // agar saat Final Save, controller tahu bahwa komponen ini harus diupdate (dikosongkan).
-    window.MODIFIED_GUIDS.add(guid);
+    window.MODIFIED_GUIDS.add(guid); // Menghapus juga dianggap 'perubahan'
 
     try {
         const response = await fetch(window.API_REMOVE_JOB, {
@@ -60,17 +56,15 @@ window.handleRemoveJob = async function(guid, index) {
             body: JSON.stringify({ guid: guid, index: index })
         });
         const result = await response.json();
-
         const data = result.status === 'success' ? result.data : [];
         renderSelectedJobsList(data, guid);
-
     } catch (error) {
         console.error("Delete error:", error);
     }
 };
 
+// Handle Final Save (Tombol Floppy Disk)
 window.triggerFinalSave = async function() {
-    // Pengecekan
     if (window.MODIFIED_GUIDS.size === 0) return alert("Simpan Berhasil (Tidak ada perubahan baru).");
 
     if(!confirm("Konfirmasi simpan perubahan ke database?")) return;
@@ -91,18 +85,19 @@ window.triggerFinalSave = async function() {
         const result = await response.json();
         if(result.status === 'success') {
             alert("Simpan berhasil");
-            window.MODIFIED_GUIDS.clear(); // Reset setelah berhasil
+            window.MODIFIED_GUIDS.clear();
         } else {
-            alert("Simpan gagal");
+            alert("Simpan gagal: " + (result.message || 'Unknown error'));
         }
     } catch (error) {
         console.error("Final Save Error:", error);
-        alert("Simpan gagal");
+        alert("Simpan gagal (Server Error)");
     } finally {
         document.body.style.cursor = 'default';
     }
 };
 
+// Helper Render List Pekerjaan Kecil
 function renderSelectedJobsList(jobs, guid) {
     const container = document.getElementById('selected-jobs-list');
     if (!container) return;
@@ -138,6 +133,7 @@ async function main() {
     const updateStatus = (msg) => { if(loadingText) loadingText.innerText = msg; };
 
     try {
+        // --- Setup Three.js & OBC ---
         updateStatus("Inisialisasi Engine 3D...");
         const components = new OBC.Components();
         const worlds = components.get(OBC.Worlds);
@@ -155,25 +151,32 @@ async function main() {
         dirLight.position.set(20, 50, 20);
         world.scene.three.add(dirLight);
 
+        // Marker Merah (Pivot)
         const pivotMarker = new THREE.Mesh(new THREE.SphereGeometry(0.15), new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.6, transparent: true }));
         pivotMarker.renderOrder = 999;
         world.scene.three.add(pivotMarker);
 
+        // --- Setup IFC Loader ---
         updateStatus("Menyiapkan Loader...");
         const fragmentIfcLoader = components.get(OBC.IfcLoader);
         await fragmentIfcLoader.setup({ wasm: { path: "https://unpkg.com/web-ifc@0.0.56/", absolute: true } });
         fragmentIfcLoader.settings.webIfc.COORDINATE_TO_ORIGIN = true;
+
+        // --- Setup Highlighter ---
         const highlighter = components.get(OBCF.Highlighter);
         highlighter.setup({ world });
         highlighter.zoomToSelection = true;
 
         if (!window.IFC_URL) throw new Error("URL IFC Missing");
+
+        // --- Load Model ---
         updateStatus("Mengunduh Model...");
         const res = await fetch(window.IFC_URL);
         const data = new Uint8Array(await res.arrayBuffer());
         const model = await fragmentIfcLoader.load(data);
         world.scene.three.add(model);
 
+        // --- Event Listener: Klik Objek ---
         highlighter.events.select.onHighlight.add(async (fragmentIdMap) => {
             if(propPanel) propPanel.classList.add('active');
             if(container) container.classList.add('panel-open');
@@ -192,6 +195,7 @@ async function main() {
             }
         });
 
+        // --- Tampilkan Properti ---
         async function displayProperties(model, expressID) {
             try {
                 const props = await model.getProperties(expressID);
@@ -202,11 +206,14 @@ async function main() {
                 const type = props.ObjectType?.value || 'Unknown';
                 const displayGuid = ifcGuid || '-';
 
+                // Cari data di JSON yang dikirim dari Laravel
                 let analysisItem = window.ANALYSIS_DATA?.find(item => item.guid === ifcGuid);
                 let dbId = '<span style="color:orange;">Checking...</span>';
 
+                // Render HTML Universal
                 renderHTML(name, type, displayGuid, analysisItem, dbId);
 
+                // Load Data Session (Pekerjaan yang sedang diedit)
                 if (ifcGuid) {
                     fetch(`${window.API_GET_JOBS}?guid=${ifcGuid}`)
                         .then(r => r.json())
@@ -222,6 +229,7 @@ async function main() {
                     renderSelectedJobsList([], null);
                 }
 
+                // Cek ID Database (Sinkronisasi)
                 if (window.ID_DESAIN && analysisItem) {
                     const params = new URLSearchParams({ nama: name, desain_id: window.ID_DESAIN, label_cad: analysisItem.label_cad, guid: analysisItem.guid });
                     fetch(`${window.API_SEARCH_URL}?${params}`)
@@ -246,19 +254,90 @@ async function main() {
             }
         }
 
+        // --- RENDER HTML DINAMIS (UNIVERSAL) ---
         function renderHTML(name, type, guid, analysisItem, dbId) {
-            let analysisHtml = analysisItem ? `
-                <div class="analysis-box" style="position: relative; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+
+            // Format angka
+            const fmt = (val) => {
+                if (typeof val === 'number') return val.toLocaleString('id-ID', { maximumFractionDigits: 3 });
+                return val || '-';
+            };
+
+            // Format Nama Key (misal: 'berat_jenis' -> 'Berat Jenis')
+            const formatKey = (key) => {
+                return key
+                    .replace(/_/g, ' ')
+                    .replace(/\b\w/g, c => c.toUpperCase());
+            };
+
+            let analysisHtml = '';
+
+            if (analysisItem) {
+                const qty = analysisItem.kuantitas || {};
+                let dynamicRows = '';
+
+                // LOGIKA LOOPING UNIVERSAL
+                if (Object.keys(qty).length > 0) {
+                    Object.entries(qty).forEach(([key, value]) => {
+                        const isVolume = key.toLowerCase().includes('volume');
+                        const isArea = key.toLowerCase().includes('area');
+
+                        let rowStyle = '';
+                        let valStyle = '';
+
+                        if (isVolume) {
+                            rowStyle = 'background-color: #d1fae5; border-top: 1px solid #6ee7b7;';
+                            valStyle = 'font-weight: bold; color: #064e3b; font-size:1.1em;';
+                        } else if (isArea) {
+                            rowStyle = 'background-color: #f0fdfa;';
+                            valStyle = 'font-weight: bold; color: #047857;';
+                        }
+
+                        dynamicRows += `
+                            <tr style="border-bottom: 1px solid #f0fdf4; ${rowStyle}">
+                                <th style="text-align: left; padding: 5px 4px; color: #555; font-weight:normal;">${formatKey(key)}</th>
+                                <td style="text-align: right; padding: 5px 4px; ${valStyle}">${fmt(value)}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    dynamicRows = `<tr><td colspan="2" style="text-align:center; color:#999; font-style:italic; padding:10px;">Tidak ada data dimensi detail.</td></tr>`;
+                }
+
+                analysisHtml = `
+                <div class="analysis-box" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
                     <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 3px solid #bbf7d0;">
                         <div class="analysis-title" style="font-weight: bold; color: #166534; display:flex; align-items:center; gap:5px;">
-                            <span>🤖</span> Hasil Analisis
+                            <span>🤖</span> Data Analisis
                         </div>
                     </div>
-                    <table class="prop-table" style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
-                        <tr style="border-bottom: 1px solid #dcfce7;"><th style="text-align: left; padding: 5px; color: #555;">Kategori</th><td style="text-align: right; padding: 5px; font-weight:600;">${analysisItem.label_cad || '-'}</td></tr>
-                        <tr style="border-bottom: 1px solid #dcfce7;"><th style="text-align: left; padding: 5px; color: #555;">Volume</th><td style="text-align: right; padding: 5px; font-weight: bold; color: #14532d;">${Number(analysisItem.kuantitas.volume_m3).toLocaleString('id-ID')} m³</td></tr>
-                    </table>
-                </div>` : `<div style="padding:10px;background:#fff7ed;border-radius:6px;margin-bottom:15px;font-size:0.9em;">⚠️ Data analisis tidak tersedia.</div>`;
+
+                    <div style="margin-bottom: 12px;">
+                        <h6 style="margin: 0 0 8px 0; font-size: 11px; color: #15803d; font-weight: 700; text-transform: uppercase;">Info Item</h6>
+                        <table class="prop-table" style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                            <tr><th style="text-align:left; color:#666;">Tipe IFC</th><td style="text-align:right; font-weight:600;">${analysisItem.tipe_ifc || '-'}</td></tr>
+                            <tr><th style="text-align:left; color:#666;">Label CAD</th><td style="text-align:right; font-family:monospace; background:#e0f2fe; border-radius:3px; padding:0 4px;">${analysisItem.label_cad || '-'}</td></tr>
+                            <tr><th style="text-align:left; color:#666;">Satuan</th><td style="text-align:right;">${analysisItem.satuan_utama_hitung || '-'}</td></tr>
+                        </table>
+                    </div>
+
+                    <div>
+                        <h6 style="margin: 0 0 8px 0; font-size: 11px; color: #15803d; font-weight: 700; text-transform: uppercase; border-top: 1px dashed #86efac; padding-top: 10px;">Detail Kuantitas</h6>
+                        <table class="prop-table" style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                            ${dynamicRows}
+                        </table>
+                    </div>
+                </div>`;
+            } else {
+                analysisHtml = `
+                <div style="padding:12px; background:#fff7ed; border:1px solid #ffedd5; border-radius:6px; margin-bottom:15px; color:#c2410c; display:flex; gap:10px; align-items:start;">
+                    <span style="font-size:1.2em">⚠️</span>
+                    <div>
+                        <div style="font-weight:bold; font-size:0.9em;">Data Tidak Ditemukan</div>
+                        <div style="font-size:0.8em; opacity:0.8;">Objek ada di 3D, tapi tidak ada di JSON Database.</div>
+                    </div>
+                </div>`;
+            }
 
             const worksList = window.WORKS_DATA || [];
             const listItems = worksList.map(work => `
@@ -271,10 +350,10 @@ async function main() {
                 <div class="std-props" style="margin-bottom: 20px;">
                     <h5 style="margin: 0 0 10px 0; font-size: 14px; border-bottom: 2px solid #eee; padding-bottom: 5px;">Properti Asli IFC</h5>
                     <table class="prop-table" style="width:100%; font-size:0.85em; color:#666;">
-                        <tr style="background-color: #f9f9f9;"><td style="padding:3px 0;"><strong>ID Database:</strong></td><td style="text-align:right;" id="db-id">${dbId}</td></tr>
+                        <tr style="background-color: #f9f9f9;"><td style="padding:3px 0;"><strong>ID DB:</strong></td><td style="text-align:right;" id="db-id">${dbId}</td></tr>
                         <tr><td style="padding:3px 0;"><strong>Name:</strong></td><td style="text-align:right;">${name}</td></tr>
                         <tr><td style="padding:3px 0;"><strong>Type:</strong></td><td style="text-align:right;">${type}</td></tr>
-                        <tr><td style="padding:3px 0;"><strong>GUID:</strong></td><td style="text-align:right; font-family:monospace; font-size:0.9em;">${guid}</td></tr>
+                        <tr><td style="padding:3px 0;"><strong>GUID:</strong></td><td style="text-align:right; font-family:monospace; font-size:0.85em; word-break:break-all;">${guid}</td></tr>
                     </table>
                 </div>
 
@@ -323,9 +402,11 @@ async function main() {
             }
         }
 
+        // --- Controls Keyboard (WASD) ---
         const keyStates = { w: false, a: false, s: false, d: false, shift: false };
         document.addEventListener('keydown', (e) => { if(keyStates.hasOwnProperty(e.key.toLowerCase())) keyStates[e.key.toLowerCase()] = true; if(e.key === 'Shift') keyStates.shift = true; });
         document.addEventListener('keyup', (e) => { if(keyStates.hasOwnProperty(e.key.toLowerCase())) keyStates[e.key.toLowerCase()] = false; if(e.key === 'Shift') keyStates.shift = false; });
+
         function animate() {
             const speed = keyStates.shift ? 1.5 : 0.5;
             if(keyStates.w) world.camera.controls.forward(speed, true);

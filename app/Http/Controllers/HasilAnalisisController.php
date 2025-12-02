@@ -17,13 +17,13 @@ class HasilAnalisisController extends Controller
         $desain = DesainRumah::where('ID_Desain_Rumah', $id)->firstOrFail();
         $works = ListPekerjaan::all();
 
-        // Path JSON (Sesuaikan dengan server Anda)
+        // Path JSON (Sesuaikan dengan path server lokal Anda)
         $jsonPath = "C:\\Materix_Engine\\ai_engine_materix\\engine_bim_and_ifc\\data\\processed\\{$desain->Nama_Desain}_ifc_data.json";
 
         $data = [];
         if (file_exists($jsonPath)) {
             $jsonContent = file_get_contents($jsonPath);
-            $data = json_decode($jsonContent, true);
+            $data = json_decode($jsonContent, true); // Decode menjadi array PHP
         }
 
         $filename = $desain->Nama_Desain . '.ifc';
@@ -33,6 +33,7 @@ class HasilAnalisisController extends Controller
         return view('Page.HasilAnalisis', compact('desain', 'data', 'ifcUrl', 'works'));
     }
 
+    // --- 2. API: CARI KOMPONEN (Sinkronisasi DB) ---
     public function cariKomponen(Request $request)
     {
         try {
@@ -61,11 +62,7 @@ class HasilAnalisisController extends Controller
         }
     }
 
-    // ============================================================
-    // LOGIKA "WORD/PPT LIKE": SESSION & DATABASE HANDLER
-    // ============================================================
-
-    // 1. GET (Logika "Buka File"): Load dari Session, jika kosong Load dari DB
+    // --- 3. API: GET JOBS (Ambil Pekerjaan Tersimpan) ---
     public function getJobs(Request $request)
     {
         $guid = $request->query('guid');
@@ -79,14 +76,12 @@ class HasilAnalisisController extends Controller
             $komponen = KomponenDesain::where('Ifc_Guid', $guid)->first();
 
             if ($komponen) {
-                // Ambil data real dari tabel relasi
                 $dbJobs = PekerjaanKomponen::join('list_pekerjaan', 'list_pekerjaan_komponen.ID_Pekerjaan', '=', 'list_pekerjaan.ID_Pekerjaan')
                             ->where('list_pekerjaan_komponen.ID_Komponen', $komponen->ID_Komponen)
                             ->select('list_pekerjaan.Nama_Pekerjaan')
                             ->get();
 
                 if ($dbJobs->isNotEmpty()) {
-                    // Masukkan ke Session agar bisa diedit
                     $savedJobs = $dbJobs->map(function($item) {
                         return ['Nama_Pekerjaan' => $item->Nama_Pekerjaan];
                     })->toArray();
@@ -99,7 +94,7 @@ class HasilAnalisisController extends Controller
         return response()->json(['status' => 'success', 'data' => $savedJobs ?? []]);
     }
 
-    // 2. ADD (Logika "Ngetik"): Tambah ke Session
+    // --- 4. API: SAVE JOB (Tambah ke Session) ---
     public function saveJob(Request $request)
     {
         $guid = $request->input('guid');
@@ -124,7 +119,7 @@ class HasilAnalisisController extends Controller
         return response()->json(['status' => 'success', 'data' => $currentJobs]);
     }
 
-    // 3. REMOVE (Logika "Backspace"): Hapus dari Session
+    // --- 5. API: REMOVE JOB (Hapus dari Session) ---
     public function removeJob(Request $request)
     {
         $guid = $request->input('guid');
@@ -143,7 +138,7 @@ class HasilAnalisisController extends Controller
         return response()->json(['status' => 'success', 'data' => $updatedJobs]);
     }
 
-    // 4. FINAL SAVE (Logika "Ctrl+S"): Sinkronisasi Total
+    // --- 6. API: FINAL SAVE (Simpan ke DB) ---
     public function finalSave(Request $request)
     {
         try {
@@ -151,7 +146,6 @@ class HasilAnalisisController extends Controller
             $guids = $request->input('guids');
 
             if (!$desainId || empty($guids)) {
-                // Jika user tekan simpan tapi belum pernah klik apapun
                 return response()->json(['status' => 'success', 'message' => 'Tidak ada perubahan untuk disimpan.']);
             }
 
@@ -166,17 +160,12 @@ class HasilAnalisisController extends Controller
 
                 $idKomponen = $komponen->ID_Komponen;
                 $sessionKey = 'pekerjaan_terpilih.' . $guid;
-
-                // Ambil "Draft" dari Session
                 $jobsInSession = session()->get($sessionKey, []);
 
-                // A. HAPUS LAMA (Delete Existing)
-                // Kita hapus semua data milik komponen ini di DB
+                // A. Hapus data lama
                 PekerjaanKomponen::where('ID_Komponen', $idKomponen)->delete();
 
-                // B. SIMPAN BARU (Insert New)
-                // Kita masukkan apa yang ada di session.
-                // Jika session kosong (karena dihapus semua oleh user), maka DB tetap kosong (hasil langkah A).
+                // B. Simpan data baru
                 if (!empty($jobsInSession)) {
                     foreach ($jobsInSession as $jobData) {
                         $masterPekerjaan = ListPekerjaan::where('Nama_Pekerjaan', $jobData['Nama_Pekerjaan'])->first();
@@ -189,10 +178,7 @@ class HasilAnalisisController extends Controller
                         }
                     }
                 }
-
-                // C. PENTING: JANGAN HAPUS SESSION
-                // Agar user bisa lanjut edit tanpa harus load ulang dari DB
-                // session()->forget($sessionKey); // <--- INI DIHAPUS
+                // Optional: session()->forget($sessionKey);
             }
 
             DB::commit();
