@@ -66,49 +66,37 @@ class HasilAnalisisController extends Controller
     // ============================================================
 
     // 1. GET (Logika "Buka File"): Load dari Session, jika kosong Load dari DB
-    // Update fungsi ini di HasilAnalisisController.php
-
     public function getJobs(Request $request)
     {
         $guid = $request->query('guid');
-        $desainId = $request->query('desain_id'); // ✅ Tambahan Parameter
-
         $sessionKey = 'pekerjaan_terpilih.' . $guid;
 
-        // 1. Cek Session (Buffer Edit)
+        // Cek Session dulu
         $savedJobs = session()->get($sessionKey);
 
-        // 2. Jika Session Kosong, Ambil dari Database (Fresh Load)
+        // Jika Session kosong, ambil dari Database (Reload/Refresh case)
         if (empty($savedJobs)) {
-
-            // Cari Komponen SPESIFIK untuk Desain ini saja
-            $komponen = KomponenDesain::where('ID_Desain_Rumah', $desainId)
-                                      ->where('Ifc_Guid', $guid)
-                                      ->first();
+            $komponen = KomponenDesain::where('Ifc_Guid', $guid)->first();
 
             if ($komponen) {
-                // Ambil pekerjaan yang tersimpan di tabel relasi
+                // Ambil data real dari tabel relasi
                 $dbJobs = PekerjaanKomponen::join('list_pekerjaan', 'list_pekerjaan_komponen.ID_Pekerjaan', '=', 'list_pekerjaan.ID_Pekerjaan')
                             ->where('list_pekerjaan_komponen.ID_Komponen', $komponen->ID_Komponen)
                             ->select('list_pekerjaan.Nama_Pekerjaan')
                             ->get();
 
                 if ($dbJobs->isNotEmpty()) {
-                    // Format data agar sesuai struktur session
+                    // Masukkan ke Session agar bisa diedit
                     $savedJobs = $dbJobs->map(function($item) {
                         return ['Nama_Pekerjaan' => $item->Nama_Pekerjaan];
                     })->toArray();
 
-                    // Masukkan ke Session agar siap diedit/ditambah/dihapus
                     session()->put($sessionKey, $savedJobs);
                 }
             }
         }
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $savedJobs ?? []
-        ]);
+        return response()->json(['status' => 'success', 'data' => $savedJobs ?? []]);
     }
 
     // 2. ADD (Logika "Ngetik"): Tambah ke Session

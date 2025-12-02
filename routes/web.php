@@ -15,90 +15,107 @@ use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\UnggahController;
 use App\Http\Controllers\DetailProyekController;
 
-Route::get('/', [LandingController::class, 'index'])->name('landing');
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
 
-// --- Rute Login & Logout ---
+// Public Routes
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 Route::get('/login', [AuthController::class, 'loginCreate'])->name('login.form');
 Route::post('/login', [AuthController::class, 'loginStore'])->name('login.submit');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-// --- Rute Registrasi ---
 Route::get('/daftar', [AuthController::class, 'registerCreate'])->name('daftar.form');
 Route::post('/daftar', [AuthController::class, 'registerStore'])->name('daftar.submit');
 
-// --- Rute Pengaturan Akun ---
+// IFC File Download Route
+Route::get('/download-ifc/{filename}', [HasilAnalisisController::class, 'downloadIfc'])->name('ifc.download');
+
+// Authenticated Routes
 Route::middleware('auth')->group(function () {
-    Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan');
-    Route::post('/pengaturan/info', [PengaturanController::class, 'updateInfo'])->name('pengaturan.updateInfo');
-    Route::post('/pengaturan/password', [PengaturanController::class, 'updatePassword'])->name('pengaturan.updatePassword');
-    Route::post('/pengaturan/avatar', [PengaturanController::class, 'updateAvatar'])->name('pengaturan.updateAvatar');
-    Route::post('/pengaturan/cek-sandi', [PengaturanController::class, 'cekSandiLama'])->name('pengaturan.cekSandi');
+    // Logout
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // --- Rute Home Page ---
+    // Account Settings
+    Route::prefix('pengaturan')->group(function () {
+        Route::get('/', [PengaturanController::class, 'index'])->name('pengaturan');
+        Route::post('/info', [PengaturanController::class, 'updateInfo'])->name('pengaturan.updateInfo');
+        Route::post('/password', [PengaturanController::class, 'updatePassword'])->name('pengaturan.updatePassword');
+        Route::post('/avatar', [PengaturanController::class, 'updateAvatar'])->name('pengaturan.updateAvatar');
+        Route::post('/cek-sandi', [PengaturanController::class, 'cekSandiLama'])->name('pengaturan.cekSandi');
+    });
+
+    // Dashboard
     Route::get('/HomePage', [HomeController::class, 'index'])->name('HomePage');
-    Route::get('/kalkulasi/{id}', [KalkulasiController::class, 'index'])->name('Kalkulasi.show');
+
+    // Projects
     Route::get('/daftarProyek', [DaftarProyekController::class, 'index'])->name('DaftarProyek.index');
+    Route::get('/daftarProyek/{id}', [DaftarProyekController::class, 'show'])->name('DaftarProyek.show');
+
+    // Calculator
+    Route::get('/Kalkulasi', [KalkulasiController::class, 'index'])->name('Kalkulasi.index');
+    Route::get('/kalkulasi/{id}', [KalkulasiController::class, 'index'])->name('Kalkulasi.show');
+
+    // Material Prices
+    Route::get('/harga-bahan', [HargaBahanController::class, 'index'])->name('Bahan.index');
+
+    // Upload
+    Route::prefix('unggah')->group(function () {
+        Route::get('/', [UnggahController::class, 'index'])->name('Unggah.index');
+        Route::post('/', [UnggahController::class, 'upload'])->name('Unggah.upload');
+        Route::post('/analyze', [UnggahController::class, 'analyze'])->name('Unggah.analyze');
+        Route::post('/analisis', [UnggahController::class, 'showJson'])->name('Unggah.showJson');
+        Route::post('/remove', [UnggahController::class, 'remove'])->name('Unggah.remove');
+        Route::get('/gambar', [UnggahController::class, 'unggahGambarForm'])->name('Unggah.gambar.form');
+    });
+
+    // 3D Viewer
+    Route::get('/hasil-analisis/{id}', [HasilAnalisisController::class, 'view'])->name('hasil.analisis.view');
+    Route::get('/viewer/{id}', [HasilAnalisisController::class, 'view'])->name('viewer');
+
+    // Project Detail
+    Route::get('/proyek/{ID_Desain_Rumah}', [DetailProyekController::class, 'show'])->name('detail_proyek.show');
+
+    // Project Data
+    Route::get('/DataProyek', [DataProyekController::class, 'index'])->name('kalkulasi.bahan');
+
+    // Materials
+    Route::prefix('projects')->group(function () {
+        Route::get('/{id}/materials', [MaterialController::class, 'index'])->name('materials.index');
+        Route::post('/{id}/materials', [MaterialController::class, 'store'])->name('materials.store');
+        Route::get('/{id}/materials/export-pdf', [MaterialController::class, 'exportPDF'])->name('materials.export.pdf');
+        Route::get('/{id}/materials/export-excel', [MaterialController::class, 'exportExcel'])->name('materials.export.excel');
+        Route::post('/kategori/store', [MaterialController::class, 'storeKategori'])->name('materials.kategori.store');
+        Route::get('/kategori/list', [MaterialController::class, 'getKategori'])->name('materials.kategori.list');
+        Route::post('/satuan/store', [MaterialController::class, 'storeSatuan'])->name('materials.satuan.store');
+        Route::get('/satuan/list', [MaterialController::class, 'getSatuan'])->name('materials.satuan.list');
+    });
 });
 
-Route::get('/daftarProyek/{id}', [DaftarProyekController::class, 'show'])->name('DaftarProyek.show');
-
-// Rute Kalkulator
-Route::get('/Kalkulasi', [KalkulasiController::class, 'index'])->name('Kalkulasi.index');
-
-// --- Rute Harga Bahan ---
-Route::get('/harga-bahan', [HargaBahanController::class, 'index'])->name('Bahan.index');
-
-// --- MATERIAL ROUTES ---
-Route::prefix('projects')->group(function () {
-    Route::get('/{id}/materials', [MaterialController::class, 'index'])->name('materials.index');
-    Route::post('/{id}/materials', [MaterialController::class, 'store'])->name('materials.store');
-
-    // Export
-    Route::get('/{id}/materials/export-pdf', [MaterialController::class, 'exportPDF'])->name('materials.export.pdf');
-    Route::get('/{id}/materials/export-excel', [MaterialController::class, 'exportExcel'])->name('materials.export.excel');
-
-    // Kategori & Satuan
-    Route::post('/kategori/store', [MaterialController::class, 'storeKategori'])->name('materials.kategori.store');
-    Route::get('/kategori/list', [MaterialController::class, 'getKategori'])->name('materials.kategori.list');
-    Route::post('/satuan/store', [MaterialController::class, 'storeSatuan'])->name('materials.satuan.store');
-    Route::get('/satuan/list', [MaterialController::class, 'getSatuan'])->name('materials.satuan.list');
-});
-
-// API DATA
-Route::prefix('api')->group(function () {
+// API Routes (Authenticated)
+Route::prefix('api')->middleware('auth')->group(function () {
+    // Material APIs
     Route::get('/bahan-list', [MaterialController::class, 'getBahanList'])->name('api.bahan-list');
     Route::get('/komponen-list', [MaterialController::class, 'getKomponenList'])->name('api.komponen-list');
     Route::get('/supplier-list', [MaterialController::class, 'getSupplierList'])->name('api.supplier-list');
     Route::post('/bahan/store', [MaterialController::class, 'storeBahan'])->name('api.bahan-store');
     Route::post('/supplier/store', [MaterialController::class, 'storeSupplier'])->name('api.supplier-store');
 
+    // Hasil Analisis APIs
+    Route::get('/cari-komponen', [HasilAnalisisController::class, 'cariKomponen'])->name('api.cari_komponen');
+    Route::get('/get-jobs', [HasilAnalisisController::class, 'getJobs'])->name('api.get_jobs');
+    Route::post('/save-job', [HasilAnalisisController::class, 'saveJob'])->name('api.save_job');
+    Route::post('/remove-job', [HasilAnalisisController::class, 'removeJob'])->name('api.remove_job');
+    Route::post('/final-save', [HasilAnalisisController::class, 'finalSave'])->name('api.final_save');
+
+    // New IFC File APIs
+    Route::get('/list-ifc-files', [HasilAnalisisController::class, 'listIfcFiles'])->name('api.list_ifc_files');
+
+    // Debug API
+    Route::get('/debug-info/{id}', [HasilAnalisisController::class, 'debugInfo'])->name('api.debug.info');
 });
 
-// Rute Unggah File
-Route::get('/unggah', [UnggahController::class, 'index'])->name('Unggah.index');
-Route::post('/unggah', [UnggahController::class, 'upload'])->name('Unggah.upload');
-Route::post('/analyze', [UnggahController::class, 'analyze'])->name('Unggah.analyze');
-Route::post('/analisis', [UnggahController::class, 'showJson'])->name('Unggah.showJson');
-Route::post('/unggah/remove', [UnggahController::class, 'remove'])->name('Unggah.remove');
-
-// Upload Gambar
-Route::get('/unggah-gambar', [UnggahController::class, 'unggahGambarForm'])->name('Unggah.gambar.form');
-Route::post('/unggah-desain', [UnggahController::class, 'upload'])->name('unggah.upload');
-
-//Rute Detail Proyek
-Route::get('/proyek/{ID_Desain_Rumah}', [DetailProyekController::class, 'show'])->name('detail_proyek.show');
-
-//Hasil Analisis 3D
-Route::get('/viewer/{id}', [HasilAnalisisController::class, 'view'])->name('viewer');
-
-//Data Proyek
-Route::get('/DataProyek', [DataProyekController::class, 'index'])->name('kalkulasi.bahan');
-
-Route::get('/api/get-jobs', [HasilAnalisisController::class, 'getJobs'])->name('api.get_jobs');
-Route::post('/api/save-job', [HasilAnalisisController::class, 'saveJob'])->name('api.save_job');
-Route::post('/api/remove-job', [HasilAnalisisController::class, 'removeJob'])->name('api.remove_job');
-
-// Route View & Search yang sudah ada
-Route::get('/hasil-analisis/{id}', [HasilAnalisisController::class, 'view'])->name('hasil.analisis'); // Sesuaikan nama route view anda
-Route::get('/api/cari-komponen', [HasilAnalisisController::class, 'cariKomponen'])->name('api.cari_komponen');
-Route::post('/api/final-save', [HasilAnalisisController::class, 'finalSave'])->name('api.final_save');
+// Fallback Route
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
+});
