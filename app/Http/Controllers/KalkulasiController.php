@@ -21,9 +21,11 @@ class KalkulasiController extends Controller
         $suppliers = ListSupplier::orderBy('Nama_Supplier')
         ->get();
 
+        $materialPrices = ListHargaBahan::get();
+
         $message = $recaps->isEmpty() ? "empty data" : null;
 
-        return view('Page.DataBahanDanProdusen', compact('recaps', 'suppliers', 'message'));
+        return view('Page.DataBahanDanProdusen', compact('recaps', 'suppliers', 'materialPrices', 'message'));
     }
 }
 

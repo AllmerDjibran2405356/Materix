@@ -135,6 +135,7 @@
             <table class="table table-bordered table-sm">
                 <thead>
                     <tr>
+                        <th>No</th>
                         <th>ID Supplier</th>
                         <th>Nama Supplier</th>
                     </tr>
@@ -142,6 +143,7 @@
                 <tbody>
                     @foreach ($suppliers as $supplier)
                         <tr>
+                            <td>{{ $index + 1 }}</td>
                             <td>{{ $supplier->ID_Supplier }}</td>
                             <td>{{ $supplier->Nama_Supplier }}</td>
                         </tr>
@@ -161,24 +163,43 @@
 
 <!-- Modal Bahan -->
 <div class="modal fade" id="modalBahan" tabindex="-1" aria-labelledby="modalBahanLabel" aria-hidden="true" data-bs-backdrop="static">
-  <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-dialog">
+        <div class="modal-content">
 
-      <div class="modal-header">
-        <h5 class="modal-title">Data Bahan</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
+            <div class="modal-header">
+                <h5 class="modal-title">Data Bahan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
 
-      <div class="modal-body">
-        <p>Template daftar bahan di sini...</p>
-      </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>ID Bahan</th>
+                            <th>ID Supplier</th>
+                            <th>Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($materialPrices as $materialPrice)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $materialPrice->ID_Bahan }}</td>
+                                <td>{{ $materialPrice->ID_Supplier }}</td>
+                                <td>{{ $materialPrice->Harga_Per_Satuan }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-      </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
 
+        </div>
     </div>
-  </div>
 </div>
 
 <!-- Bootstrap JS -->
