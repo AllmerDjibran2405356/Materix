@@ -77,6 +77,12 @@ Route::middleware('auth')->group(function () {
     // Project Data
     Route::get('/data-proyek/{id}', [DataProyekController::class, 'index'])->name('dataProyek.index');
 
+    // Supplier
+    Route::post('/supplier/tambah', [DataProyekController::class, 'tambahSupplier'])->name('supplier.tambah');
+    Route::post('/rekap/update-supplier', [DataProyekController::class, 'updateSupplier'])->name('rekap.updateSupplier');
+    Route::post('/rekap/update-harga', [DataProyekController::class, 'updateHarga'])->name('rekap.updateHarga');
+    Route::post('/bahan/simpan-harga', [DataProyekController::class, 'simpanHargaBahan'])->name('bahan.simpanHarga');
+
     // Materials
     Route::prefix('projects')->group(function () {
         Route::get('/{id}/materials', [MaterialController::class, 'index'])->name('materials.index');

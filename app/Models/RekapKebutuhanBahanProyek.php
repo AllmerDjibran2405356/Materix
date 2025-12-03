@@ -12,6 +12,7 @@ class RekapKebutuhanBahanProyek extends Model
     protected $primaryKey = 'ID_Rekap';
 
     public $timestamps = false;
+
     protected $fillable = [
         'ID_User',
         'ID_Desain_Rumah',
