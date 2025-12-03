@@ -28,7 +28,7 @@
             @else
                 <div class="list-group shadow-sm">
                     @foreach ($projects as $project)
-                        <a href="{{ route('Kalkulasi.show', $project->ID_Desain_Rumah) }}"
+                        <a href="{{ route('detailProyek.show', $project->ID_Desain_Rumah) }}"
                         class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                             <div>
                                 <h5 class="mb-1 fw-bold text-primary">{{ $project->Nama_Desain ?? 'Tanpa Judul' }}</h5>

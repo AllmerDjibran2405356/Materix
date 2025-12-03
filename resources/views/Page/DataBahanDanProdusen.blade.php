@@ -121,45 +121,83 @@
 
 <!-- Modal Supplier -->
 <div class="modal fade" id="modalSupplier" tabindex="-1" aria-labelledby="modalSupplierLabel" aria-hidden="true" data-bs-backdrop="static">
-  <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-dialog">
+        <div class="modal-content">
 
-        <div class="modal-header">
-            <h5 class="modal-title">Data Supplier</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
+            <div class="modal-header">
+                <h5 class="modal-title">Data Supplier</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
 
-        <div class="modal-body">
-            <a>Tambah Supplier</a>
+            <div class="modal-body">
+                <button class="btn btn-primary btn-sm mb-3" data-bs-toggle="modal" data-bs-target="#modalTambahSupplier">
+                    Tambah Supplier
+                </button>
 
-            <table class="table table-bordered table-sm">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>ID Supplier</th>
-                        <th>Nama Supplier</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($suppliers as $supplier)
+                <table class="table table-bordered table-sm">
+                    <thead>
                         <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $supplier->ID_Supplier }}</td>
-                            <td>{{ $supplier->Nama_Supplier }}</td>
+                            <th>No</th>
+                            <th>ID Supplier</th>
+                            <th>Nama Supplier</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($suppliers as $supplier)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $supplier->ID_Supplier }}</td>
+                                <td>{{ $supplier->Nama_Supplier }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+
         </div>
-
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-      </div>
-
     </div>
-  </div>
 </div>
+
+<!-- Modal Tambah Supplier -->
+<div class="modal fade" id="modalTambahSupplier" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Tambah Supplier Baru</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Nama Supplier</label>
+                        <input type="text" class="form-control" placeholder="Masukkan nama supplier">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Alamat</label>
+                        <input type="text" class="form-control" placeholder="Alamat supplier">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">No. Telepon</label>
+                        <input type="text" class="form-control" placeholder="Nomor telepon">
+                    </div>
+
+                    <button type="button" class="btn btn-primary w-100">Simpan</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 
 <!-- Modal Bahan -->
 <div class="modal fade" id="modalBahan" tabindex="-1" aria-labelledby="modalBahanLabel" aria-hidden="true" data-bs-backdrop="static">
@@ -169,6 +207,11 @@
             <div class="modal-header">
                 <h5 class="modal-title">Data Bahan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Simpan</button>
             </div>
 
             <div class="modal-body">
@@ -193,17 +236,30 @@
                     </tbody>
                 </table>
             </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-            </div>
-
         </div>
     </div>
 </div>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const modalSupplier = new bootstrap.Modal(document.getElementById('modalSupplier'));
+        const modalTambah = new bootstrap.Modal(document.getElementById('modalTambahSupplier'));
+
+        // Ketika modal tambah supplier ditutup → kembali ke modal supplier
+        document.getElementById('modalTambahSupplier').addEventListener('hidden.bs.modal', function () {
+            modalSupplier.show();
+        });
+
+        // Saat tombol Simpan ditekan → tutup modal tambah → kembali otomatis
+        document.getElementById('btnSimpanSupplier').addEventListener('click', function () {
+            modalTambah.hide(); // setelah hide, event hidden.bs.modal akan membuka modalSupplier
+        });
+
+    });
+</script>
 
 </body>
 </html>

@@ -15,6 +15,7 @@ use App\Http\Controllers\HasilAnalisisController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\UnggahController;
 use App\Http\Controllers\DetailProyekController;
+use App\Http\Controllers\KelolaLaporanProyekController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,10 +54,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/daftarProyek', [DaftarProyekController::class, 'index'])->name('DaftarProyek.index');
     Route::get('/daftarProyek/{id}', [DaftarProyekController::class, 'show'])->name('DaftarProyek.show');
 
-    // Calculator
-    Route::get('/Kalkulasi', [KalkulasiController::class, 'index'])->name('Kalkulasi.index');
-    Route::get('/kalkulasi/{id}', [KalkulasiController::class, 'index'])->name('Kalkulasi.show');
-
     // Material Prices
     Route::get('/harga-bahan', [HargaBahanController::class, 'index'])->name('Bahan.index');
 
@@ -75,13 +72,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/viewer/{id}', [HasilAnalisisController::class, 'view'])->name('viewer');
 
     // Project Detail
-    Route::get('/proyek/{ID_Desain_Rumah}', [DetailProyekController::class, 'show'])->name('detail_proyek.show');
+    Route::get('/proyek/{ID_Desain_Rumah}', [DetailProyekController::class, 'show'])->name('detailProyek.show');
 
     // Project Data
-    Route::get('/DataProyek', [DataProyekController::class, 'index'])->name('kalkulasi.bahan');
-
-    //RAB
-    Route::post('/{id}/index', [DataRABController::class, 'index'])->name('RAB.index');
+    Route::get('/data-proyek/{id}', [DataProyekController::class, 'index'])->name('dataProyek.index');
 
     // Materials
     Route::prefix('projects')->group(function () {

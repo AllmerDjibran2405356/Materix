@@ -7,14 +7,14 @@ use App\Models\DesainRumah;
 
 class DetailProyekController extends Controller
 {
-   public function show(int $id)
-{
-    $project = DesainRumah::where('ID_Desain_Rumah', $id)
-        ->where('id_user', Auth::id())
-        ->firstOrFail();
+   public function show($id)
+    {
+        $project = DesainRumah::where('ID_Desain_Rumah', $id)
+            ->where('id_user', Auth::id())
+            ->firstOrFail();
 
-    return view('page.proyek_detail', compact('project'));
-}
+        return view('page.DetailProyek', compact('project'));
+    }
 
 }
 
