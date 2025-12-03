@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DaftarProyekController;
 use App\Http\Controllers\DataBahanDanProdusenController;
 use App\Http\Controllers\DataProyekController;
+use App\Http\Controllers\DataRABController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\HomeController;
@@ -78,6 +79,9 @@ Route::middleware('auth')->group(function () {
 
     // Project Data
     Route::get('/DataProyek', [DataProyekController::class, 'index'])->name('kalkulasi.bahan');
+
+    //RAB
+    Route::post('/{id}/index', [DataRABController::class, 'index'])->name('RAB.index');
 
     // Materials
     Route::prefix('projects')->group(function () {

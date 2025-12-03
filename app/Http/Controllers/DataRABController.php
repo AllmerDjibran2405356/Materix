@@ -2,22 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DesainRumah;
-use App\Models\RekapKebutuhanBahanProyek;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\DesainRumah;
+use App\Models\User;
+use App\Models\RekapKebutuhanBahanProyek;
 
-class KalkulasiController extends Controller
+class DataRABController extends Controller
 {
     public function index($id)
     {
-        $project = DesainRumah::findOrFail($id);
         $recaps = RekapKebutuhanBahanProyek::where('ID_Desain_Rumah', $id)
         ->get();
 
         $message = $recaps->isEmpty() ? "empty data" : null;
 
-        return view('Page.DataBahanDanProdusen', compact('recaps', 'message'));
+        return view('Page.RekapKebutuhanBahanProyek', compact('rekap', 'message'));
     }
 }
-
-?>
