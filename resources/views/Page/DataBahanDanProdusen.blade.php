@@ -1,18 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendataan Bahan & Produsen</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap icons (opsional) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
 <div class="container mt-4">
+
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3>Pendataan Bahan & Produsen</h3>
+
         <div>
-            {{-- Changed to anchor tags for linking, assuming routes exist --}}
-            <a href="{{ url('/data-supplier') }}" class="btn btn-outline-primary me-2">
+            <!-- Tombol Popup Supplier -->
+            <a href="#" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#modalSupplier">
                 <i class="bi bi-truck"></i> Data Supplier
             </a>
-            <a href="{{ url('/data-bahan') }}" class="btn btn-secondary">
+
+            <!-- Tombol Popup Bahan -->
+            <a href="#" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalBahan">
                 <i class="bi bi-box-seam"></i> Data Bahan
             </a>
         </div>
     </div>
 
-    {{-- Data Section --}}
+    <!-- Tabel Data -->
     <section>
         @if ($recaps->isEmpty())
             <div class="alert alert-warning text-center">
@@ -48,7 +69,12 @@
                                         <td>{{ $index + 1 }}</td>
 
                                         {{-- Tanggal --}}
-                                        <td>{{ \Carbon\Carbon::parse($recap->Tanggal_Hitung)->format('d M Y') }} <small class="text-muted">{{ \Carbon\Carbon::parse($recap->Tanggal_Hitung)->format('H:i') }}</small></td>
+                                        <td>
+                                            {{ \Carbon\Carbon::parse($recap->Tanggal_Hitung)->format('d M Y') }}
+                                            <small class="text-muted">
+                                                {{ \Carbon\Carbon::parse($recap->Tanggal_Hitung)->format('H:i') }}
+                                            </small>
+                                        </td>
 
                                         {{-- Nama Bahan --}}
                                         <td>{{ $recap->bahan->Nama_Bahan ?? 'ID: '.$recap->ID_Bahan }}</td>
@@ -63,27 +89,24 @@
                                         <td class="text-end">Rp {{ number_format($recap->Harga_Satuan_Saat_Ini, 0, ',', '.') }}</td>
                                         <td class="text-end fw-bold text-success">Rp {{ number_format($recap->Total_Harga, 0, ',', '.') }}</td>
 
-                                        {{-- FIX 3: Supplier Name instead of ID Number --}}
+                                        {{-- Supplier --}}
                                         <td>
-                                            {{-- Assuming relation 'supplier' exists. Fallback to ID if null --}}
                                             {{ $recap->supplier->Nama_Supplier ?? 'ID: ' . $recap->ID_Supplier }}
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
-                            {{-- Footer untuk Grand Total --}}
+
                             <tfoot>
                                 <tr class="table-secondary fw-bold">
-                                    {{-- FIX 2: Colspan should be 7 so the price aligns with column 8 --}}
                                     <td colspan="7" class="text-end text-uppercase">Grand Total Estimasi</td>
-
-                                    {{-- Total Sum aligned with 'Total Harga' column --}}
-                                    <td class="text-end text-primary">Rp {{ number_format($recaps->sum('Total_Harga'), 0, ',', '.') }}</td>
-
-                                    {{-- Empty cell for Supplier column --}}
+                                    <td class="text-end text-primary">
+                                        Rp {{ number_format($recaps->sum('Total_Harga'), 0, ',', '.') }}
+                                    </td>
                                     <td></td>
                                 </tr>
                             </tfoot>
+
                         </table>
                     </div>
                 </div>
@@ -91,3 +114,57 @@
         @endif
     </section>
 </div>
+
+<!-- ========================================================= -->
+<!-- ======================= MODALS =========================== -->
+<!-- ========================================================= -->
+
+<!-- Modal Supplier -->
+<div class="modal fade" id="modalSupplier" tabindex="-1" aria-labelledby="modalSupplierLabel" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Data Supplier</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <p>Template data supplier di sini...</p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal Bahan -->
+<div class="modal fade" id="modalBahan" tabindex="-1" aria-labelledby="modalBahanLabel" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Data Bahan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <p>Template daftar bahan di sini...</p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
