@@ -25,8 +25,8 @@ class KomponenDesain extends Model
 
     public $timestamps = false;
 
-    public function materials() {
-        return $this->hasMany(Material::class, 'ID_Komponen', 'ID_Komponen');
+    public function pekerjaanKomponen() {
+        return $this->hasMany(PekerjaanKomponen::class, 'ID_Komponen', 'ID_Komponen');
     }
 
     public function desainRumah() {

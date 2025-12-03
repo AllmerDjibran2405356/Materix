@@ -26,16 +26,6 @@ class DesainRumah extends Model
         'Nama_File'
     ];
 
-    // Relasi ke tabel material
-    public function materials()
-    {
-        return $this->hasMany(
-            Material::class,
-            'ID_Desain_Rumah',
-            'ID_Desain_Rumah'
-        );
-    }
-
     // Relasi ke tabel komponen desain
     public function komponen()
     {

@@ -33,7 +33,7 @@ class ListHargaBahan extends Model
 
     // Relasi ke Model Bahan (Milik Bahan Apa?)
     public function bahan() {
-        return $this->belongsTo(Bahan::class, 'ID_Bahan', 'ID_Bahan');
+        return $this->belongsTo(ListBahan::class, 'ID_Bahan', 'ID_Bahan');
     }
 
     // Relasi ke Model Supplier (Siapa Penjualnya?)

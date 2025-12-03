@@ -11,12 +11,12 @@ class SatuanUkur extends Model
 
     protected $table = 'list_satuan_ukur';
     protected $primaryKey = 'ID_Satuan_Ukur';
-    
+
     protected $fillable = [
         'Nama_Satuan'
     ];
 
     public function bahan() {
-        return $this->hasMany(Bahan::class, 'ID_Satuan_Bahan', 'ID_Satuan_Ukur');
+        return $this->hasMany(ListBahan::class, 'ID_Satuan_Bahan', 'ID_Satuan_Ukur');
     }
 }

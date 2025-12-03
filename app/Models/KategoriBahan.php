@@ -11,12 +11,12 @@ class KategoriBahan extends Model
 
     protected $table = 'list_kategori_bahan';
     protected $primaryKey = 'ID_Kategori';
-    
+
     protected $fillable = [
         'Nama_Kelompok_Bahan'
     ];
 
     public function bahan() {
-        return $this->hasMany(Bahan::class, 'ID_Kategori', 'ID_Kategori');
+        return $this->hasMany(ListBahan::class, 'ID_Kategori', 'ID_Kategori');
     }
 }

@@ -9,7 +9,7 @@ class ListBahanPekerjaan extends Model
     // kita set false jika tidak ada kolom 'id' auto increment.
     // Tapi untuk baca data saja (readonly) ini aman.
 
-    public function material() {
+    public function bahan() {
         return $this->belongsTo(ListBahan::class, 'ID_Bahan', 'ID_Bahan');
     }
 }

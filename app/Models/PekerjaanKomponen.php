@@ -11,11 +11,18 @@ class PekerjaanKomponen extends Model
 
     protected $table = 'list_pekerjaan_komponen';
 
-    // PENTING: Matikan timestamps agar tidak error 'updated_at' not found
     public $timestamps = false;
 
     protected $fillable = [
         'ID_Komponen',
         'ID_Pekerjaan'
     ];
+
+    public function komponen() {
+        return $this->belongsTo(KomponenDesain::class, 'ID_Komponen', 'ID_Komponen');
+    }
+
+    public function pekerjaan() {
+        return $this->belongsTo(ListPekerjaan::class, 'ID_Pekerjaan', 'ID_Pekerjaan');
+    }
 }
