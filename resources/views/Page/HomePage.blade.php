@@ -50,33 +50,64 @@
 {{-- Riwayat Bangunan --}}
 <section class="riwayat-section py-5 bg-light">
     <div class="container">
-        <h3 class="fw-bold mb-4">Riwayat Bangunan</h3>
 
         @if ($projects->isEmpty())
-            <div class="alert alert-info text-center shadow-sm" role="alert" style="border-radius: 10px;">
-                Belum ada proyek desain rumah yang kamu unggah 😅 <br>
-                Yuk mulai kalkulasi pertamamu sekarang!
-                <br>
-                <a href="{{ route('Unggah.index') }}" class="btn btn-warning mt-3">Mulai Proyek Baru</a>
+
+            {{-- EMPTY STATE BOX --}}
+            <div class="riwayat-empty-wrapper">
+
+                {{-- CHARACTER (KELUAR DARI BOX) --}}
+                <img src="{{ asset('images/bobwonder.png') }}" class="riwayat-character" alt="Character">
+
+                {{-- ORANGE BOX --}}
+                <div class="riwayat-empty-box">
+                    <p class="riwayat-empty-text">
+                        Belum ada proyek desain rumah yang kamu unggah 😅 <br>
+                        Yuk mulai proyek pertamamu!
+                    </p>
+                    <div class="btn-wrapper">
+                        <a href="{{ route('Unggah.index') }}" class="mulai-btn">
+                            + Mulai Proyek Baru
+                        </a>
+                    </div>
+                </div>
             </div>
+
         @else
-            <div class="list-group shadow-sm">
-                @foreach ($projects as $project)
-                    <a href="{{ route('detailProyek.show', $project->ID_Desain_Rumah) }}"
-                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="mb-1 fw-bold text-primary">{{ $project->Nama_desain ?? 'Tanpa Judul' }}</h5>
-                            <p class="mb-1 text-muted">
-                                {{ Str::limit($project->Deskripsi ?? 'Tidak ada deskripsi proyek', 100) }}
-                            </p>
-                        </div>
-                        <small class="text-secondary">
-                            {{ \Carbon\Carbon::parse($project->Tanggal_dibuat)->format('d M Y') }}
-                        </small>
+
+            {{-- LIST PROJECT MODE --}}
+            <div class="riwayat-list-wrapper">
+
+                <div class="riwayat-list-header">
+                    <span>Lanjutkan Proyek Terakhir</span>
+                    <a href="#" class="lihat-semua">Lihat Semua</a>
+                </div>
+
+                <div class="list-group">
+                    @foreach ($projects as $project)
+                        <a href="{{ route('detailProyek.show', $project->ID_Desain_Rumah) }}"
+                           class="riwayat-item">
+
+                            <div>
+                                <h5>{{ $project->Nama_desain ?? 'Tanpa Judul' }}</h5>
+                                <p>{{ \Carbon\Carbon::parse($project->Tanggal_dibuat)->format('d/m/Y | H:i') }}</p>
+                            </div>
+
+                            <span class="dots">⋮</span>
+                        </a>
+                    @endforeach
+                </div>
+
+                <div class="riwayat-footer">
+                    <a href="{{ route('Unggah.index') }}" class="mulai-btn">
+                        + Mulai Proyek Baru
                     </a>
-                @endforeach
+                </div>
+
             </div>
+
         @endif
+
     </div>
 </section>
 @endsection

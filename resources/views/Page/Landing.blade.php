@@ -47,7 +47,7 @@
     <div class="features-list">
         <div class="feature-item">
             <div class="feature-img">
-                <img src="{{ asset('icons/digitalisasi.svg') }}" alt="Digitalisasi">
+                <img src="{{ asset('images/feature-iconA.png') }}" alt="Digitalisasi">
             </div>
             <div class="feture-text">
                 <h3>Digitalisasi & Analisis Desain Bangunan</h3>
@@ -57,7 +57,7 @@
 
         <div class="feature-item">
             <div class="feature-img">
-                <img src="{{ asset('icons/supplier.svg') }}" alt="Supplier">
+                <img src="{{ asset('images/feature-iconB.png') }}" alt="Supplier">
             </div>
             <div class="feture-text">
                 <h3>Kelola Data Bahan dan Supplier</h3>
@@ -67,7 +67,7 @@
 
         <div class="feature-item">
             <div class="feature-img">
-                <img src="{{ asset('icons/laporan.svg') }}" alt="Laporan">
+                <img src="{{ asset('images/feature-iconC.png') }}" alt="Laporan">
             </div>
             <div class="feture-text">
                 <h3>Perhitungan & Laporan Estimasi Proyek</h3>

@@ -9,11 +9,6 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* HAPUS/REDUCE PADDING BODY */
-body {
-    padding-top: 0 !important; /* HAPUS INI */
-}
-
 /* ====== HERO SECTION - DISAMAKAN DENGAN LANDING PAGE ====== */
 .hero-home {
     position: relative;
@@ -126,7 +121,7 @@ body {
     flex-wrap: wrap;
 }
 
-/* KOTAK FITUR (620 × 512) */
+/* KOTAK FITUR */
 .fitur-box {
     background: #0A2568;
     width: 620px;
@@ -140,7 +135,7 @@ body {
     gap: 60px;
 }
 
-/* IKON PNG 190×190 */
+/* IKON PNG */
 .fitur-icon {
     width: 190px;
     height: 190px;
@@ -148,7 +143,7 @@ body {
     background: transparent; /* sesuai permintaan */
 }
 
-/* TOMBOL (441 × 118) */
+/* TOMBOL */
 .fitur-btn {
     width: 441px;
     height: 118px;
@@ -209,6 +204,7 @@ body {
     transform: translateX(5px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
+
 
 /* ====== RESPONSIVE ====== */
 @media (max-width: 1200px) {
@@ -285,5 +281,166 @@ body {
         bottom: -15px;
         left: 20px;
         border-width: 8px;
+    }
+}
+
+/* Menu Proyek */
+
+/* Kosong */
+.riwayat-empty-wrapper {
+    position: relative;
+    margin-top: 167px;
+    display: flex;
+    justify-content: center;
+}
+
+.riwayat-empty-box {
+    background: #ff8f3f;
+    border-radius: 20px;
+    padding: 50px 60px 50px 240px;
+    width: 100%;
+    max-width: 1310px;
+    min-height: 370px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.riwayat-empty-text {
+    font-size: 27px;
+    font-weight: 600;
+    color: #1b1b1b;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-bottom: 67px;
+}
+
+.riwayat-character {
+    position: absolute;
+    left: -40px;
+    bottom: -20px;
+    width: 260px;
+    z-index: 5;
+}
+
+/* Tombol mulai */
+
+.btn-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.mulai-btn {
+    margin-top: 28px;
+    background: #0A1F59;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+    padding: 16px 48px;
+    border-radius: 14px;
+    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+    transition: 0.25s ease;
+}
+
+.mulai-btn:hover {
+    transform: translateY(-4px);
+    color: #fff;
+}
+
+/* Ada proyek */
+.riwayat-list-wrapper {
+    background: #ff8f3f;
+    border-radius: 24px;
+    padding: 26px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+
+/* Header atas */
+.riwayat-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.lihat-semua {
+    color: white;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+/* Card project */
+.riwayat-item {
+    background: #f6efe6;
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: #000;
+    transition: 0.25s ease;
+}
+
+.riwayat-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+.riwayat-item h5 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.riwayat-item p {
+    font-size: 13px;
+    color: #888;
+    margin: 0;
+}
+
+/* Icon titik tiga */
+.dots {
+    font-size: 22px;
+    color: #777;
+}
+
+/* Footer tombol bawah */
+.riwayat-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+    .riwayat-empty-box {
+        padding: 40px 30px 40px 30px;
+        text-align: center;
+    }
+
+    .riwayat-character {
+        display: none;
+    }
+
+    .mulai-btn {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .riwayat-list-wrapper {
+        padding: 18px;
     }
 }
