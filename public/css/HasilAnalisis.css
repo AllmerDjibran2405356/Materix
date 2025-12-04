@@ -3,7 +3,7 @@
    ========================================= */
 #viewer-container {
     position: fixed;
-    top: 64px; /* Sesuaikan dengan tinggi Navbar */
+    top: 64px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -12,13 +12,12 @@
     background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
     overflow: hidden;
     z-index: 1;
-    cursor: default; /* Pastikan cursor default */
+    cursor: default;
 }
 
 /* =========================================
    2. OVERLAYS (JUDUL & KONTROL)
    ========================================= */
-/* Title Overlay (Kiri Atas) */
 .title-overlay {
     position: absolute;
     top: 20px;
@@ -37,10 +36,9 @@
     font-weight: 700;
 }
 
-/* Controls Overlay (Kiri Bawah) */
 .controls-overlay {
     position: absolute;
-    bottom: 20px;
+    bottom: 30px;
     left: 20px;
     z-index: 20;
     background: rgba(0, 0, 0, 0.6);
@@ -48,7 +46,6 @@
     padding: 15px;
     border-radius: 10px;
     color: white;
-    font-family: sans-serif;
     pointer-events: none;
     user-select: none;
     min-width: 200px;
@@ -71,7 +68,6 @@
     font-size: 0.8rem;
     color: #e5e7eb;
 }
-
 .control-icon {
     width: 24px;
     text-align: center;
@@ -104,7 +100,10 @@
     margin-bottom: 15px;
 }
 
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
 /* =========================================
    4. SIDEBAR PROPERTI (KANAN)
@@ -138,43 +137,82 @@
 .prop-header h4 { margin: 0; font-size: 1rem; color: #1f2937; }
 
 .close-btn {
-    background: none; border: none; font-size: 1.5rem; color: #9ca3af; cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #9ca3af;
+    cursor: pointer;
 }
 .close-btn:hover { color: #ef4444; }
 
 .prop-content { padding: 20px; overflow-y: auto; flex: 1; }
 
-/* Table & Styles dalam Sidebar */
 .prop-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 20px; }
-.prop-table th, .prop-table td { padding: 8px 0; border-bottom: 1px solid #f3f4f6; text-align: left; }
+.prop-table th, .prop-table td {
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f6;
+    text-align: left;
+}
 .prop-table th { color: #6b7280; width: 40%; }
 
-.analysis-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
-.analysis-title { color: #166534; font-weight: 700; margin-bottom: 10px; border-bottom: 1px solid #bbf7d0; padding-bottom: 8px; }
-
-/* Formulir dalam Sidebar */
-.analysis-form { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #bbf7d0; }
-.form-label { display: block; font-size: 0.8rem; font-weight: 600; color: #166534; margin-bottom: 5px; }
-.form-input {
-    width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #bbf7d0;
-    border-radius: 6px; font-size: 0.85rem; background-color: #ffffff;
-    color: #1f2937; outline: none; transition: border-color 0.2s;
-    box-sizing: border-box; /* Tambahan agar padding tidak merusak width */
+.analysis-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
 }
-.form-input:focus { border-color: #166534; box-shadow: 0 0 0 2px rgba(22, 101, 52, 0.1); }
+.analysis-title {
+    color: #166534;
+    font-weight: 700;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #bbf7d0;
+    padding-bottom: 8px;
+}
 
-/* Tombol kecil di dalam sidebar (jika ada) */
+/* Form dalam panel */
+.form-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #166534;
+    margin-bottom: 5px;
+}
+
+.form-input {
+    width: 100%; padding: 8px; margin-bottom: 10px;
+    border: 1px solid #bbf7d0;
+    border-radius: 6px; font-size: 0.85rem;
+    background-color: #ffffff;
+    color: #1f2937;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+.form-input:focus {
+    border-color: #166534;
+    box-shadow: 0 0 0 2px rgba(22, 101, 52, 0.1);
+}
+
 .btn-save {
-    width: 100%; padding: 8px; background-color: #166534; color: white;
-    border: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600;
-    cursor: pointer; transition: background 0.2s;
-    display: flex; justify-content: center; align-items: center; gap: 5px;
+    width: 100%; padding: 8px;
+    background-color: #166534;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
 }
 .btn-save:hover { background-color: #14532d; }
-.btn-save:active { transform: scale(0.98); }
 
 /* =========================================
-   5. CROSSHAIR (TITIK TENGAH)
+   5. CROSSHAIR
    ========================================= */
 #pivot-crosshair {
     position: absolute;
@@ -190,117 +228,63 @@
 }
 
 /* =========================================
-   6. TOMBOL SIMPAN FLOATING (POJOK KANAN BAWAH)
+   6. TOMBOL SAVE FLOATING (GRADIENT HIJAU OPSI A)
    ========================================= */
 .btn-save-floating {
-    /* Posisi Absolut relatif terhadap viewer-container */
-    position: absolute;
-    bottom: 30px;  /* Jarak dari bawah */
-    right: 30px;   /* Jarak dari kanan */
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
 
-    /* Agar tombol muncul di atas canvas 3D */
-    z-index: 90;
+    /* === Gradasi Hijau Opsi A === */
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
 
-    /* Styling Tampilan */
-    background-color: #166534; /* Hijau gelap */
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 50px; /* Bentuk Pill/Lonjong */
-    font-family: sans-serif;
+    border-radius: 50px;
+    padding: 15px 25px;
+    font-size: 16px;
     font-weight: 600;
-    font-size: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* Bayangan */
     cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
     display: flex;
     align-items: center;
     gap: 10px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
 }
 
-/* Efek saat mouse diarahkan (Hover) */
 .btn-save-floating:hover {
-    background-color: #14532d;
-    transform: translateY(-4px); /* Tombol naik sedikit */
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
 }
 
-/* Efek saat diklik */
 .btn-save-floating:active {
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-/* Responsif di layar HP */
+/* Jika panel kanan dibuka, tombol geser kiri */
+#viewer-container.panel-open .btn-save-floating {
+    right: 350px;
+}
+
 @media (max-width: 768px) {
     .btn-save-floating {
         bottom: 20px;
         right: 20px;
         padding: 10px 18px;
         font-size: 14px;
+    }
+    #viewer-container.panel-open .btn-save-floating {
+        right: 20px;
+        z-index: 40;
     }
 }
 
 /* =========================================
-   6. TOMBOL SIMPAN FLOATING (POJOK KANAN BAWAH)
+   7. TOMBOL BACK
    ========================================= */
-.btn-save-floating {
-    position: absolute;
-    bottom: 30px;
-    right: 30px;   /* Posisi Awal */
-    z-index: 90;
-
-    background-color: #166534;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 50px;
-    font-family: sans-serif;
-    font-weight: 600;
-    font-size: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    /* PENTING: Transisi agar gesernya halus */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-save-floating:hover {
-    background-color: #14532d;
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-}
-
-.btn-save-floating:active {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-
-/* --- LOGIKA PERGESERAN (BARU) --- */
-/* Jika container punya class .panel-open, geser tombol ke kiri */
-#viewer-container.panel-open .btn-save-floating {
-    right: 350px; /* 320px (Lebar Sidebar) + 30px (Margin Awal) */
-}
-
-/* Responsif HP: Geser full ke atas atau tetap (opsional) */
-@media (max-width: 768px) {
-    .btn-save-floating {
-        bottom: 20px;
-        right: 20px;
-        padding: 10px 18px;
-        font-size: 14px;
-    }
-    /* Di HP sidebar biasanya full screen, tombol mungkin perlu disembunyikan atau digeser beda */
-    #viewer-container.panel-open .btn-save-floating {
-        right: 20px; /* Di HP mungkin tertutup sidebar, atau biarkan default */
-        z-index: 40; /* Sembunyikan di bawah sidebar */
-    }
-}
-
-/* TOMBOL BACK */
 .btn-back-viewer {
     position: fixed;
     top: 20px;
@@ -326,49 +310,4 @@
     background: #f8f9fa;
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Tombol Simpan Floating */
-.btn-save-floating {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 15px 25px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: all 0.3s ease;
-}
-
-.btn-save-floating:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-}
-
-.btn-save-floating span {
-    font-size: 20px;
-}
-
-/* Pastikan viewer container tidak overflow hidden */
-#viewer-container {
-    width: 100%;
-    height: 100vh;
-    position: relative;
-    /* JANGAN pakai overflow: hidden jika menutupi tombol */
-}
-
-/* Jika ada iframe atau canvas dari viewer, atur z-index-nya lebih rendah */
-#viewer-container canvas,
-#viewer-container iframe {
-    z-index: 1;
 }
