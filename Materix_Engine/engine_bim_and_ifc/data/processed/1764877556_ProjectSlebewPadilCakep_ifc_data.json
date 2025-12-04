@@ -1,0 +1,77 @@
+[
+  {
+    "guid": "2DINXo81PFaAi0IUC0Wye8",
+    "tipe_ifc": "IfcSlab",
+    "nama": "Floor:Generic 300mm:1664482",
+    "label_cad": "1664482",
+    "satuan_utama_hitung": "m2",
+    "satuan_sumber": "METER (Converted)",
+    "kuantitas": {
+      "panjang": 69.8,
+      "tinggi": 0.0,
+      "tebal": 0.15,
+      "area_m2": 0.004,
+      "volume_m3": 0.0
+    }
+  },
+  {
+    "guid": "2DINXo81PFaAi0IUC0WymO",
+    "tipe_ifc": "IfcWallStandardCase",
+    "nama": "Basic Wall:Generic - 200mm:1663986",
+    "label_cad": "1663986",
+    "satuan_utama_hitung": "m3",
+    "satuan_sumber": "METER (Converted)",
+    "kuantitas": {
+      "panjang": 70.2,
+      "tinggi": 6.0,
+      "tebal": 0.2,
+      "area_m2": 421.2,
+      "volume_m3": 84.24
+    }
+  },
+  {
+    "guid": "2DINXo81PFaAi0IUC0WyiM",
+    "tipe_ifc": "IfcWallStandardCase",
+    "nama": "Basic Wall:Generic - 200mm:1664252",
+    "label_cad": "1664252",
+    "satuan_utama_hitung": "m3",
+    "satuan_sumber": "METER (Converted)",
+    "kuantitas": {
+      "panjang": 55.0,
+      "tinggi": 6.0,
+      "tebal": 0.2,
+      "area_m2": 330.0,
+      "volume_m3": 66.0
+    }
+  },
+  {
+    "guid": "2DINXo81PFaAi0IUC0Wyg9",
+    "tipe_ifc": "IfcWallStandardCase",
+    "nama": "Basic Wall:Generic - 200mm:1664355",
+    "label_cad": "1664355",
+    "satuan_utama_hitung": "m3",
+    "satuan_sumber": "METER (Converted)",
+    "kuantitas": {
+      "panjang": 70.0,
+      "tinggi": 6.0,
+      "tebal": 0.2,
+      "area_m2": 420.0,
+      "volume_m3": 84.0
+    }
+  },
+  {
+    "guid": "2DINXo81PFaAi0IUC0Wyeb",
+    "tipe_ifc": "IfcWallStandardCase",
+    "nama": "Basic Wall:Generic - 200mm:1664463",
+    "label_cad": "1664463",
+    "satuan_utama_hitung": "m3",
+    "satuan_sumber": "METER (Converted)",
+    "kuantitas": {
+      "panjang": 54.8,
+      "tinggi": 6.0,
+      "tebal": 0.2,
+      "area_m2": 328.8,
+      "volume_m3": 65.76
+    }
+  }
+]

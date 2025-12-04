@@ -54,7 +54,7 @@ class HasilAnalisisController extends Controller
         session()->put($sessionKey, $sessionData);
 
         // Load JSON File
-        $jsonPath = base_path("Materix_Engine\\ai_engine_materix\\engine_bim_and_ifc\\data\\processed\\{$desain->Nama_Desain}_ifc_data.json");
+        $jsonPath = base_path("Materix_Engine\\engine_bim_and_ifc\\data\\processed\\{$desain->Nama_Desain}_ifc_data.json");
         $data = [];
         if (file_exists($jsonPath)) {
             $jsonContent = file_get_contents($jsonPath);

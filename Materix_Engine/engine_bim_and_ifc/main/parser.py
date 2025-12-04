@@ -5,13 +5,8 @@ import json
 import sys
 import math
 
-# Lokasi folder skrip parser.py saat ini
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# Naik 1 folder ke engine_bim_and_ifc/
 ENGINE_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
-
-# Path ke folder processed
 FOLDER_OUTPUT = os.path.join(ENGINE_ROOT, "data", "processed")
 
 # Daftar Tipe IFC yang TIDAK perlu diekstrak
