@@ -168,7 +168,7 @@
 
 <!-- ================= MODALS ================= -->
 
-<!-- Modal Supplier -->
+<!-- Modal Supplier & Tambah Supplier -->
 <div class="modal fade" id="modalSupplier" tabindex="-1" aria-labelledby="modalSupplierLabel" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -195,7 +195,6 @@
                         @endforeach
                     </tbody>
                 </table>
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -215,22 +214,18 @@
             <div class="modal-body">
                 <form action="{{ route('supplier.tambah') }}" method="POST">
                     @csrf
-
                     <div class="mb-3">
                         <label class="form-label">Nama Supplier</label>
                         <input type="text" name="Nama_Supplier" class="form-control" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label">Alamat Supplier</label>
                         <input type="text" name="Alamat_Supplier" class="form-control" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label">Kontak Supplier</label>
                         <input type="text" name="Kontak_Supplier" class="form-control" required>
                     </div>
-
                     <button type="submit" class="btn btn-primary w-100">Simpan</button>
                 </form>
             </div>
@@ -238,7 +233,7 @@
     </div>
 </div>
 
-<!-- Modal Pilih Supplier (modal-xl) -->
+<!-- Modal Pilih Supplier -->
 <div class="modal fade" id="modalPilihSupplier" tabindex="-1" aria-labelledby="modalPilihSupplierLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -288,7 +283,7 @@
     </div>
 </div>
 
-<!-- Modal Bahan (modal-xl) -->
+<!-- Modal Bahan -->
 <div class="modal fade" id="modalBahan" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -320,8 +315,6 @@
 
                         <tbody>
                             @php
-                                // To avoid duplicate bahan rows if recaps contain same bahan many times,
-                                // aggregate unique bahan list for the modal. We'll collect unique ID_Bahan from recaps.
                                 $uniqueBahan = collect($recaps)->unique('ID_Bahan')->values();
                             @endphp
 
@@ -329,15 +322,12 @@
                                 <tr>
                                     <td class="text-center">{{ $i + 1 }}</td>
                                     <td>{{ $recapB->bahan->Nama_Bahan ?? 'ID: ' . $recapB->ID_Bahan }}</td>
-
                                     <td>
                                         <select class="form-select form-select-sm pilihSupplierHarga"
                                                 data-id-bahan="{{ $recapB->ID_Bahan }}">
                                             <option value="">-- Pilih Supplier --</option>
                                             @foreach ($suppliers as $sup)
-                                                <option value="{{ $sup->ID_Supplier }}">
-                                                    {{ $sup->Nama_Supplier }}
-                                                </option>
+                                                <option value="{{ $sup->ID_Supplier }}">{{ $sup->Nama_Supplier }}</option>
                                             @endforeach
                                         </select>
                                     </td>
@@ -366,7 +356,6 @@
 
                     </table>
                 </div>
-
             </div>
 
             <div class="modal-footer">
@@ -383,7 +372,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    // Helpers
     function formatRupiah(number) {
         if (number === null || number === undefined || isNaN(number) || Number(number) === 0) return '-';
         return 'Rp ' + Number(number).toLocaleString('id-ID', { maximumFractionDigits: 0 });
@@ -405,25 +393,21 @@ document.addEventListener('DOMContentLoaded', function () {
         toastEl.addEventListener('hidden.bs.toast', () => wrapper.remove());
     }
 
-    // Modal pilih supplier logic
+    // Modal Pilih Supplier
     const modalPilihSupplierEl = document.getElementById('modalPilihSupplier');
     const modalPilihSupplier = new bootstrap.Modal(modalPilihSupplierEl);
     let currentRekapId = null;
-    let currentBahanIdForRekap = null;
 
     document.querySelectorAll('.pilih-supplier-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             currentRekapId = this.getAttribute('data-id-rekap');
-            currentBahanIdForRekap = this.getAttribute('data-id-bahan');
             document.getElementById('currentRekapId').textContent = currentRekapId;
             modalPilihSupplier.show();
             setTimeout(() => { document.getElementById('searchSupplierInput').focus(); }, 250);
         });
     });
 
-    // supplier search filter
-    const searchInput = document.getElementById('searchSupplierInput');
-    searchInput.addEventListener('input', function () {
+    document.getElementById('searchSupplierInput').addEventListener('input', function () {
         const q = this.value.trim().toLowerCase();
         document.querySelectorAll('#supplierListGroup .supplier-row').forEach(row => {
             const nama = row.getAttribute('data-nama') || '';
@@ -431,21 +415,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // pilih supplier -> update recap via AJAX
     document.querySelectorAll('.pilih-ini-btn').forEach(btn => {
         btn.addEventListener('click', async function () {
             const idSupplier = this.getAttribute('data-id-supplier');
             const namaSupplier = this.getAttribute('data-nama');
 
-            if (!currentRekapId) {
-                showToast('ID rekap tidak terdeteksi. Tutup modal lalu coba lagi.', 'danger');
-                return;
-            }
+            if (!currentRekapId) { showToast('ID rekap tidak terdeteksi.', 'danger'); return; }
 
-            // disable button while saving
             this.disabled = true;
             const original = this.innerHTML;
-            this.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memilih...`;
+            this.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Memilih...`;
 
             try {
                 const res = await fetch('{{ route("rekap.updateSupplier") }}', {
@@ -455,30 +434,24 @@ document.addEventListener('DOMContentLoaded', function () {
                         'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({
-                        ID_Rekap: currentRekapId,
-                        ID_Supplier: idSupplier
-                    })
+                    body: JSON.stringify({ ID_Rekap: currentRekapId, ID_Supplier: idSupplier })
                 });
 
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Gagal menyimpan supplier');
 
-                // update supplier button text
                 const selector = `.pilih-supplier-btn[data-id-rekap="${currentRekapId}"]`;
                 const targetBtn = document.querySelector(selector);
                 if (targetBtn) {
                     const spanName = targetBtn.querySelector('.supplier-name-text');
-                    if (spanName) spanName.textContent = data.supplier_name || namaSupplier || 'Pilih Supplier';
-                    targetBtn.setAttribute('data-current-name', data.supplier_name || namaSupplier || '');
-                    // update price & total cells for that row
+                    if (spanName) spanName.textContent = data.supplier_name || namaSupplier;
+                    targetBtn.setAttribute('data-current-name', data.supplier_name || namaSupplier);
                     const row = document.querySelector(`.recap-row[data-id-rekap="${data.ID_Rekap}"]`);
                     if (row) {
                         const hargaCell = row.querySelector('.harga-value');
                         const totalCell = row.querySelector('.total-value');
                         if (hargaCell) hargaCell.textContent = formatRupiah(data.harga);
                         if (totalCell) totalCell.textContent = formatRupiah(data.total_harga);
-                        // highlight
                         row.classList.add('price-updated');
                         setTimeout(()=> row.classList.remove('price-updated'), 900);
                     }
@@ -489,40 +462,27 @@ document.addEventListener('DOMContentLoaded', function () {
             } catch (err) {
                 console.error(err);
                 showToast(err.message || 'Gagal menyimpan supplier.', 'danger');
-            } finally {
-                this.disabled = false;
-                this.innerHTML = original;
-            }
+            } finally { this.disabled = false; this.innerHTML = original; }
         });
     });
 
-    // MODAL BAHAN: Save harga per row
+    // Modal Bahan: Save harga per row
     document.querySelectorAll('.btnSimpanHarga').forEach(btn => {
         btn.addEventListener('click', async function () {
             const idBahan = this.getAttribute('data-id-bahan');
-            // cari select dan input terkait
             const select = document.querySelector(`.pilihSupplierHarga[data-id-bahan="${idBahan}"]`);
             const input = document.querySelector(`.inputHargaBahan[data-id-bahan="${idBahan}"]`);
-            if (!select || !input) {
-                showToast('Elemen tidak ditemukan.', 'danger');
-                return;
-            }
+            if (!select || !input) { showToast('Elemen tidak ditemukan.', 'danger'); return; }
+
             const idSupplier = select.value;
             const harga = input.value;
 
-            if (!idSupplier) {
-                showToast('Pilih supplier terlebih dahulu.', 'warning');
-                return;
-            }
-            if (!harga || Number(harga) <= 0) {
-                showToast('Masukkan harga yang valid.', 'warning');
-                return;
-            }
+            if (!idSupplier) { showToast('Pilih supplier terlebih dahulu.', 'warning'); return; }
+            if (!harga || Number(harga) <= 0) { showToast('Masukkan harga yang valid.', 'warning'); return; }
 
-            // disable
             this.disabled = true;
             const origText = this.innerHTML;
-            this.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Menyimpan...`;
+            this.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Menyimpan...`;
 
             try {
                 const res = await fetch('{{ route("bahan.simpanHarga") }}', {
@@ -532,25 +492,17 @@ document.addEventListener('DOMContentLoaded', function () {
                         'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({
-                        ID_Bahan: idBahan,
-                        ID_Supplier: idSupplier,
-                        Harga_per_Satuan: harga
-                    })
+                    body: JSON.stringify({ ID_Bahan: idBahan, ID_Supplier: idSupplier, Harga_per_Satuan: harga })
                 });
 
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Gagal menyimpan harga');
 
-                // update all recap rows that have this ID_Bahan and same supplier (and optionally update all with same ID_Bahan)
                 document.querySelectorAll(`.recap-row[data-id-bahan="${idBahan}"]`).forEach(row => {
-                    // if recap row has ID_Supplier equal to idSupplier (we store in button data-current-name maybe),
-                    // but to simplify, update price for rows that have ID_Supplier == idSupplier or even update all rows with same bahan
-                    const hargaCell = row.querySelector('.harga-value');
-                    const totalCell = row.querySelector('.total-value');
-                    // compute new total using Volume_Final (stored text). Retrieve numeric volume_final by removing dots/comma
                     const volFinalText = row.querySelector('.vol-final').textContent.trim().replace(/\./g, '').replace(',', '.');
                     const volFinal = parseFloat(volFinalText) || 0;
+                    const hargaCell = row.querySelector('.harga-value');
+                    const totalCell = row.querySelector('.total-value');
                     const newTotal = volFinal * Number(data.Harga_per_Satuan);
                     if (hargaCell) hargaCell.textContent = formatRupiah(data.Harga_per_Satuan);
                     if (totalCell) totalCell.textContent = formatRupiah(newTotal);
@@ -559,22 +511,33 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
                 showToast('Harga bahan tersimpan dan rekap diperbarui.', 'success');
-            } catch (err) {
-                console.error(err);
-                showToast(err.message || 'Gagal menyimpan harga.', 'danger');
-            } finally {
-                this.disabled = false;
-                this.innerHTML = origText;
-            }
+            } catch (err) { console.error(err); showToast(err.message || 'Gagal menyimpan harga.', 'danger'); }
+            finally { this.disabled = false; this.innerHTML = origText; }
         });
     });
 
-    // If session success after adding supplier (server-side redirect), show Data Supplier modal again
+    document.querySelectorAll('.pilihSupplierHarga').forEach(select => {
+        select.addEventListener('change', async function () {
+            const idBahan = this.getAttribute('data-id-bahan');
+            const idSupplier = this.value;
+            if (!idSupplier) return;
+
+            try {
+                const res = await fetch(`{{ route('rekap.get-harga-bahan') }}?ID_Bahan=${idBahan}&ID_Supplier=${idSupplier}`, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                if (!res.ok && data.message) throw new Error(data.message);
+                const input = document.querySelector(`.inputHargaBahan[data-id-bahan="${idBahan}"]`);
+                if (input) input.value = data.harga || '';
+            } catch (err) { console.error(err); showToast('Gagal mengambil harga bahan.', 'danger'); }
+        });
+    });
+
     @if (session('success'))
         const modalSupplier = new bootstrap.Modal(document.getElementById('modalSupplier'));
         modalSupplier.show();
     @endif
-
 });
 </script>
 

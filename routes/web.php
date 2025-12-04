@@ -78,6 +78,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/data-proyek/{id}', [DataProyekController::class, 'index'])->name('dataProyek.index');
 
     // Supplier
+    Route::get('/rekap/get-harga-bahan', [DataProyekController::class, 'getHargaBahan'])->name('rekap.get-harga-bahan');
     Route::post('/supplier/tambah', [DataProyekController::class, 'tambahSupplier'])->name('supplier.tambah');
     Route::post('/rekap/update-supplier', [DataProyekController::class, 'updateSupplier'])->name('rekap.updateSupplier');
     Route::post('/rekap/update-harga', [DataProyekController::class, 'updateHarga'])->name('rekap.updateHarga');

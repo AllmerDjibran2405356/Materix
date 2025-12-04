@@ -10,17 +10,11 @@ class ListHargaBahan extends Model
     use HasFactory;
 
     protected $table = 'list_harga_bahan';
-
     protected $primaryKey = 'ID_Harga';
-
     public $timestamps = false;
 
     protected $fillable = [
-        'ID_Supplier',
-        'ID_Bahan',
-        'ID_Satuan',
-        'Harga_per_Satuan',
-        'Tanggal_Update_Data'
+        'ID_Supplier', 'ID_Bahan', 'ID_Satuan', 'Harga_per_Satuan', 'Tanggal_Update_Data'
     ];
 
     public function bahan() {

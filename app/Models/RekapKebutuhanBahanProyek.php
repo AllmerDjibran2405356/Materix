@@ -10,23 +10,19 @@ class RekapKebutuhanBahanProyek extends Model
     use HasFactory;
     protected $table = 'rekap_kebutuhan_bahan_proyek';
     protected $primaryKey = 'ID_Rekap';
-
     public $timestamps = false;
 
     protected $fillable = [
-        'ID_User',
-        'ID_Desain_Rumah',
-        'ID_Bahan',
-        'Volume_Teoritis',
-        'Volume_Final',
-        'Satuan_Saat_Ini',
-        'Harga_Satuan_Saat_Ini',
-        'Total_Harga',
-        'Tanggal_Hitung'
+        'ID_User', 'ID_Desain_Rumah', 'ID_Bahan', 'Volume_Teoritis', 'Volume_Final',
+        'Satuan_Saat_Ini', 'Harga_Satuan_Saat_Ini', 'Total_Harga', 'Tanggal_Hitung', 'ID_Supplier'
     ];
 
-    public function Bahan() {
+    public function bahan() {
         return $this->belongsTo(ListBahan::class, 'ID_Bahan', 'ID_Bahan');
+    }
+
+    public function supplier() {
+        return $this->belongsTo(ListSupplier::class, 'ID_Supplier', 'ID_Supplier');
     }
 
     public function desainRumah() {

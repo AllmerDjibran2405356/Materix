@@ -8,11 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class SupplierKontak extends Model
 {
     use HasFactory;
-
     public $timestamps = false;
-
     protected $table = 'supplier_kontak';
-
     protected $fillable = ['ID_Supplier', 'Kontak_Supplier'];
 
     public function supplier() {
