@@ -16,6 +16,7 @@ use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\UnggahController;
 use App\Http\Controllers\DetailProyekController;
 use App\Http\Controllers\KelolaLaporanProyekController;
+use App\Http\Controllers\RABController;
 
 /*
 |--------------------------------------------------------------------------
@@ -116,6 +117,19 @@ Route::middleware('auth')->group(function () {
         Route::post('/satuan/store', [MaterialController::class, 'storeSatuan'])->name('materials.satuan.store');
         Route::get('/satuan/list', [MaterialController::class, 'getSatuan'])->name('materials.satuan.list');
     });
+
+    // Lihat RAB
+    Route::get('/laporan/{id}', [RABController::class, 'index'])->name('laporan.index');
+});
+
+// RAB Routes
+Route::prefix('rab')->group(function () {
+    Route::get('/project/{id}', [RABController::class, 'index'])->name('rab.index');
+    Route::get('/project/{id}/recap-data', [RABController::class, 'getRecapData'])->name('rab.get-recap-data');
+    Route::get('/project/{id}/export-excel', [RABController::class, 'exportExcel'])->name('rab.export-excel');
+    Route::get('/project/{id}/export-pdf', [RABController::class, 'exportPDF'])->name('rab.export-pdf');
+    Route::put('/recap/{id}', [RABController::class, 'updateRecap'])->name('rab.update');
+    Route::delete('/recap/{id}', [RABController::class, 'deleteRecap'])->name('rab.delete');
 });
 
 // API Routes (Authenticated)

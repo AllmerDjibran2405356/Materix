@@ -19,6 +19,16 @@
 <body class="bg-light">
 
 <div class="container mt-4">
+
+    <div class="position-fixed" style="top: 20px; left: 20px; z-index: 1000;">
+        <button onclick="window.location.href='{{ route('detailProyek.show', $project->ID_Desain_Rumah) }}'"
+                class="btn btn-light shadow-sm rounded-circle"
+                style="width: 50px; height: 50px;"
+                title="Kembali ke Detail Proyek">
+            <i class="bi bi-arrow-left fs-5"></i>
+        </button>
+    </div>
+
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3>Pendataan Bahan & Produsen</h3>
