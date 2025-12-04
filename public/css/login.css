@@ -132,12 +132,12 @@ form {
     .main-container {
         width: 90%;
         height: auto;
-        flex-direction: column;
+        flex-direction: row;
         padding: 20px;
     }
 
     .c_login-frame {
-        flex-direction: column;
+        flex-direction: row;
         gap: 20px;
     }
 
@@ -149,6 +149,59 @@ form {
 
     .c_login-right {
         padding: 40px 30px;
+    }
+
+}
+
+@media (max-width: 1024px) {
+    .main-container {
+        width: 97%;
+        height: 67%;
+        flex-direction: row;
+        padding: 20px;
+    }
+
+    .c_login-frame {
+        flex-direction: row;
+        gap: 20px;
+    }
+
+    .c_login-left,
+    .c_login-right {
+        width:450px;
+        height: 670px;
+    }
+
+    .c_login-right {
+        padding: 10px 10px;
+    }
+
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+        padding: 0px;
+    }
+
+    .c_login-frame {
+        flex-direction: column;
+        gap: 0px;
+    }
+
+    .c_login-left {
+        display: none !important;
+    }
+
+    .c_login-right {
+        width: 90%;
+        height: auto;
+    }
+
+    .c_login-right {
+        padding: 67px 67px;
     }
 
 }
