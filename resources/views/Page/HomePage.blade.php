@@ -13,14 +13,18 @@
     <div class="hero-overlay"></div>
 
     <div class="hero-content">
-        <img src="{{ asset('images/pekerja.png') }}" alt="Worker" class="hero-character">
+        <div class="hero-column">
+            <div class="speech-bubble">
+                <p class="mb-0 fw-semibold">
+                    Hai! Mari kita mulai perhitungan material konstruksi bangunanmu!
+                </p>
+            </div>
+
+            <img src="{{ asset('images/pekerja.png') }}" alt="Worker" class="hero-character">
+        </div>
 
         <div class="hero-text">
             <h2 class="fw-bold">Selamat Datang,<br>{{ $user->username }}!</h2>
-        </div>
-
-        <div class="speech-bubble">
-            <p class="mb-0 fw-semibold">Hai! Mari kita mulai perhitungan material konstruksi bangunanmu!</p>
         </div>
     </div>
 </section>
@@ -53,13 +57,10 @@
 
         @if ($projects->isEmpty())
 
-            {{-- EMPTY STATE BOX --}}
             <div class="riwayat-empty-wrapper">
 
-                {{-- CHARACTER (KELUAR DARI BOX) --}}
                 <img src="{{ asset('images/bobwonder.png') }}" class="riwayat-character" alt="Character">
 
-                {{-- ORANGE BOX --}}
                 <div class="riwayat-empty-box">
                     <p class="riwayat-empty-text">
                         Belum ada proyek desain rumah yang kamu unggah 😅 <br>
@@ -75,7 +76,6 @@
 
         @else
 
-            {{-- LIST PROJECT MODE --}}
             <div class="riwayat-list-wrapper">
 
                 <div class="riwayat-list-header">

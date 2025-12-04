@@ -199,10 +199,10 @@ body, html {
 }
 
 .feature-img {
-    width: 40px;
-    height: 40px;
+    width: 67px;
+    height: 67px;
     flex-shrink: 0;
-    background-color:#fff;
+    background: transparent;
     align-items: center;
     justify-content: center;
 }
