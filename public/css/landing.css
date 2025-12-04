@@ -235,10 +235,33 @@ body, html {
     margin-bottom: 10px;
 }
 
-/* ==============Responsive============== */
+/* Responsive */
 @media (max-width: 768px) {
-    .about-content {
-        flex-direction: column;
+    .about-title h2 {
+        font: optional;
+    }
+    .about-image
+    {
+        display: none !important;
+    }
+    .hero-text h1 {
+        font-size: 1.6rem;
+    }
+    .feature-item {
+        width: 100%;
+    }
+}
+
+@media (max-width: 425px) {
+    .about-title h2 {
+        font: optional;
+    }
+    .about-image
+    {
+        display: none !important;
+    }
+    .about-text p {
+        font-size: 24px;
     }
     .hero-text h1 {
         font-size: 1.6rem;
@@ -246,5 +269,8 @@ body, html {
     .feature-item {
         width: 100%;
         max-width: 350px;
+    }
+    .features-header {
+        display: none !important;
     }
 }
