@@ -19,7 +19,6 @@
 <body class="bg-light">
 
 <div class="container mt-4">
-
     <div class="position-fixed" style="top: 20px; left: 20px; z-index: 1000;">
         <button onclick="window.location.href='{{ route('detailProyek.show', $project->ID_Desain_Rumah) }}'"
                 class="btn btn-light shadow-sm rounded-circle"
