@@ -14,12 +14,14 @@ class ListSupplier extends Model
 
     protected $fillable = ['Nama_Supplier'];
 
+    // Relasi one-to-many ke alamat (sudah benar)
     public function alamat() {
-        return $this->hasOne(SupplierAlamat::class, 'ID_Supplier', 'ID_Supplier');
+        return $this->hasMany(SupplierAlamat::class, 'ID_Supplier', 'ID_Supplier');
     }
 
+    // Relasi one-to-many ke kontak (sudah benar)
     public function kontak() {
-        return $this->hasOne(SupplierKontak::class, 'ID_Supplier', 'ID_Supplier');
+        return $this->hasMany(SupplierKontak::class, 'ID_Supplier', 'ID_Supplier');
     }
 
     public function hargaBahan() {

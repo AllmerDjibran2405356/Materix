@@ -19,13 +19,16 @@ class DataProyekController extends Controller
     {
         $project = DesainRumah::findOrFail($id);
         $recaps = RekapKebutuhanBahanProyek::where('ID_Desain_Rumah', $id)->get();
-        $suppliers = ListSupplier::orderBy('Nama_Supplier')->get();
+
+        // Load supplier dengan alamat dan kontak (ONE-TO-MANY)
+        $suppliers = ListSupplier::with(['alamat', 'kontak'])->orderBy('Nama_Supplier')->get();
 
         // Ambil semua bahan yang ada di rekap
         $bahanIds = $recaps->pluck('ID_Bahan')->unique()->toArray();
 
         // Ambil harga bahan terbaru untuk setiap bahan dan supplier
         $materialPrices = ListHargaBahan::whereIn('ID_Bahan', $bahanIds)
+            ->with(['bahan', 'supplier'])
             ->orderBy('Tanggal_Update_Data', 'desc')
             ->get();
 
@@ -60,11 +63,13 @@ class DataProyekController extends Controller
                 'Nama_Supplier' => $request->Nama_Supplier
             ]);
 
+            // Tambahkan alamat pertama
             SupplierAlamat::create([
                 'ID_Supplier' => $supplier->ID_Supplier,
                 'Alamat_Supplier' => $request->Alamat_Supplier
             ]);
 
+            // Tambahkan kontak pertama
             SupplierKontak::create([
                 'ID_Supplier' => $supplier->ID_Supplier,
                 'Kontak_Supplier' => $request->Kontak_Supplier
@@ -76,6 +81,76 @@ class DataProyekController extends Controller
             DB::rollBack();
             Log::error('Error tambah supplier: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menambahkan supplier: ' . $e->getMessage());
+        }
+    }
+
+    // TAMBAH ALAMAT BARU (bisa banyak)
+    public function tambahAlamatSupplier(Request $request)
+    {
+        $request->validate([
+            'ID_Supplier' => 'required|exists:list_supplier,ID_Supplier',
+            'Alamat_Supplier' => 'required|string|max:255',
+        ]);
+
+        try {
+            SupplierAlamat::create([
+                'ID_Supplier' => $request->ID_Supplier,
+                'Alamat_Supplier' => $request->Alamat_Supplier
+            ]);
+
+            return redirect()->back()->with('success', 'Alamat supplier berhasil ditambahkan!');
+        } catch (\Throwable $e) {
+            Log::error('Error tambah alamat supplier: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menambahkan alamat: ' . $e->getMessage());
+        }
+    }
+
+    // TAMBAH KONTAK BARU (bisa banyak)
+    public function tambahKontakSupplier(Request $request)
+    {
+        $request->validate([
+            'ID_Supplier' => 'required|exists:list_supplier,ID_Supplier',
+            'Kontak_Supplier' => 'required|string|max:50',
+        ]);
+
+        try {
+            SupplierKontak::create([
+                'ID_Supplier' => $request->ID_Supplier,
+                'Kontak_Supplier' => $request->Kontak_Supplier
+            ]);
+
+            return redirect()->back()->with('success', 'Kontak supplier berhasil ditambahkan!');
+        } catch (\Throwable $e) {
+            Log::error('Error tambah kontak supplier: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menambahkan kontak: ' . $e->getMessage());
+        }
+    }
+
+    // HAPUS ALAMAT
+    public function hapusAlamatSupplier($id)
+    {
+        try {
+            $alamat = SupplierAlamat::findOrFail($id);
+            $alamat->delete();
+
+            return redirect()->back()->with('success', 'Alamat berhasil dihapus!');
+        } catch (\Throwable $e) {
+            Log::error('Error hapus alamat supplier: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus alamat: ' . $e->getMessage());
+        }
+    }
+
+    // HAPUS KONTAK
+    public function hapusKontakSupplier($id)
+    {
+        try {
+            $kontak = SupplierKontak::findOrFail($id);
+            $kontak->delete();
+
+            return redirect()->back()->with('success', 'Kontak berhasil dihapus!');
+        } catch (\Throwable $e) {
+            Log::error('Error hapus kontak supplier: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus kontak: ' . $e->getMessage());
         }
     }
 
@@ -111,7 +186,6 @@ class DataProyekController extends Controller
 
     public function simpanHargaBahan(Request $request)
     {
-        // Validasi yang lebih fleksibel untuk harga
         $request->validate([
             'ID_Bahan' => 'required|exists:list_bahan,ID_Bahan',
             'ID_Supplier' => 'required|exists:list_supplier,ID_Supplier',
@@ -120,24 +194,18 @@ class DataProyekController extends Controller
 
         $idBahan = $request->ID_Bahan;
         $idSupplier = $request->ID_Supplier;
-        $hargaInput = $request->Harga_Per_Satuan;
+        $hargaInput = (int)$request->Harga_Per_Satuan;
 
-        // Konversi ke integer untuk menghindari masalah desimal
-        $hargaInput = (int)$hargaInput;
-
-        // Cek apakah bahan ada
         $bahan = ListBahan::findOrFail($idBahan);
         $idSatuan = $bahan->ID_Satuan_Bahan;
 
         DB::beginTransaction();
         try {
-            // Cek apakah sudah ada harga untuk kombinasi bahan-supplier ini
             $hargaExisting = ListHargaBahan::where('ID_Bahan', $idBahan)
                 ->where('ID_Supplier', $idSupplier)
                 ->first();
 
             if ($hargaExisting) {
-                // Update harga yang sudah ada
                 $hargaExisting->update([
                     'Harga_Per_Satuan' => $hargaInput,
                     'ID_Satuan' => $idSatuan,
@@ -145,7 +213,6 @@ class DataProyekController extends Controller
                 ]);
                 $message = 'Harga berhasil diperbarui!';
             } else {
-                // Buat harga baru
                 ListHargaBahan::create([
                     'ID_Bahan' => $idBahan,
                     'ID_Supplier' => $idSupplier,
@@ -174,6 +241,159 @@ class DataProyekController extends Controller
             DB::rollBack();
             Log::error('Error simpan harga: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menyimpan harga: ' . $e->getMessage());
+        }
+    }
+
+    // EDIT HARGA - GET DATA
+    public function editHargaBahan($id)
+    {
+        try {
+            $harga = ListHargaBahan::with(['bahan', 'supplier'])->findOrFail($id);
+
+            // Ambil semua bahan untuk dropdown
+            $semuaBahan = ListBahan::orderBy('Nama_Bahan')->get(['ID_Bahan', 'Nama_Bahan']);
+            // Ambil semua supplier untuk dropdown
+            $semuaSupplier = ListSupplier::orderBy('Nama_Supplier')->get(['ID_Supplier', 'Nama_Supplier']);
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'id' => $harga->ID_Harga,
+                    'id_bahan' => $harga->ID_Bahan,
+                    'nama_bahan' => $harga->bahan->Nama_Bahan ?? 'Unknown',
+                    'id_supplier' => $harga->ID_Supplier,
+                    'nama_supplier' => $harga->supplier->Nama_Supplier ?? 'Unknown',
+                    'harga' => $harga->Harga_Per_Satuan,
+                    'tanggal' => $harga->Tanggal_Update_Data
+                ],
+                'dropdowns' => [
+                    'bahan' => $semuaBahan,
+                    'supplier' => $semuaSupplier
+                ]
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error editHargaBahan: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memuat data harga'
+            ], 500);
+        }
+    }
+
+    // UPDATE HARGA - PUT
+    public function updateHargaBahan(Request $request, $id)
+    {
+        // Debug: Log request data
+        \Log::info('Update harga request:', [
+            'id' => $id,
+            'data' => $request->all()
+        ]);
+
+        $request->validate([
+            'ID_Bahan' => 'required|exists:list_bahan,ID_Bahan',
+            'ID_Supplier' => 'required|exists:list_supplier,ID_Supplier',
+            'Harga_Per_Satuan' => 'required|numeric|min:1'
+        ]);
+
+        $harga = ListHargaBahan::findOrFail($id);
+        $idBahanLama = $harga->ID_Bahan;
+        $idSupplierLama = $harga->ID_Supplier;
+
+        $idBahanBaru = $request->ID_Bahan;
+        $idSupplierBaru = $request->ID_Supplier;
+        $hargaInput = (int)$request->Harga_Per_Satuan;
+
+        DB::beginTransaction();
+        try {
+            // Update harga
+            $harga->update([
+                'ID_Bahan' => $idBahanBaru,
+                'ID_Supplier' => $idSupplierBaru,
+                'Harga_Per_Satuan' => $hargaInput,
+                'Tanggal_Update_Data' => now()
+            ]);
+
+            // Jika bahan atau supplier berubah, update rekap yang lama
+            if ($idBahanLama != $idBahanBaru || $idSupplierLama != $idSupplierBaru) {
+                // Update rekap yang menggunakan kombinasi lama
+                $recapsLama = RekapKebutuhanBahanProyek::where('ID_Bahan', $idBahanLama)
+                    ->where('ID_Supplier', $idSupplierLama)
+                    ->get();
+
+                foreach ($recapsLama as $recap) {
+                    $recap->Harga_Satuan_Saat_Ini = 0; // Reset karena kombinasi berubah
+                    $recap->Total_Harga = 0;
+                    $recap->save();
+                }
+            }
+
+            // Update rekap yang menggunakan kombinasi baru
+            $recapsBaru = RekapKebutuhanBahanProyek::where('ID_Bahan', $idBahanBaru)
+                ->where('ID_Supplier', $idSupplierBaru)
+                ->get();
+
+            foreach ($recapsBaru as $recap) {
+                $recap->Harga_Satuan_Saat_Ini = $hargaInput;
+                $recap->Total_Harga = $recap->Volume_Final * $hargaInput;
+                $recap->save();
+            }
+
+            DB::commit();
+
+            // Kembalikan response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Harga berhasil diperbarui!',
+                'data' => [
+                    'id' => $harga->ID_Harga,
+                    'harga' => $hargaInput
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error update harga: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui harga: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // EDIT SUPPLIER - GET DATA
+    public function editSupplier($id)
+    {
+        $supplier = ListSupplier::with(['alamat', 'kontak'])->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $supplier->ID_Supplier,
+                'nama' => $supplier->Nama_Supplier,
+                'alamat' => $supplier->alamat,
+                'kontak' => $supplier->kontak
+            ]
+        ]);
+    }
+
+    // UPDATE SUPPLIER - PUT
+    public function updateSupplier(Request $request, $id)
+    {
+        $request->validate([
+            'Nama_Supplier' => 'required|string|max:255'
+        ]);
+
+        try {
+            $supplier = ListSupplier::findOrFail($id);
+            $supplier->update([
+                'Nama_Supplier' => $request->Nama_Supplier
+            ]);
+
+            return redirect()->back()->with('success', 'Supplier berhasil diperbarui!');
+        } catch (\Throwable $e) {
+            Log::error('Error update supplier: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui supplier: ' . $e->getMessage());
         }
     }
 }

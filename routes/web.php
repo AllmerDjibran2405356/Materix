@@ -77,13 +77,33 @@ Route::middleware('auth')->group(function () {
     // Project Data
     Route::get('/data-proyek/{id}', [DataProyekController::class, 'index'])->name('dataProyek.index');
 
-    // Supplier
+    // ========== TAMBAHAN ROUTE UNTUK FITUR BARU ==========
+    // Supplier Management
+    Route::prefix('supplier')->group(function () {
+        Route::post('/tambah', [DataProyekController::class, 'tambahSupplier'])->name('supplier.tambah');
+        Route::post('/tambah-alamat', [DataProyekController::class, 'tambahAlamatSupplier'])->name('supplier.tambahAlamat');
+        Route::post('/tambah-kontak', [DataProyekController::class, 'tambahKontakSupplier'])->name('supplier.tambahKontak');
+        Route::delete('/alamat/{id}', [DataProyekController::class, 'hapusAlamatSupplier'])->name('supplier.hapusAlamat');
+        Route::delete('/kontak/{id}', [DataProyekController::class, 'hapusKontakSupplier'])->name('supplier.hapusKontak');
+        Route::get('/{id}/edit', [DataProyekController::class, 'editSupplier'])->name('supplier.edit');
+        Route::put('/{id}', [DataProyekController::class, 'updateSupplier'])->name('supplier.update');
+    });
+
+    // Harga Bahan Management
+    Route::prefix('harga-bahan')->group(function () {
+        Route::post('/simpan', [DataProyekController::class, 'simpanHargaBahan'])->name('bahan.simpanHarga');
+        Route::get('/{id}/edit', [DataProyekController::class, 'editHargaBahan'])->name('harga.edit');
+        Route::put('/{id}', [DataProyekController::class, 'updateHargaBahan'])->name('harga.update'); // <-- INI YANG PENTING
+    });
+
+    // Rekap Management
+    Route::post('/rekap/update-supplier', [DataProyekController::class, 'updateSupplierRekap'])->name('rekap.updateSupplier');
+    // ========== END TAMBAHAN ROUTE ==========
+
+    // Existing Routes...
     Route::get('/rekap/get-harga-bahan', [DataProyekController::class, 'getHargaBahan'])->name('rekap.get-harga-bahan');
-    Route::post('/supplier/tambah', [DataProyekController::class, 'tambahSupplier'])->name('supplier.tambah');
-    Route::post('/rekap/update-supplier', [DataProyekController::class, 'updateSupplier'])->name('rekap.updateSupplier');
     Route::post('/rekap/update-harga', [DataProyekController::class, 'updateHarga'])->name('rekap.updateHarga');
     Route::post('/bahan/simpan-harga', [DataProyekController::class, 'simpanHargaBahan'])->name('bahan.simpanHarga');
-    Route::post('/rekap/update-supplier', [DataProyekController::class, 'updateSupplierRekap'])->name('rekap.updateSupplier');
 
     // Materials
     Route::prefix('projects')->group(function () {
@@ -100,6 +120,45 @@ Route::middleware('auth')->group(function () {
 
 // API Routes (Authenticated)
 Route::prefix('api')->middleware('auth')->group(function () {
+    // API untuk mendapatkan harga berdasarkan bahan dan supplier
+    Route::get('/harga/{bahanId}/{supplierId}', function($bahanId, $supplierId) {
+        $harga = \App\Models\ListHargaBahan::where('ID_Bahan', $bahanId)
+            ->where('ID_Supplier', $supplierId)
+            ->orderBy('Tanggal_Update_Data', 'desc')
+            ->first();
+
+        return response()->json([
+            'success' => true,
+            'harga' => $harga ? $harga->Harga_Per_Satuan : null
+        ]);
+    });
+
+    // API untuk mendapatkan semua harga (cache)
+    Route::get('/harga-cache', function() {
+        $hargaData = \App\Models\ListHargaBahan::select('ID_Bahan', 'ID_Supplier', 'Harga_Per_Satuan')
+            ->orderBy('Tanggal_Update_Data', 'desc')
+            ->get()
+            ->reduce(function($carry, $item) {
+                $key = $item->ID_Bahan . '-' . $item->ID_Supplier;
+                if (!isset($carry[$key])) {
+                    $carry[$key] = $item->Harga_Per_Satuan;
+                }
+                return $carry;
+            }, []);
+
+        return response()->json($hargaData);
+    });
+
+    Route::get('/bahan-all', function() {
+        $bahan = \App\Models\ListBahan::orderBy('Nama_Bahan')->get(['ID_Bahan', 'Nama_Bahan']);
+        return response()->json($bahan);
+    })->name('api.bahan-all');
+
+    Route::get('/supplier-all', function() {
+        $supplier = \App\Models\ListSupplier::orderBy('Nama_Supplier')->get(['ID_Supplier', 'Nama_Supplier']);
+        return response()->json($supplier);
+    })->name('api.supplier-all');
+
     // Material APIs
     Route::get('/bahan-list', [MaterialController::class, 'getBahanList'])->name('api.bahan-list');
     Route::get('/komponen-list', [MaterialController::class, 'getKomponenList'])->name('api.komponen-list');
