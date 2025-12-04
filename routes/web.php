@@ -76,6 +76,7 @@ Route::middleware('auth')->group(function () {
 
     // Project Data
     Route::get('/data-proyek/{id}', [DataProyekController::class, 'index'])->name('dataProyek.index');
+    Route::get('/data-proyek/{id}/refresh', [DataProyekController::class, 'refreshTable'])->name('dataProyek.refresh');
 
     // ========== TAMBAHAN ROUTE UNTUK FITUR BARU ==========
     // Supplier Management
@@ -93,12 +94,11 @@ Route::middleware('auth')->group(function () {
     Route::prefix('harga-bahan')->group(function () {
         Route::post('/simpan', [DataProyekController::class, 'simpanHargaBahan'])->name('bahan.simpanHarga');
         Route::get('/{id}/edit', [DataProyekController::class, 'editHargaBahan'])->name('harga.edit');
-        Route::put('/{id}', [DataProyekController::class, 'updateHargaBahan'])->name('harga.update'); // <-- INI YANG PENTING
+        Route::put('/{id}', [DataProyekController::class, 'updateHargaBahan'])->name('harga-bahan.update'); // NAMA ROUTE DIPERBAIKI
     });
 
     // Rekap Management
     Route::post('/rekap/update-supplier', [DataProyekController::class, 'updateSupplierRekap'])->name('rekap.updateSupplier');
-    // ========== END TAMBAHAN ROUTE ==========
 
     // Existing Routes...
     Route::get('/rekap/get-harga-bahan', [DataProyekController::class, 'getHargaBahan'])->name('rekap.get-harga-bahan');

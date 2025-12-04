@@ -46,7 +46,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped mb-0">
+                        <table class="table table-bordered table-striped mb-0" id="mainTable">
                             <thead class="table-dark">
                                 <tr>
                                     <th>No</th>
@@ -58,54 +58,8 @@
                                     <th>Supplier</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach ($recaps as $index => $recap)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $recap->bahan->Nama_Bahan ?? 'ID: '.$recap->ID_Bahan }}</td>
-                                    <td class="text-end">{{ number_format($recap->Volume_Final, 2, ',', '.') }}</td>
-                                    <td class="text-center">{{ $recap->Satuan_Saat_Ini }}</td>
-                                    <td class="text-end">
-                                        @if($recap->Harga_Satuan_Saat_Ini)
-                                            Rp {{ number_format($recap->Harga_Satuan_Saat_Ini, 0, ',', '.') }}
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-                                    <td class="text-end fw-bold text-success">
-                                        @if($recap->Total_Harga)
-                                            Rp {{ number_format($recap->Total_Harga, 0, ',', '.') }}
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <form action="{{ route('rekap.updateSupplier') }}" method="POST" class="d-flex">
-                                            @csrf
-                                            <input type="hidden" name="ID_Rekap" value="{{ $recap->ID_Rekap }}">
-                                            <select name="ID_Supplier" class="form-select form-select-sm" onchange="this.form.submit()">
-                                                <option value="">Pilih Supplier</option>
-                                                @foreach ($suppliers as $sup)
-                                                    <option value="{{ $sup->ID_Supplier }}"
-                                                        {{ $recap->ID_Supplier == $sup->ID_Supplier ? 'selected' : '' }}>
-                                                        {{ $sup->Nama_Supplier }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr class="table-secondary fw-bold">
-                                    <td colspan="5" class="text-end">Grand Total</td>
-                                    <td class="text-end text-primary">
-                                        Rp {{ number_format($recaps->sum('Total_Harga'), 0, ',', '.') }}
-                                    </td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
+                            <!-- Tabel body akan diisi oleh partial -->
+                            @include('partials.main-table')
                         </table>
                     </div>
                 </div>

@@ -392,3 +392,71 @@
 .shadow-sm {
     box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;
 }
+
+/* public/css/data-bahan-produsen.css */
+
+/* Loading spinner untuk tabel */
+.table-loading {
+    position: relative;
+    min-height: 100px;
+}
+
+.table-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Animation untuk refresh */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.table-updated {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Highlight row yang baru diupdate */
+.highlight-update {
+    background-color: rgba(40, 167, 69, 0.1) !important;
+    transition: background-color 2s ease-out;
+}
+
+/* Tambahkan di data-bahan-produsen.css */
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.highlight-update {
+    animation: highlight-fade 3s ease-out;
+}
+
+@keyframes highlight-fade {
+    0% { background-color: #d4edda; }
+    100% { background-color: transparent; }
+}
+
+.is-changed {
+    border-color: #ffc107 !important;
+    background-color: #fff3cd !important;
+}

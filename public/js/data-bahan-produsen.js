@@ -1,5 +1,6 @@
 // ========== GLOBAL VARIABLES ==========
 let hargaCache = {}; // Cache untuk harga berdasarkan bahan dan supplier
+let originalTableHTML = null; // Simpan HTML asli tabel untuk fallback
 
 // ========== UTILITY FUNCTIONS ==========
 window.formatNumber = function(num) {
@@ -16,8 +17,11 @@ window.isValidNumber = function(value) {
 
 // Fungsi untuk set ID Supplier ke form alamat/kontak
 window.setSupplierId = function(id) {
-    document.getElementById('inputIdSupplierAlamat').value = id;
-    document.getElementById('inputIdSupplierKontak').value = id;
+    const alamatInput = document.getElementById('inputIdSupplierAlamat');
+    const kontakInput = document.getElementById('inputIdSupplierKontak');
+
+    if (alamatInput) alamatInput.value = id;
+    if (kontakInput) kontakInput.value = id;
 };
 
 // ========== TOAST NOTIFICATION ==========
@@ -65,25 +69,12 @@ function createToastContainer() {
 }
 
 // ========== HARGA CACHE MANAGEMENT ==========
-// ========== HARGA CACHE MANAGEMENT ==========
 async function loadHargaCache() {
     try {
         const response = await fetch('/api/harga-cache');
         if (response.ok) {
             hargaCache = await response.json();
-            console.log('Harga cache loaded:', hargaCache);
-
-            // Debug: Cek cache untuk bahan-supplier tertentu
-            const firstRow = document.querySelector('tr[data-harga-id]');
-            if (firstRow) {
-                const bahanId = firstRow.getAttribute('data-bahan-id');
-                const supplierSelect = firstRow.querySelector('.supplier-select');
-                if (supplierSelect) {
-                    const supplierId = supplierSelect.getAttribute('data-original-supplier');
-                    const cacheKey = `${bahanId}-${supplierId}`;
-                    console.log(`Cache check for ${cacheKey}:`, hargaCache[cacheKey]);
-                }
-            }
+            console.log('Harga cache loaded:', Object.keys(hargaCache).length, 'items');
         } else {
             console.error('Failed to load harga cache:', response.status);
         }
@@ -94,14 +85,12 @@ async function loadHargaCache() {
 
 function getHargaFromCache(bahanId, supplierId) {
     const key = `${bahanId}-${supplierId}`;
-    console.log(`Getting harga from cache: ${key} =`, hargaCache[key]);
     return hargaCache[key] || null;
 }
 
 function updateHargaCache(bahanId, supplierId, harga) {
     const key = `${bahanId}-${supplierId}`;
     hargaCache[key] = harga;
-    console.log(`Updated cache: ${key} =`, harga);
 }
 
 // ========== HANDLE TABEL HARGA DENGAN AUTO-UPDATE ==========
@@ -117,14 +106,13 @@ function initializeHargaTable() {
     // Load cache saat pertama kali
     loadHargaCache();
 
+    // Set initial state untuk semua input harga
     hargaInputs.forEach(input => {
         const originalHarga = input.getAttribute('data-original-harga');
         const currentValue = input.value;
 
-        console.log(`Initial state - Input: ${input.getAttribute('data-harga-id')}, Original: ${originalHarga}, Current: ${currentValue}`);
-
         // Pastikan nilai awal sesuai dengan data-original-harga
-        if (currentValue && !input.value) {
+        if (!currentValue && originalHarga) {
             input.value = originalHarga;
         }
 
@@ -148,7 +136,6 @@ function initializeHargaTable() {
             const isHargaChanged = currentHarga !== originalHarga;
 
             button.disabled = !(isSupplierChanged || isHargaChanged);
-            console.log(`Initial button state - ID: ${hargaId}, Disabled: ${button.disabled}`);
         }
     });
 
@@ -163,8 +150,6 @@ function initializeHargaTable() {
             const hargaInput = row.querySelector('.harga-input');
             const simpanBtn = row.querySelector('.btn-simpan-harga');
 
-            console.log(`Supplier changed: ${originalSupplier} -> ${currentSupplier} for bahan ${bahanId}`);
-
             // Reset harga input
             hargaInput.value = '';
             hargaInput.placeholder = 'Loading...';
@@ -173,39 +158,31 @@ function initializeHargaTable() {
                 // Cari harga dari cache atau database
                 const cachedHarga = getHargaFromCache(bahanId, currentSupplier);
 
-                console.log(`Cached harga for ${bahanId}-${currentSupplier}:`, cachedHarga);
-
                 if (cachedHarga !== null && cachedHarga !== undefined) {
                     // Gunakan harga dari cache
                     hargaInput.value = cachedHarga;
                     hargaInput.placeholder = '';
                     updateHargaInputState(hargaInput, cachedHarga);
-                    console.log(`Loaded from cache: ${cachedHarga}`);
                 } else {
-                    console.log(`Cache miss, fetching from API...`);
                     // Fetch dari API
                     try {
                         const response = await fetch(`/api/harga/${bahanId}/${currentSupplier}`);
-                        console.log(`API response status: ${response.status}`);
 
                         if (response.ok) {
                             const data = await response.json();
-                            console.log('API response data:', data);
 
                             if (data.success && data.harga !== null && data.harga !== undefined) {
                                 hargaInput.value = data.harga;
                                 hargaInput.placeholder = '';
                                 updateHargaCache(bahanId, currentSupplier, data.harga);
-                                console.log(`Loaded from API: ${data.harga}`);
+                                updateHargaInputState(hargaInput, data.harga);
                             } else {
                                 hargaInput.placeholder = 'Kosong';
                                 hargaInput.value = '';
-                                console.log('No harga found in API response');
                             }
                         } else {
                             hargaInput.placeholder = 'Kosong';
                             hargaInput.value = '';
-                            console.error('API request failed:', response.status);
                         }
                     } catch (error) {
                         console.error('Error fetching harga:', error);
@@ -224,8 +201,6 @@ function initializeHargaTable() {
                 const hasHarga = hargaInput.value && parseFloat(hargaInput.value) >= 1;
                 simpanBtn.disabled = !(isSupplierChanged || hasHarga);
 
-                console.log(`Simpan button - Supplier changed: ${isSupplierChanged}, Has harga: ${hasHarga}, Disabled: ${simpanBtn.disabled}`);
-
                 // Tampilkan indicator
                 if (isSupplierChanged) {
                     this.classList.add('is-changed');
@@ -235,69 +210,60 @@ function initializeHargaTable() {
             }
         });
 
-        // Panggil event change untuk set harga awal berdasarkan supplier yang dipilih
-        setTimeout(() => {
-            if (select.value) {
+        // Trigger change event untuk supplier yang sudah terpilih
+        if (select.value) {
+            setTimeout(() => {
                 select.dispatchEvent(new Event('change'));
-            }
-        }, 500);
-    });
-
-    // Handle perubahan input harga
-    // Handle perubahan input harga
-hargaInputs.forEach(input => {
-    input.addEventListener('input', function() {
-        const hargaId = this.getAttribute('data-harga-id');
-        const originalHarga = this.getAttribute('data-original-harga');
-        const currentHarga = this.value;
-        const simpanBtn = document.querySelector(`.btn-simpan-harga[data-harga-id="${hargaId}"]`);
-
-        console.log(`Harga input changed - ID: ${hargaId}, Original: ${originalHarga}, Current: ${currentHarga}`);
-
-        updateHargaInputState(this, originalHarga);
-
-        if (simpanBtn) {
-            const supplierSelect = document.querySelector(`.supplier-select[data-harga-id="${hargaId}"]`);
-            const originalSupplier = supplierSelect ? supplierSelect.getAttribute('data-original-supplier') : '';
-            const currentSupplier = supplierSelect ? supplierSelect.value : '';
-
-            const isSupplierChanged = currentSupplier !== originalSupplier;
-            const isHargaChanged = currentHarga !== originalHarga;
-
-            console.log(`Simpan button check - Supplier changed: ${isSupplierChanged}, Harga changed: ${isHargaChanged}`);
-
-            // Enable tombol jika ada perubahan supplier atau harga
-            simpanBtn.disabled = !(isSupplierChanged || isHargaChanged);
-            console.log(`Simpan button disabled: ${simpanBtn.disabled}`);
+            }, 300);
         }
     });
 
-    // Validasi saat blur
-    input.addEventListener('blur', function() {
-        const value = parseFloat(this.value) || 0;
-        const originalHarga = this.getAttribute('data-original-harga');
-        const originalHargaNum = parseFloat(originalHarga) || 0;
-
-        console.log(`Harga blur - Value: ${value}, Original: ${originalHargaNum}`);
-
-        if (value < 1 && value !== 0) {
-            this.value = originalHargaNum || '';
-            this.placeholder = originalHargaNum ? '' : 'Kosong';
-            this.classList.remove('is-changed');
-            console.log('Reset to original harga');
-
+    // Handle perubahan input harga
+    hargaInputs.forEach(input => {
+        input.addEventListener('input', function() {
             const hargaId = this.getAttribute('data-harga-id');
+            const originalHarga = this.getAttribute('data-original-harga');
+            const currentHarga = this.value;
             const simpanBtn = document.querySelector(`.btn-simpan-harga[data-harga-id="${hargaId}"]`);
-            if (simpanBtn) simpanBtn.disabled = true;
-        }
 
-        updateHargaInputState(this, originalHarga);
+            updateHargaInputState(this, originalHarga);
+
+            if (simpanBtn) {
+                const supplierSelect = document.querySelector(`.supplier-select[data-harga-id="${hargaId}"]`);
+                const originalSupplier = supplierSelect ? supplierSelect.getAttribute('data-original-supplier') : '';
+                const currentSupplier = supplierSelect ? supplierSelect.value : '';
+
+                const isSupplierChanged = currentSupplier !== originalSupplier;
+                const isHargaChanged = currentHarga !== originalHarga;
+
+                // Enable tombol jika ada perubahan supplier atau harga
+                simpanBtn.disabled = !(isSupplierChanged || isHargaChanged);
+            }
+        });
+
+        // Validasi saat blur
+        input.addEventListener('blur', function() {
+            const value = parseFloat(this.value) || 0;
+            const originalHarga = this.getAttribute('data-original-harga');
+            const originalHargaNum = parseFloat(originalHarga) || 0;
+
+            if (value < 1 && value !== 0) {
+                this.value = originalHargaNum || '';
+                this.placeholder = originalHargaNum ? '' : 'Kosong';
+                this.classList.remove('is-changed');
+
+                const hargaId = this.getAttribute('data-harga-id');
+                const simpanBtn = document.querySelector(`.btn-simpan-harga[data-harga-id="${hargaId}"]`);
+                if (simpanBtn) simpanBtn.disabled = true;
+            }
+
+            updateHargaInputState(this, originalHarga);
+        });
+
+        // Set initial state saat modal dibuka
+        const originalHarga = input.getAttribute('data-original-harga');
+        updateHargaInputState(input, originalHarga);
     });
-
-    // Set initial state saat modal dibuka
-    const originalHarga = input.getAttribute('data-original-harga');
-    updateHargaInputState(input, originalHarga);
-});
 
     // Handle tombol simpan
     simpanButtons.forEach(button => {
@@ -313,22 +279,16 @@ function updateHargaInputState(input, originalHarga) {
     const currentHarga = parseFloat(input.value) || 0;
     const originalHargaNum = parseFloat(originalHarga) || 0;
 
-    console.log(`updateHargaInputState - Current: ${currentHarga}, Original: ${originalHargaNum}, Equal: ${currentHarga === originalHargaNum}`);
-
     // Hapus class is-changed jika tidak ada perubahan
     if (currentHarga === originalHargaNum) {
         input.classList.remove('is-changed');
-        console.log('Removed is-changed class');
     } else if (currentHarga >= 1) {
         input.classList.add('is-changed');
-        console.log('Added is-changed class');
     } else {
         input.classList.remove('is-changed');
-        console.log('Removed is-changed class (invalid harga)');
     }
 }
 
-// Fungsi untuk menyimpan perubahan harga
 // Fungsi untuk menyimpan perubahan harga
 async function saveHargaChanges(hargaId, bahanId) {
     const row = document.querySelector(`tr[data-harga-id="${hargaId}"]`);
@@ -363,14 +323,12 @@ async function saveHargaChanges(hargaId, bahanId) {
     }
 
     // Tampilkan loading
-    const originalContent = simpanBtn.innerHTML;
-    simpanBtn.innerHTML = '<span class="loading-spinner"></span>';
+    const originalBtnContent = simpanBtn.innerHTML;
+    simpanBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
     simpanBtn.disabled = true;
 
     try {
-        // PERBAIKAN: Gunakan route yang benar
         const url = `/harga-bahan/${hargaId}`;
-        console.log('Sending PUT request to:', url);
 
         const response = await fetch(url, {
             method: 'PUT',
@@ -386,63 +344,214 @@ async function saveHargaChanges(hargaId, bahanId) {
             })
         });
 
-        console.log('Response status:', response.status);
-
-        // Coba parse response sebagai JSON
-        let data;
-        try {
-            data = await response.json();
-            console.log('Response data:', data);
-        } catch (jsonError) {
-            console.error('Error parsing JSON:', jsonError);
-            throw new Error('Invalid response from server');
-        }
+        const data = await response.json();
 
         if (response.ok && data.success) {
-            // Update nilai original
+            // Update UI lokal
             hargaInput.setAttribute('data-original-harga', newHarga);
             supplierSelect.setAttribute('data-original-supplier', newSupplierId);
 
             // Update cache
             updateHargaCache(bahanId, newSupplierId, newHarga);
 
-            // Reset indicator
+            // Reset UI
             hargaInput.classList.remove('is-changed');
             supplierSelect.classList.remove('is-changed');
 
-            // Update tombol
-            simpanBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
-            simpanBtn.classList.remove('btn-success');
-            simpanBtn.classList.add('btn-outline-success');
+            // Tampilkan success message
+            showToast('success', data.message || 'Harga berhasil diperbarui!');
 
-            // Tampilkan notifikasi sukses
-            showToast('success', data.message || 'Perubahan berhasil disimpan!');
+            // Refresh tabel utama setelah 1 detik
+            setTimeout(async () => {
+                try {
+                    await refreshMainTable();
 
-            // Reset setelah 2 detik
-            setTimeout(() => {
-                simpanBtn.innerHTML = originalContent;
-                simpanBtn.classList.remove('btn-outline-success');
-                simpanBtn.classList.add('btn-success');
-                simpanBtn.disabled = true;
-            }, 2000);
+                    // Update tombol simpan setelah refresh
+                    const newSimpanBtn = document.querySelector(`.btn-simpan-harga[data-harga-id="${hargaId}"]`);
+                    if (newSimpanBtn) {
+                        newSimpanBtn.innerHTML = '<i class="bi bi-save"></i>';
+                        newSimpanBtn.disabled = true;
+                        newSimpanBtn.title = 'Simpan Perubahan';
+                    }
+                } catch (refreshError) {
+                    console.error('Refresh failed:', refreshError);
+                    showToast('info', 'Data disimpan. Refresh halaman untuk melihat perubahan lengkap.');
+                }
+            }, 1000);
 
         } else {
-            throw new Error(data.message || `Gagal menyimpan perubahan. Status: ${response.status}`);
+            throw new Error(data.message || 'Server returned error');
         }
-    } catch (error) {
-        console.error('Error:', error);
-        simpanBtn.innerHTML = originalContent;
-        simpanBtn.disabled = false;
-        showToast('error', 'Gagal menyimpan perubahan: ' + error.message);
 
-        // Debug tambahan
-        console.log('Request details:', {
-            hargaId,
-            bahanId,
-            newHarga,
-            newSupplierId
-        });
+    } catch (error) {
+        console.error('Save error:', error);
+
+        // Reset tombol
+        simpanBtn.innerHTML = originalBtnContent;
+        simpanBtn.disabled = false;
+
+        showToast('error', 'Gagal menyimpan: ' + error.message);
     }
+}
+
+// ========== FUNGSI REFRESH TABEL UTAMA ==========
+async function refreshMainTable() {
+    try {
+        console.log('Refreshing main table...');
+
+        // Tampilkan loading indicator pada tbody saja
+        const tableBody = document.querySelector('#mainTable tbody');
+        if (!tableBody) {
+            console.error('Table body not found');
+            return;
+        }
+
+        // Simpan original content
+        const originalContent = tableBody.innerHTML;
+
+        // Tampilkan loading
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center py-4">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span>Memperbarui data...</span>
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        // Ambil project ID dari URL
+        const currentPath = window.location.pathname;
+        const projectIdMatch = currentPath.match(/\/data-proyek\/(\d+)/);
+
+        if (!projectIdMatch) {
+            console.error('Cannot find project ID in URL');
+            tableBody.innerHTML = originalContent;
+            return;
+        }
+
+        const projectId = projectIdMatch[1];
+        const refreshUrl = `/data-proyek/${projectId}/refresh?_=${Date.now()}`;
+
+        // Fetch data
+        const response = await fetch(refreshUrl, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success && data.html) {
+            // Update hanya tbody
+            tableBody.innerHTML = data.html;
+
+            // Re-attach event listeners untuk form
+            reattachFormListeners();
+
+            console.log('Table updated successfully');
+            showToast('success', 'Data berhasil diperbarui');
+        } else {
+            throw new Error(data.message || 'Invalid response');
+        }
+
+    } catch (error) {
+        console.error('Error refreshing main table:', error);
+
+        // Restore original content
+        const tableBody = document.querySelector('#mainTable tbody');
+        if (tableBody) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center text-danger py-4">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Gagal memuat data terbaru
+                        <br>
+                        <button class="btn btn-sm btn-outline-primary mt-2" onclick="window.location.reload()">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh Halaman
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        showToast('error', 'Gagal memperbarui: ' + error.message);
+    }
+}
+
+// ========== REATTACH FORM LISTENERS ==========
+function reattachFormListeners() {
+    // Re-attach event listeners untuk semua form supplier di tabel utama
+    document.querySelectorAll('#mainTable form.supplier-form').forEach(form => {
+        // Hapus event listener lama
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+
+        const select = newForm.querySelector('select[name="ID_Supplier"]');
+
+        if (select) {
+            select.addEventListener('change', function() {
+                const recapId = this.getAttribute('data-recap-id');
+                const bahanId = this.getAttribute('data-bahan-id');
+                const supplierId = this.value;
+
+                if (!supplierId) {
+                    showToast('error', 'Pilih supplier terlebih dahulu');
+                    return;
+                }
+
+                // Tampilkan loading
+                const originalText = this.options[this.selectedIndex].text;
+                this.options[this.selectedIndex].text = 'Menyimpan...';
+                this.disabled = true;
+
+                // Kirim data
+                const formData = new FormData(newForm);
+                formData.append('ID_Rekap', recapId);
+                formData.append('ID_Supplier', supplierId);
+
+                fetch(newForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('success', data.message || 'Supplier berhasil diperbarui');
+                        // Refresh tabel setelah 500ms
+                        setTimeout(() => refreshMainTable(), 500);
+                    } else {
+                        showToast('error', data.message || 'Gagal mengubah supplier');
+                        // Reset select
+                        this.options[this.selectedIndex].text = originalText;
+                        this.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('error', 'Terjadi kesalahan saat menyimpan');
+                    // Reset select
+                    this.options[this.selectedIndex].text = originalText;
+                    this.disabled = false;
+                });
+            });
+        }
+    });
+
+    console.log('Supplier form listeners re-attached');
 }
 
 // ========== FORM VALIDATIONS ==========
@@ -520,25 +629,28 @@ function initializeFormValidations() {
             const alamat = this.querySelector('input[name="Alamat_Supplier"]')?.value.trim();
             const kontak = this.querySelector('input[name="Kontak_Supplier"]')?.value.trim();
 
+            let hasError = false;
+
             if (!nama) {
                 e.preventDefault();
                 showToast('error', 'Nama supplier tidak boleh kosong');
                 this.querySelector('input[name="Nama_Supplier"]')?.focus();
-                return false;
+                hasError = true;
             }
-            if (!alamat) {
+            if (!alamat && !hasError) {
                 e.preventDefault();
                 showToast('error', 'Alamat supplier tidak boleh kosong');
                 this.querySelector('input[name="Alamat_Supplier"]')?.focus();
-                return false;
+                hasError = true;
             }
-            if (!kontak) {
+            if (!kontak && !hasError) {
                 e.preventDefault();
                 showToast('error', 'Kontak supplier tidak boleh kosong');
                 this.querySelector('input[name="Kontak_Supplier"]')?.focus();
-                return false;
+                hasError = true;
             }
-            return true;
+
+            return !hasError;
         });
     }
 }
@@ -563,7 +675,8 @@ function initializeDeleteHandlers() {
                 })
                 .then(response => {
                     if (response.ok) {
-                        window.location.reload();
+                        showToast('success', 'Alamat berhasil dihapus');
+                        setTimeout(() => window.location.reload(), 1000);
                     } else {
                         return response.json().then(data => {
                             throw new Error(data.message || 'Gagal menghapus alamat');
@@ -596,7 +709,8 @@ function initializeDeleteHandlers() {
                 })
                 .then(response => {
                     if (response.ok) {
-                        window.location.reload();
+                        showToast('success', 'Kontak berhasil dihapus');
+                        setTimeout(() => window.location.reload(), 1000);
                     } else {
                         return response.json().then(data => {
                             throw new Error(data.message || 'Gagal menghapus kontak');
@@ -679,16 +793,20 @@ async function loadHargaData(hargaId) {
     }
 }
 
-// ========== EVENT LISTENERS ==========
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Data Bahan dan Produsen script loaded');
+// ========== MODAL INITIALIZATION ==========
+function initializeModals() {
+    // Modal supplier - reattach listeners saat modal dibuka
+    const modalSupplier = document.getElementById('modalSupplier');
+    if (modalSupplier) {
+        modalSupplier.addEventListener('shown.bs.modal', function() {
+            setTimeout(() => {
+                initializeDeleteHandlers();
+                initializeEditHandlers();
+            }, 100);
+        });
+    }
 
-    // Initialize semua handler
-    initializeFormValidations();
-    initializeDeleteHandlers();
-    initializeEditHandlers();
-
-    // Initialize harga table saat modal bahan dibuka
+    // Modal bahan - initialize harga table
     const modalBahan = document.getElementById('modalBahan');
     if (modalBahan) {
         modalBahan.addEventListener('shown.bs.modal', function() {
@@ -697,8 +815,76 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 100);
         });
     }
+}
 
-    // Auto-hide toast
+// ========== INITIALIZE TABLE REFRESH ==========
+function initializeTableRefresh() {
+    const mainTable = document.querySelector('.card .table-responsive table');
+    if (mainTable) {
+        originalTableHTML = mainTable.innerHTML;
+        console.log('Original table HTML saved for fallback');
+    }
+}
+
+// ========== HIGHLIGHT UPDATED ROW ==========
+function highlightUpdatedRow(bahanId, supplierId) {
+    // Cari row di tabel utama yang sesuai dengan bahan dan supplier
+    const rows = document.querySelectorAll('#mainTable tbody tr');
+
+    rows.forEach(row => {
+        const bahanCell = row.querySelector('td:nth-child(2)');
+        const supplierSelect = row.querySelector('select[name="ID_Supplier"]');
+
+        if (bahanCell && supplierSelect) {
+            const bahanText = bahanCell.textContent.trim();
+            const supplierValue = supplierSelect.value;
+
+            // Sesuaikan dengan struktur data Anda
+            if (supplierValue == supplierId) {
+                row.classList.add('highlight-update');
+
+                // Hapus highlight setelah 3 detik
+                setTimeout(() => {
+                    row.classList.remove('highlight-update');
+                }, 3000);
+            }
+        }
+    });
+}
+
+// ========== INITIALIZE ALL FUNCTIONALITY ==========
+function initializeAll() {
+    console.log('Initializing Data Bahan dan Produsen...');
+
+    // Initialize table refresh
+    initializeTableRefresh();
+
+    // Initialize form validations
+    initializeFormValidations();
+
+    // Initialize delete handlers
+    initializeDeleteHandlers();
+
+    // Initialize edit handlers
+    initializeEditHandlers();
+
+    // Initialize modals
+    initializeModals();
+
+    // Attach supplier form listeners saat pertama kali load
+    reattachFormListeners();
+
+    console.log('Initialization complete');
+}
+
+// ========== EVENT LISTENERS ==========
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded - Data Bahan dan Produsen');
+
+    // Initialize semua functionality
+    initializeAll();
+
+    // Auto-hide toast yang ada
     setTimeout(() => {
         document.querySelectorAll('.toast').forEach(toast => {
             const bsToast = new bootstrap.Toast(toast);
@@ -706,3 +892,52 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, 5000);
 });
+
+// ========== EXPORT FUNCTIONS FOR GLOBAL USE ==========
+window.refreshMainTable = refreshMainTable;
+window.showToast = showToast;
+window.setSupplierId = setSupplierId;
+window.initializeHargaTable = initializeHargaTable;
+
+// ========== DEBUG HELPER ==========
+window.debugRefresh = async function() {
+    const currentPath = window.location.pathname;
+    const projectIdMatch = currentPath.match(/\/data-proyek\/(\d+)/);
+
+    if (!projectIdMatch) {
+        console.error('Cannot find project ID in URL');
+        return;
+    }
+
+    const projectId = projectIdMatch[1];
+    const url = `/data-proyek/${projectId}/refresh`;
+
+    console.log('Debug URL:', url);
+
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        console.log('Response status:', response.status);
+        console.log('Content-Type:', response.headers.get('content-type'));
+
+        const text = await response.text();
+        console.log('Raw response (first 500 chars):', text.substring(0, 500));
+
+        try {
+            const json = JSON.parse(text);
+            console.log('Parsed JSON:', json);
+        } catch(e) {
+            console.log('Not valid JSON:', e.message);
+        }
+
+    } catch(error) {
+        console.error('Test error:', error);
+    }
+};
+
+console.log('Data Bahan dan Produsen JavaScript loaded successfully');

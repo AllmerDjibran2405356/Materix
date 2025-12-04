@@ -154,6 +154,7 @@ class DataProyekController extends Controller
         }
     }
 
+    // DataProyekController.php
     public function updateSupplierRekap(Request $request)
     {
         $request->validate([
@@ -161,27 +162,52 @@ class DataProyekController extends Controller
             'ID_Supplier' => 'required|integer|exists:list_supplier,ID_Supplier'
         ]);
 
-        $recap = RekapKebutuhanBahanProyek::find($request->ID_Rekap);
+        DB::beginTransaction();
+        try {
+            $recap = RekapKebutuhanBahanProyek::find($request->ID_Rekap);
 
-        if (!$recap) {
-            return redirect()->back()->with('error', 'Rekap tidak ditemukan');
+            if (!$recap) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Rekap tidak ditemukan'
+                ], 404);
+            }
+
+            // Cari harga terbaru untuk bahan dan supplier ini
+            $hargaRow = ListHargaBahan::where('ID_Bahan', $recap->ID_Bahan)
+                ->where('ID_Supplier', $request->ID_Supplier)
+                ->orderByDesc('Tanggal_Update_Data')
+                ->first();
+
+            $harga = $hargaRow ? (float)$hargaRow->Harga_Per_Satuan : 0;
+
+            // Update rekap
+            $recap->ID_Supplier = $request->ID_Supplier;
+            $recap->Harga_Satuan_Saat_Ini = $harga;
+            $recap->Total_Harga = $recap->Volume_Final * $harga;
+            $recap->save();
+
+            DB::commit();
+
+            // Kembalikan JSON response untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Supplier berhasil diperbarui!',
+                'data' => [
+                    'harga_satuan' => $harga,
+                    'total_harga' => $recap->Total_Harga
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error update supplier rekap: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui supplier: ' . $e->getMessage()
+            ], 500);
         }
-
-        // Cari harga terbaru untuk bahan dan supplier ini
-        $hargaRow = ListHargaBahan::where('ID_Bahan', $recap->ID_Bahan)
-            ->where('ID_Supplier', $request->ID_Supplier)
-            ->orderByDesc('Tanggal_Update_Data')
-            ->first();
-
-        $harga = $hargaRow ? (float)$hargaRow->Harga_Per_Satuan : 0;
-
-        // Update rekap
-        $recap->ID_Supplier = $request->ID_Supplier;
-        $recap->Harga_Satuan_Saat_Ini = $harga;
-        $recap->Total_Harga = $recap->Volume_Final * $harga;
-        $recap->save();
-
-        return redirect()->back()->with('success', 'Supplier berhasil diperbarui!');
     }
 
     public function simpanHargaBahan(Request $request)
@@ -394,6 +420,39 @@ class DataProyekController extends Controller
         } catch (\Throwable $e) {
             Log::error('Error update supplier: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal memperbarui supplier: ' . $e->getMessage());
+        }
+    }
+
+    public function refreshTable($id)
+    {
+        try {
+            $project = DesainRumah::findOrFail($id);
+            $recaps = RekapKebutuhanBahanProyek::where('ID_Desain_Rumah', $id)
+                ->with(['bahan', 'supplier'])
+                ->orderBy('ID_Rekap')
+                ->get();
+
+            $suppliers = ListSupplier::orderBy('Nama_Supplier')->get();
+
+            // HANYA render tbody bagian saja
+            $html = view('partials.main-table', compact('project', 'recaps', 'suppliers'))->render();
+
+            // SELALU kembalikan JSON untuk AJAX requests
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'count' => $recaps->count(),
+                'timestamp' => now()->toDateTimeString()
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error refreshing table: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memuat data: ' . $e->getMessage(),
+                'html' => '<tr><td colspan="7" class="text-center text-danger">Error: ' . e($e->getMessage()) . '</td></tr>'
+            ], 500);
         }
     }
 }
