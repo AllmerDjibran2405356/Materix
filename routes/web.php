@@ -83,6 +83,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/rekap/update-supplier', [DataProyekController::class, 'updateSupplier'])->name('rekap.updateSupplier');
     Route::post('/rekap/update-harga', [DataProyekController::class, 'updateHarga'])->name('rekap.updateHarga');
     Route::post('/bahan/simpan-harga', [DataProyekController::class, 'simpanHargaBahan'])->name('bahan.simpanHarga');
+    Route::post('/rekap/update-supplier', [DataProyekController::class, 'updateSupplierRekap'])->name('rekap.updateSupplier');
 
     // Materials
     Route::prefix('projects')->group(function () {

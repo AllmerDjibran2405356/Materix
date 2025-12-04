@@ -14,7 +14,7 @@ class ListHargaBahan extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'ID_Supplier', 'ID_Bahan', 'ID_Satuan', 'Harga_per_Satuan', 'Tanggal_Update_Data'
+        'ID_Supplier', 'ID_Bahan', 'ID_Satuan', 'Harga_Per_Satuan', 'Tanggal_Update_Data'
     ];
 
     public function bahan() {

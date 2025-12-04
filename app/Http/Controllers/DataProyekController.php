@@ -11,6 +11,7 @@ use App\Models\SupplierKontak;
 use App\Models\ListBahan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DataProyekController extends Controller
 {
@@ -19,20 +20,28 @@ class DataProyekController extends Controller
         $project = DesainRumah::findOrFail($id);
         $recaps = RekapKebutuhanBahanProyek::where('ID_Desain_Rumah', $id)->get();
         $suppliers = ListSupplier::orderBy('Nama_Supplier')->get();
-        $materialPrices = ListHargaBahan::get();
 
-        $hargaMap = [];
-        foreach ($materialPrices as $h) {
-            $hargaMap[$h->ID_Bahan][$h->ID_Supplier] = $h->Harga_per_Satuan;
-        }
+        // Ambil semua bahan yang ada di rekap
+        $bahanIds = $recaps->pluck('ID_Bahan')->unique()->toArray();
+
+        // Ambil harga bahan terbaru untuk setiap bahan dan supplier
+        $materialPrices = ListHargaBahan::whereIn('ID_Bahan', $bahanIds)
+            ->orderBy('Tanggal_Update_Data', 'desc')
+            ->get();
+
+        // Ambil data bahan untuk dropdown
+        $bahanList = ListBahan::whereIn('ID_Bahan', $bahanIds)
+            ->pluck('Nama_Bahan', 'ID_Bahan')
+            ->toArray();
 
         $message = $recaps->isEmpty() ? "empty data" : null;
 
         return view('Page.DataBahanDanProdusen', compact(
+            'project',
             'recaps',
             'suppliers',
             'materialPrices',
-            'hargaMap',
+            'bahanList',
             'message'
         ));
     }
@@ -65,88 +74,89 @@ class DataProyekController extends Controller
             return redirect()->back()->with('success', 'Supplier berhasil ditambahkan!');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Gagal menambahkan supplier: '.$e->getMessage());
+            Log::error('Error tambah supplier: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menambahkan supplier: ' . $e->getMessage());
         }
     }
 
-    public function updateSupplier(Request $request)
+    public function updateSupplierRekap(Request $request)
     {
         $request->validate([
-            'ID_Rekap' => 'required|integer',
-            'ID_Supplier' => 'required|integer'
+            'ID_Rekap' => 'required|integer|exists:rekap_kebutuhan_bahan_proyek,ID_Rekap',
+            'ID_Supplier' => 'required|integer|exists:list_supplier,ID_Supplier'
         ]);
 
         $recap = RekapKebutuhanBahanProyek::find($request->ID_Rekap);
 
         if (!$recap) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Rekap tidak ditemukan'
-            ], 404);
+            return redirect()->back()->with('error', 'Rekap tidak ditemukan');
         }
 
-        $recap->ID_Supplier = $request->ID_Supplier;
-
+        // Cari harga terbaru untuk bahan dan supplier ini
         $hargaRow = ListHargaBahan::where('ID_Bahan', $recap->ID_Bahan)
             ->where('ID_Supplier', $request->ID_Supplier)
             ->orderByDesc('Tanggal_Update_Data')
             ->first();
 
-        $harga = $hargaRow ? (float)$hargaRow->Harga_per_Satuan : 0;
+        $harga = $hargaRow ? (float)$hargaRow->Harga_Per_Satuan : 0;
 
+        // Update rekap
+        $recap->ID_Supplier = $request->ID_Supplier;
         $recap->Harga_Satuan_Saat_Ini = $harga;
         $recap->Total_Harga = $recap->Volume_Final * $harga;
         $recap->save();
 
-        $supplier = ListSupplier::find($request->ID_Supplier);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Supplier berhasil diperbarui',
-            'supplier_name' => $supplier ? $supplier->Nama_Supplier : null,
-            'harga' => $harga,
-            'total_harga' => $recap->Total_Harga,
-            'ID_Rekap' => $recap->ID_Rekap,
-        ]);
+        return redirect()->back()->with('success', 'Supplier berhasil diperbarui!');
     }
 
     public function simpanHargaBahan(Request $request)
     {
+        // Validasi yang lebih fleksibel untuk harga
         $request->validate([
             'ID_Bahan' => 'required|exists:list_bahan,ID_Bahan',
             'ID_Supplier' => 'required|exists:list_supplier,ID_Supplier',
-            'Harga_per_Satuan' => 'required|numeric|min:1'
+            'Harga_Per_Satuan' => 'required|numeric|min:1'
         ]);
 
         $idBahan = $request->ID_Bahan;
         $idSupplier = $request->ID_Supplier;
-        $hargaInput = $request->Harga_per_Satuan;
+        $hargaInput = $request->Harga_Per_Satuan;
 
+        // Konversi ke integer untuk menghindari masalah desimal
+        $hargaInput = (int)$hargaInput;
+
+        // Cek apakah bahan ada
         $bahan = ListBahan::findOrFail($idBahan);
         $idSatuan = $bahan->ID_Satuan_Bahan;
 
+        DB::beginTransaction();
         try {
+            // Cek apakah sudah ada harga untuk kombinasi bahan-supplier ini
             $hargaExisting = ListHargaBahan::where('ID_Bahan', $idBahan)
                 ->where('ID_Supplier', $idSupplier)
                 ->first();
 
             if ($hargaExisting) {
+                // Update harga yang sudah ada
                 $hargaExisting->update([
-                    'Harga_per_Satuan' => $hargaInput,
+                    'Harga_Per_Satuan' => $hargaInput,
                     'ID_Satuan' => $idSatuan,
                     'Tanggal_Update_Data' => now()
                 ]);
-                $hargaRecord = $hargaExisting;
+                $message = 'Harga berhasil diperbarui!';
             } else {
-                $hargaRecord = ListHargaBahan::create([
+                // Buat harga baru
+                ListHargaBahan::create([
                     'ID_Bahan' => $idBahan,
                     'ID_Supplier' => $idSupplier,
-                    'Harga_per_Satuan' => $hargaInput,
+                    'Harga_Per_Satuan' => $hargaInput,
                     'ID_Satuan' => $idSatuan,
                     'Tanggal_Update_Data' => now()
                 ]);
+                $message = 'Harga berhasil disimpan!';
             }
 
+            // Update semua rekap yang menggunakan bahan ini dengan supplier ini
             $recapsToUpdate = RekapKebutuhanBahanProyek::where('ID_Bahan', $idBahan)
                 ->where('ID_Supplier', $idSupplier)
                 ->get();
@@ -157,62 +167,13 @@ class DataProyekController extends Controller
                 $recap->save();
             }
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Harga bahan tersimpan / diperbarui',
-                'ID_Harga' => $hargaRecord->ID_Harga,
-                'Harga_per_Satuan' => $hargaInput
-            ]);
+            DB::commit();
+            return redirect()->back()->with('success', $message);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Gagal menyimpan harga: ' . $e->getMessage()
-            ], 500);
+            DB::rollBack();
+            Log::error('Error simpan harga: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menyimpan harga: ' . $e->getMessage());
         }
-    }
-
-    public function updateHarga(Request $request)
-    {
-        $request->validate([
-            'ID_Rekap' => 'required|integer',
-            'Harga_Satuan_Saat_Ini' => 'required|numeric|min:0'
-        ]);
-
-        $recap = RekapKebutuhanBahanProyek::find($request->ID_Rekap);
-
-        if (!$recap) {
-            return response()->json(['status' => 'error', 'message' => 'Rekap tidak ditemukan'], 404);
-        }
-
-        $recap->Harga_Satuan_Saat_Ini = $request->Harga_Satuan_Saat_Ini;
-        $recap->Total_Harga = $recap->Volume_Final * $request->Harga_Satuan_Saat_Ini;
-        $recap->save();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Harga berhasil diperbarui',
-            'total_harga' => $recap->Total_Harga
-        ]);
-    }
-
-    /**
-     * Ambil harga bahan terakhir berdasarkan supplier
-     */
-    public function getHargaBahan(Request $request)
-    {
-        $request->validate([
-            'ID_Bahan' => 'required|integer|exists:list_bahan,ID_Bahan',
-            'ID_Supplier' => 'required|integer|exists:list_supplier,ID_Supplier',
-        ]);
-
-        $hargaRow = ListHargaBahan::where('ID_Bahan', $request->ID_Bahan)
-            ->where('ID_Supplier', $request->ID_Supplier)
-            ->orderByDesc('Tanggal_Update_Data')
-            ->first();
-
-        return response()->json([
-            'harga' => $hargaRow ? (float)$hargaRow->Harga_per_Satuan : 0
-        ]);
     }
 }

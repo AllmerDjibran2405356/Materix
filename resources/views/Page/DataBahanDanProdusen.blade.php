@@ -5,18 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pendataan Bahan & Produsen</title>
 
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
         .pilih-supplier-btn {
             min-width: 160px;
-            justify-content: space-between;
             white-space: nowrap;
         }
         .supplier-name-text {
@@ -26,63 +22,44 @@
             max-width: 120px;
             vertical-align: middle;
         }
-        .supplier-list-scroll {
-            max-height: 60vh;
-            overflow: auto;
-        }
-        .supplier-row:hover { background: #f8f9fa; cursor: pointer; }
-        .price-updated { animation: highlight 1s; }
-        @keyframes highlight {
-            from { background: #e6ffea; }
-            to { background: transparent; }
-        }
     </style>
 </head>
 
 <body class="bg-light">
 
 <div class="container mt-4">
-
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3>Pendataan Bahan & Produsen</h3>
-
         <div>
             <a href="#" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#modalSupplier">
                 <i class="bi bi-truck"></i> Data Supplier
             </a>
-
             <a href="#" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalBahan">
                 <i class="bi bi-box-seam"></i> Data Bahan
             </a>
         </div>
     </div>
 
-    <!-- Tabel Data -->
+    <!-- Tabel Utama -->
     <section>
         @if ($recaps->isEmpty())
             <div class="alert alert-warning text-center">
                 <i class="bi bi-exclamation-triangle"></i>
-                Belum ada data rekapitulasi. Silakan lakukan perhitungan RAB terlebih dahulu.
+                Belum ada data rekapitulasi.
             </div>
         @else
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-white">
-                    <h5 class="mb-0">
-                        Desain:
-                        <strong>{{ $recaps->first()->desainRumah->Nama_Desain ?? 'ID: '.$recaps->first()->ID_Desain_Rumah }}</strong>
-                    </h5>
+                    <h5 class="mb-0">Desain: <strong>{{ $recaps->first()->desainRumah->Nama_Desain ?? 'ID: '.$recaps->first()->ID_Desain_Rumah }}</strong></h5>
                 </div>
-
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover mb-0 align-middle">
-                            <thead class="table-dark align-middle">
+                        <table class="table table-bordered table-striped mb-0">
+                            <thead class="table-dark">
                                 <tr>
                                     <th>No</th>
-                                    <th>Tanggal Hitung</th>
                                     <th>Nama Bahan</th>
-                                    <th class="text-end">Vol. Teoritis</th>
                                     <th class="text-end">Vol. Final</th>
                                     <th class="text-center">Satuan</th>
                                     <th class="text-end">Harga Satuan</th>
@@ -90,74 +67,54 @@
                                     <th>Supplier</th>
                                 </tr>
                             </thead>
-
                             <tbody>
                                 @foreach ($recaps as $index => $recap)
-                                    <tr class="recap-row"
-                                        data-id-rekap="{{ $recap->ID_Rekap }}"
-                                        data-id-bahan="{{ $recap->ID_Bahan }}">
-                                        <td style="width:50px;">{{ $index + 1 }}</td>
-
-                                        <td style="min-width:140px;">
-                                            {{ \Carbon\Carbon::parse($recap->Tanggal_Hitung)->format('d M Y') }}
-                                            <small class="text-muted d-block">
-                                                {{ \Carbon\Carbon::parse($recap->Tanggal_Hitung)->format('H:i') }}
-                                            </small>
-                                        </td>
-
-                                        <td style="min-width:200px;">{{ $recap->bahan->Nama_Bahan ?? 'ID: '.$recap->ID_Bahan }}</td>
-
-                                        <td class="text-end vol-teoritis">{{ number_format($recap->Volume_Teoritis, 2, ',', '.') }}</td>
-                                        <td class="text-end vol-final fw-bold">{{ number_format($recap->Volume_Final, 2, ',', '.') }}</td>
-
-                                        <td class="text-center">{{ $recap->Satuan_Saat_Ini }}</td>
-
-                                        <td class="text-end harga-cell">
-                                            <span class="harga-value">
-                                                @if($recap->Harga_Satuan_Saat_Ini)
-                                                    Rp {{ number_format($recap->Harga_Satuan_Saat_Ini, 0, ',', '.') }}
-                                                @else
-                                                    -
-                                                @endif
-                                            </span>
-                                        </td>
-
-                                        <td class="text-end fw-bold text-success total-cell">
-                                            <span class="total-value">
-                                                @if($recap->Total_Harga)
-                                                    Rp {{ number_format($recap->Total_Harga, 0, ',', '.') }}
-                                                @else
-                                                    -
-                                                @endif
-                                            </span>
-                                        </td>
-
-                                        <td style="min-width:180px;">
-                                            <button type="button"
-                                                    class="btn btn-sm btn-light border d-flex align-items-center gap-2 pilih-supplier-btn"
-                                                    data-id-rekap="{{ $recap->ID_Rekap }}"
-                                                    data-id-bahan="{{ $recap->ID_Bahan }}"
-                                                    data-current-name="{{ $recap->supplier->Nama_Supplier ?? '' }}">
-                                                <span class="supplier-name-text">
-                                                    {{ $recap->supplier->Nama_Supplier ?? 'Pilih Supplier' }}
-                                                </span>
-                                                <i class="bi bi-chevron-down small"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $recap->bahan->Nama_Bahan ?? 'ID: '.$recap->ID_Bahan }}</td>
+                                    <td class="text-end">{{ number_format($recap->Volume_Final, 2, ',', '.') }}</td>
+                                    <td class="text-center">{{ $recap->Satuan_Saat_Ini }}</td>
+                                    <td class="text-end">
+                                        @if($recap->Harga_Satuan_Saat_Ini)
+                                            Rp {{ number_format($recap->Harga_Satuan_Saat_Ini, 0, ',', '.') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td class="text-end fw-bold text-success">
+                                        @if($recap->Total_Harga)
+                                            Rp {{ number_format($recap->Total_Harga, 0, ',', '.') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <form action="{{ route('rekap.updateSupplier') }}" method="POST" class="d-flex">
+                                            @csrf
+                                            <input type="hidden" name="ID_Rekap" value="{{ $recap->ID_Rekap }}">
+                                            <select name="ID_Supplier" class="form-select form-select-sm" onchange="this.form.submit()">
+                                                <option value="">Pilih Supplier</option>
+                                                @foreach ($suppliers as $sup)
+                                                    <option value="{{ $sup->ID_Supplier }}"
+                                                        {{ $recap->ID_Supplier == $sup->ID_Supplier ? 'selected' : '' }}>
+                                                        {{ $sup->Nama_Supplier }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </form>
+                                    </td>
+                                </tr>
                                 @endforeach
                             </tbody>
-
                             <tfoot>
                                 <tr class="table-secondary fw-bold">
-                                    <td colspan="7" class="text-end text-uppercase">Grand Total Estimasi</td>
+                                    <td colspan="5" class="text-end">Grand Total</td>
                                     <td class="text-end text-primary">
                                         Rp {{ number_format($recaps->sum('Total_Harga'), 0, ',', '.') }}
                                     </td>
                                     <td></td>
                                 </tr>
                             </tfoot>
-
                         </table>
                     </div>
                 </div>
@@ -168,8 +125,8 @@
 
 <!-- ================= MODALS ================= -->
 
-<!-- Modal Supplier & Tambah Supplier -->
-<div class="modal fade" id="modalSupplier" tabindex="-1" aria-labelledby="modalSupplierLabel" aria-hidden="true" data-bs-backdrop="static">
+<!-- Modal Supplier -->
+<div class="modal fade" id="modalSupplier" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -177,24 +134,37 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <button class="btn btn-primary btn-sm mb-3"
-                        data-bs-toggle="modal"
-                        data-bs-target="#modalTambahSupplier">
-                    Tambah Supplier
+                <!-- Tombol Tambah Supplier -->
+                <button class="btn btn-primary btn-sm mb-3" data-bs-toggle="modal" data-bs-target="#modalTambahSupplier">
+                    <i class="bi bi-plus"></i> Tambah Supplier
                 </button>
 
-                <table class="table table-bordered table-sm">
-                    <thead><tr><th>No</th><th>ID Supplier</th><th>Nama Supplier</th></tr></thead>
-                    <tbody>
-                        @foreach ($suppliers as $index => $supplier)
+                <!-- Tabel Supplier -->
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>ID Supplier</th>
+                                <th>Nama Supplier</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($suppliers as $index => $supplier)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $supplier->ID_Supplier }}</td>
                                 <td>{{ $supplier->Nama_Supplier }}</td>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                            @endforeach
+                            @if($suppliers->isEmpty())
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">Belum ada data supplier</td>
+                            </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -226,58 +196,15 @@
                         <label class="form-label">Kontak Supplier</label>
                         <input type="text" name="Kontak_Supplier" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Simpan</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Pilih Supplier -->
-<div class="modal fade" id="modalPilihSupplier" tabindex="-1" aria-labelledby="modalPilihSupplierLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Pilih Supplier</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <div id="pilihSupplierInfo" class="mb-3">
-                    <small class="text-muted">Pilih supplier untuk baris rekap ID: <span id="currentRekapId">-</span></small>
-                </div>
-
-                <div class="mb-3">
-                    <input type="search" id="searchSupplierInput" class="form-control" placeholder="Cari supplier... (ketik nama)">
-                </div>
-
-                <div class="supplier-list-scroll">
-                    <div class="list-group" id="supplierListGroup">
-                        @foreach ($suppliers as $supplier)
-                            <div class="list-group-item d-flex justify-content-between align-items-center supplier-row"
-                                 data-nama="{{ strtolower($supplier->Nama_Supplier) }}"
-                                 data-id-supplier="{{ $supplier->ID_Supplier }}">
-                                <div>
-                                    <strong>{{ $supplier->Nama_Supplier }}</strong>
-                                    <div class="small text-muted">ID: {{ $supplier->ID_Supplier }}</div>
-                                </div>
-
-                                <div>
-                                    <button class="btn btn-sm btn-outline-primary pilih-ini-btn"
-                                            data-id-supplier="{{ $supplier->ID_Supplier }}"
-                                            data-nama="{{ $supplier->Nama_Supplier }}">
-                                        Pilih
-                                    </button>
-                                </div>
-                            </div>
-                        @endforeach
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Batal
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Simpan
+                        </button>
                     </div>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </form>
             </div>
         </div>
     </div>
@@ -285,259 +212,220 @@
 
 <!-- Modal Bahan -->
 <div class="modal fade" id="modalBahan" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Kelola Harga Bahan</h5>
+                <h5 class="modal-title">Data Harga Bahan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-
             <div class="modal-body">
-                <div class="alert alert-info">
-                    Mengisi harga bahan di sini akan otomatis:
-                    <ul class="mb-0">
-                        <li>Membuat / memperbarui data <b>list_harga_bahan</b></li>
-                        <li>Mengupdate <b>harga & total</b> pada tabel utama (semua rekap yang menggunakan bahan ini)</li>
-                    </ul>
-                </div>
+                <!-- Tombol Tambah Harga -->
+                <button class="btn btn-primary btn-sm mb-3" data-bs-toggle="modal" data-bs-target="#modalTambahHarga">
+                    <i class="bi bi-plus"></i> Tambah Harga
+                </button>
 
+                <!-- Tabel Harga Bahan - SANGAT SEDERHANA -->
                 <div class="table-responsive">
-                    <table class="table table-bordered table-sm align-middle">
-                        <thead class="table-dark text-center">
+                    <table class="table table-bordered table-sm">
+                        <thead>
                             <tr>
                                 <th>No</th>
                                 <th>Nama Bahan</th>
                                 <th>Supplier</th>
-                                <th>Harga per Satuan (Rp)</th>
-                                <th></th>
+                                <th class="text-end">Harga (Rp)</th>
+                                <th>Terakhir Update</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             @php
-                                $uniqueBahan = collect($recaps)->unique('ID_Bahan')->values();
+                                $counter = 0;
                             @endphp
 
-                            @foreach ($uniqueBahan as $i => $recapB)
+                            {{-- Tampilkan langsung dari $materialPrices (data dari database) --}}
+                            @if($materialPrices->count() > 0)
+                                @foreach ($materialPrices as $index => $harga)
+                                    @php
+                                        $counter++;
+                                        // Cari nama bahan
+                                        $namaBahan = 'Unknown';
+                                        if (isset($bahanList[$harga->ID_Bahan])) {
+                                            $namaBahan = $bahanList[$harga->ID_Bahan];
+                                        }
+
+                                        // Cari nama supplier
+                                        $namaSupplier = 'Unknown';
+                                        foreach ($suppliers as $sup) {
+                                            if ($sup->ID_Supplier == $harga->ID_Supplier) {
+                                                $namaSupplier = $sup->Nama_Supplier;
+                                                break;
+                                            }
+                                        }
+                                    @endphp
+                                    <tr>
+                                        <td>{{ $counter }}</td>
+                                        <td>{{ $namaBahan }}</td>
+                                        <td>{{ $namaSupplier }}</td>
+                                        <td class="text-end fw-bold text-success">
+                                            Rp {{ number_format($harga->Harga_Per_Satuan, 0, ',', '.') }}
+                                        </td>
+                                        <td>
+                                            @if($harga->Tanggal_Update_Data)
+                                                {{ \Carbon\Carbon::parse($harga->Tanggal_Update_Data)->format('d/m/Y') }}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
                                 <tr>
-                                    <td class="text-center">{{ $i + 1 }}</td>
-                                    <td>{{ $recapB->bahan->Nama_Bahan ?? 'ID: ' . $recapB->ID_Bahan }}</td>
-                                    <td>
-                                        <select class="form-select form-select-sm pilihSupplierHarga"
-                                                data-id-bahan="{{ $recapB->ID_Bahan }}">
-                                            <option value="">-- Pilih Supplier --</option>
-                                            @foreach ($suppliers as $sup)
-                                                <option value="{{ $sup->ID_Supplier }}">{{ $sup->Nama_Supplier }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-
-                                    <td style="width: 220px;">
-                                        <div class="input-group">
-                                            <span class="input-group-text">Rp</span>
-                                            <input type="number"
-                                                   class="form-control inputHargaBahan"
-                                                   data-id-bahan="{{ $recapB->ID_Bahan }}"
-                                                   min="0"
-                                                   placeholder="Masukkan harga">
-                                        </div>
-                                    </td>
-
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-primary btnSimpanHarga"
-                                                data-id-bahan="{{ $recapB->ID_Bahan }}">
-                                            Simpan
-                                        </button>
+                                    <td colspan="5" class="text-center text-muted py-3">
+                                        <i class="bi bi-inbox"></i> Belum ada data harga bahan
                                     </td>
                                 </tr>
-                            @endforeach
-
+                            @endif
                         </tbody>
-
                     </table>
                 </div>
             </div>
-
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Modal Tambah Harga - HANYA BAGIAN INPUT HARGA YANG DIPERBAIKI -->
+<div class="modal fade" id="modalTambahHarga" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tambah Harga Bahan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('bahan.simpanHarga') }}" method="POST" id="formHarga">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label">Pilih Bahan</label>
+                        <select name="ID_Bahan" class="form-select" required>
+                            <option value="">-- Pilih Bahan --</option>
+                            @if(!empty($bahanList) && is_array($bahanList))
+                                @foreach ($bahanList as $idBahan => $namaBahan)
+                                    <option value="{{ $idBahan }}">{{ $namaBahan }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pilih Supplier</label>
+                        <select name="ID_Supplier" class="form-select" required>
+                            <option value="">-- Pilih Supplier --</option>
+                            @foreach ($suppliers as $sup)
+                                <option value="{{ $sup->ID_Supplier }}">{{ $sup->Nama_Supplier }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Harga per Satuan (Rp)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rp</span>
+                            <!-- HAPUS validasi HTML5 yang ketat -->
+                            <input type="number"
+                                   name="Harga_Per_Satuan"
+                                   id="inputHarga"
+                                   class="form-control"
+                                   min="1"
+                                   required
+                                   placeholder="Contoh: 10000, 15000, 20000">
+                        </div>
+                        <div class="form-text">
+                            Masukkan harga dalam angka bulat (tanpa titik/koma)
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Batal
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="btnSimpanHarga">
+                            <i class="bi bi-save"></i> Simpan Harga
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notifikasi Toast -->
+@if(session('success') || session('error'))
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
+    @if(session('success'))
+    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <strong class="me-auto"><i class="bi bi-check-circle"></i> Sukses</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">
+            {{ session('success') }}
+        </div>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-danger text-white">
+            <strong class="me-auto"><i class="bi bi-exclamation-triangle"></i> Error</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">
+            {{ session('error') }}
+        </div>
+    </div>
+    @endif
+</div>
+@endif
+
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+<!-- Script tambahan untuk handle form submission -->
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+document.addEventListener('DOMContentLoaded', function() {
+    const formHarga = document.getElementById('formHarga');
+    const inputHarga = document.getElementById('inputHarga');
 
-    function formatRupiah(number) {
-        if (number === null || number === undefined || isNaN(number) || Number(number) === 0) return '-';
-        return 'Rp ' + Number(number).toLocaleString('id-ID', { maximumFractionDigits: 0 });
+    if (formHarga) {
+        // Hapus validasi HTML5 yang terlalu ketat
+        formHarga.setAttribute('novalidate', 'novalidate');
+
+        formHarga.addEventListener('submit', function(e) {
+            // Validasi custom
+            const harga = inputHarga.value.trim();
+
+            if (!harga || isNaN(harga) || parseInt(harga) < 1) {
+                e.preventDefault();
+                alert('Masukkan harga yang valid (minimal Rp 1)');
+                inputHarga.focus();
+                return false;
+            }
+
+            // Konversi ke integer sebelum submit
+            inputHarga.value = parseInt(harga);
+
+            return true;
+        });
     }
 
-    function showToast(message, type='success') {
-        const wrapper = document.createElement('div');
-        wrapper.innerHTML = `
-            <div class="toast align-items-center text-bg-${type} border-0 position-fixed" role="alert" aria-live="assertive" aria-atomic="true" style="right:1rem; bottom:1rem; z-index:12000;">
-                <div class="d-flex">
-                    <div class="toast-body">${message}</div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            </div>`;
-        document.body.appendChild(wrapper);
-        const toastEl = wrapper.querySelector('.toast');
-        const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
-        toast.show();
-        toastEl.addEventListener('hidden.bs.toast', () => wrapper.remove());
-    }
-
-    // Modal Pilih Supplier
-    const modalPilihSupplierEl = document.getElementById('modalPilihSupplier');
-    const modalPilihSupplier = new bootstrap.Modal(modalPilihSupplierEl);
-    let currentRekapId = null;
-
-    document.querySelectorAll('.pilih-supplier-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            currentRekapId = this.getAttribute('data-id-rekap');
-            document.getElementById('currentRekapId').textContent = currentRekapId;
-            modalPilihSupplier.show();
-            setTimeout(() => { document.getElementById('searchSupplierInput').focus(); }, 250);
+    // Auto-hide toast setelah 5 detik
+    setTimeout(() => {
+        const toasts = document.querySelectorAll('.toast');
+        toasts.forEach(toast => {
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.hide();
         });
-    });
-
-    document.getElementById('searchSupplierInput').addEventListener('input', function () {
-        const q = this.value.trim().toLowerCase();
-        document.querySelectorAll('#supplierListGroup .supplier-row').forEach(row => {
-            const nama = row.getAttribute('data-nama') || '';
-            row.style.display = (!q || nama.indexOf(q) !== -1) ? '' : 'none';
-        });
-    });
-
-    document.querySelectorAll('.pilih-ini-btn').forEach(btn => {
-        btn.addEventListener('click', async function () {
-            const idSupplier = this.getAttribute('data-id-supplier');
-            const namaSupplier = this.getAttribute('data-nama');
-
-            if (!currentRekapId) { showToast('ID rekap tidak terdeteksi.', 'danger'); return; }
-
-            this.disabled = true;
-            const original = this.innerHTML;
-            this.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Memilih...`;
-
-            try {
-                const res = await fetch('{{ route("rekap.updateSupplier") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ ID_Rekap: currentRekapId, ID_Supplier: idSupplier })
-                });
-
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.message || 'Gagal menyimpan supplier');
-
-                const selector = `.pilih-supplier-btn[data-id-rekap="${currentRekapId}"]`;
-                const targetBtn = document.querySelector(selector);
-                if (targetBtn) {
-                    const spanName = targetBtn.querySelector('.supplier-name-text');
-                    if (spanName) spanName.textContent = data.supplier_name || namaSupplier;
-                    targetBtn.setAttribute('data-current-name', data.supplier_name || namaSupplier);
-                    const row = document.querySelector(`.recap-row[data-id-rekap="${data.ID_Rekap}"]`);
-                    if (row) {
-                        const hargaCell = row.querySelector('.harga-value');
-                        const totalCell = row.querySelector('.total-value');
-                        if (hargaCell) hargaCell.textContent = formatRupiah(data.harga);
-                        if (totalCell) totalCell.textContent = formatRupiah(data.total_harga);
-                        row.classList.add('price-updated');
-                        setTimeout(()=> row.classList.remove('price-updated'), 900);
-                    }
-                }
-
-                showToast('Supplier berhasil diperbarui.', 'success');
-                modalPilihSupplier.hide();
-            } catch (err) {
-                console.error(err);
-                showToast(err.message || 'Gagal menyimpan supplier.', 'danger');
-            } finally { this.disabled = false; this.innerHTML = original; }
-        });
-    });
-
-    // Modal Bahan: Save harga per row
-    document.querySelectorAll('.btnSimpanHarga').forEach(btn => {
-        btn.addEventListener('click', async function () {
-            const idBahan = this.getAttribute('data-id-bahan');
-            const select = document.querySelector(`.pilihSupplierHarga[data-id-bahan="${idBahan}"]`);
-            const input = document.querySelector(`.inputHargaBahan[data-id-bahan="${idBahan}"]`);
-            if (!select || !input) { showToast('Elemen tidak ditemukan.', 'danger'); return; }
-
-            const idSupplier = select.value;
-            const harga = input.value;
-
-            if (!idSupplier) { showToast('Pilih supplier terlebih dahulu.', 'warning'); return; }
-            if (!harga || Number(harga) <= 0) { showToast('Masukkan harga yang valid.', 'warning'); return; }
-
-            this.disabled = true;
-            const origText = this.innerHTML;
-            this.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Menyimpan...`;
-
-            try {
-                const res = await fetch('{{ route("bahan.simpanHarga") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ ID_Bahan: idBahan, ID_Supplier: idSupplier, Harga_per_Satuan: harga })
-                });
-
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.message || 'Gagal menyimpan harga');
-
-                document.querySelectorAll(`.recap-row[data-id-bahan="${idBahan}"]`).forEach(row => {
-                    const volFinalText = row.querySelector('.vol-final').textContent.trim().replace(/\./g, '').replace(',', '.');
-                    const volFinal = parseFloat(volFinalText) || 0;
-                    const hargaCell = row.querySelector('.harga-value');
-                    const totalCell = row.querySelector('.total-value');
-                    const newTotal = volFinal * Number(data.Harga_per_Satuan);
-                    if (hargaCell) hargaCell.textContent = formatRupiah(data.Harga_per_Satuan);
-                    if (totalCell) totalCell.textContent = formatRupiah(newTotal);
-                    row.classList.add('price-updated');
-                    setTimeout(()=> row.classList.remove('price-updated'), 900);
-                });
-
-                showToast('Harga bahan tersimpan dan rekap diperbarui.', 'success');
-            } catch (err) { console.error(err); showToast(err.message || 'Gagal menyimpan harga.', 'danger'); }
-            finally { this.disabled = false; this.innerHTML = origText; }
-        });
-    });
-
-    document.querySelectorAll('.pilihSupplierHarga').forEach(select => {
-        select.addEventListener('change', async function () {
-            const idBahan = this.getAttribute('data-id-bahan');
-            const idSupplier = this.value;
-            if (!idSupplier) return;
-
-            try {
-                const res = await fetch(`{{ route('rekap.get-harga-bahan') }}?ID_Bahan=${idBahan}&ID_Supplier=${idSupplier}`, {
-                    headers: { 'Accept': 'application/json' }
-                });
-                const data = await res.json();
-                if (!res.ok && data.message) throw new Error(data.message);
-                const input = document.querySelector(`.inputHargaBahan[data-id-bahan="${idBahan}"]`);
-                if (input) input.value = data.harga || '';
-            } catch (err) { console.error(err); showToast('Gagal mengambil harga bahan.', 'danger'); }
-        });
-    });
-
-    @if (session('success'))
-        const modalSupplier = new bootstrap.Modal(document.getElementById('modalSupplier'));
-        modalSupplier.show();
-    @endif
+    }, 5000);
 });
 </script>
 
