@@ -80,7 +80,7 @@
 
                 <div class="riwayat-list-header">
                     <span>Lanjutkan Proyek Terakhir</span>
-                    <a href="#" class="lihat-semua">Lihat Semua</a>
+                    <a href="{{ route('DaftarProyek.index') }}" class="lihat-semua">Lihat Semua</a>
                 </div>
 
                 <div class="list-group">

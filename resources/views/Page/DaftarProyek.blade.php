@@ -4,50 +4,66 @@
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/daftarProyek.css') }}">
-    <link href="{{ asset('css/homepage.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
 
-{{-- Tombol Back, diletakkan di luar main-content --}}
-<div class="position-fixed" style="top: 20px; left: 20px; z-index: 2000;">
-    <button onclick="window.location.href='{{ route('HomePage') }}'"
-            class="btn btn-light shadow-sm rounded-circle"
-            style="width: 50px; height: 50px;"
-            title="Kembali ke Halaman Utama">
-        <i class="bi bi-arrow-left fs-5"></i>
-    </button>
-</div>
-
 <div class="main-content">
 
-    <section class="tombol-section">
-        <a href="{{ route('Unggah.index') }}">Input Desain</a>
-        <a>Input Data Bahan & Supplier</a>
-    </section>
+    <div class="left-sidebar">
+        <div class="btn-wrapper">
+            <a href="{{ route('Unggah.index') }}" class="unggah-btn">
+                Input Design
+            </a>
+        </div>
+        <div class="btn-wrapper">
+            <a href="#" class="data-btn">
+                Input Data Bahan & Supplier
+            </a>
+        </div>        
+    </div>
 
-    {{-- List Bangunan --}}
-    <section class="riwayat-section py-5 bg-light">
+    <div class="right-content">
+
+    <div class="search-wrapper">
+        <input type="text" placeholder="Search">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    </div>
+
+    <section class="riwayat-section">
         <div class="container">
-            <h3 class="fw-bold mb-4">Daftar Proyek Bangunan</h3>
 
             @if($projects->isEmpty())
-                <div class="alert alert-info text-center shadow-sm" role="alert" style="border-radius: 10px;">
-                    Belum ada proyek desain rumah 😅 <br>
-                    <a href="{{ route('Unggah.index') }}" class="btn btn-warning mt-3">Mulai Proyek Baru</a>
+
+                <div class="riwayat-empty-wrapper">
+
+                    <img src="{{ asset('images/bobwonder.png') }}" class="riwayat-character" alt="Character">
+
+                    <div class="riwayat-empty-box">
+                        <p class="riwayat-empty-text">
+                            Belum ada proyek desain rumah yang kamu unggah 😅 <br>
+                            Yuk mulai proyek pertamamu!
+                        </p>
+                        <div class="btn-wrapper">
+                            <a href="{{ route('Unggah.index') }}" class="mulai-btn">
+                                + Mulai Proyek Baru
+                            </a>
+                        </div>
+                    </div>
                 </div>
+
             @else
-                <div class="list-group shadow-sm">
+                <div class="list-group">
                     @foreach ($projects as $project)
                         <a href="{{ route('detailProyek.show', $project->ID_Desain_Rumah) }}"
-                           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                           class="riwayat-item">
+
                             <div>
-                                <h5 class="mb-1 fw-bold text-primary">{{ $project->Nama_Desain ?? 'Tanpa Judul' }}</h5>
-                                <p>{{ Str::limit($project->Deskripsi ?? 'Tidak ada deskripsi proyek', 100) }}</p>
+                                <h5>{{ $project->Nama_desain ?? 'Tanpa Judul' }}</h5>
+                                <p>{{ \Carbon\Carbon::parse($project->Tanggal_dibuat)->format('d/m/Y | H:i') }}</p>
                             </div>
-                            <small class="text-secondary">
-                                {{ \Carbon\Carbon::parse($project->Tanggal_dibuat)->format('d M Y') }}
-                            </small>
+
+                            <span class="dots">⋮</span>
                         </a>
                     @endforeach
                 </div>
