@@ -7,17 +7,13 @@ use App\Models\DesainRumah;
 use App\Models\KomponenDesain;
 use App\Models\ListPekerjaan;
 use App\Models\PekerjaanKomponen;
-use App\Models\RekapKebutuhanBahanProyek; // Pastikan 'Models' huruf besar
+use App\Models\RekapKebutuhanBahanProyek;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class HasilAnalisisController extends Controller
 {
-    /**
-     * CONSTRUCTOR: PENGAMAN PINTU MASUK
-     * Fungsi ini akan dijalankan pertama kali sebelum fungsi lain.
-     * Middleware 'auth' memastikan hanya user login yang bisa lewat.
-     */
     public function __construct()
     {
         $this->middleware('auth');
@@ -28,42 +24,47 @@ class HasilAnalisisController extends Controller
     // =========================================================================
     public function view($id)
     {
-        $desain = DesainRumah::where('ID_Desain_Rumah', $id)->firstOrFail();
+        $desain = DesainRumah::findOrFail($id);
         $works = ListPekerjaan::all();
 
-        // Setup Session Key Unik
         $sessionKey = 'workspace_desain_' . $id;
-
-        // Ambil komponen milik desain ini
         $allComponents = KomponenDesain::where('ID_Desain_Rumah', $id)->get();
 
         $sessionData = [];
         foreach ($allComponents as $comp) {
-            // JOIN tabel pivot ke master
-            $jobs = PekerjaanKomponen::join('list_kode_pekerjaan', 'list_pekerjaan_komponen.ID_Pekerjaan', '=', 'list_kode_pekerjaan.ID_Pekerjaan')
-                        ->where('list_pekerjaan_komponen.ID_Komponen', $comp->ID_Komponen)
-                        ->select('list_kode_pekerjaan.Nama_Pekerjaan')
-                        ->get();
+            $jobs = PekerjaanKomponen::join(
+                        'list_kode_pekerjaan',
+                        'list_pekerjaan_komponen.ID_Pekerjaan',
+                        '=',
+                        'list_kode_pekerjaan.ID_Pekerjaan'
+                    )
+                    ->where('list_pekerjaan_komponen.ID_Komponen', $comp->ID_Komponen)
+                    ->select('list_kode_pekerjaan.Nama_Pekerjaan')
+                    ->get();
 
-            // Simpan ke array session
-            $sessionData[$comp->Ifc_Guid] = $jobs->map(function($item) {
-                return ['Nama_Pekerjaan' => $item->Nama_Pekerjaan];
-            })->toArray();
+            $sessionData[$comp->Ifc_Guid] = $jobs
+                ->map(fn($item) => ['Nama_Pekerjaan' => $item->Nama_Pekerjaan])
+                ->toArray();
         }
 
         session()->put($sessionKey, $sessionData);
 
-        // Load JSON File
-        $jsonPath = base_path("Materix_Engine\\engine_bim_and_ifc\\data\\processed\\{$desain->Nama_Desain}_ifc_data.json");
+        // ===================================================
+        // 🔥 UPDATED: JSON diambil dari base_path('public/IFCprocessed')
+        // ===================================================
+        $jsonFileName = $desain->Nama_Desain . '_ifc_data.json';
+        $jsonPath = base_path('public/IFCprocessed/' . $jsonFileName);
+
         $data = [];
-        if (file_exists($jsonPath)) {
-            $jsonContent = file_get_contents($jsonPath);
+        if (File::exists($jsonPath)) {
+            $jsonContent = File::get($jsonPath);
             $data = json_decode($jsonContent, true);
         }
 
-        $filename = $desain->Nama_Desain . '.ifc';
-        $publicPath = public_path('uploads/ifc/' . $filename);
-        $ifcUrl = file_exists($publicPath) ? asset('uploads/ifc/' . $filename) : '';
+        // IFC URL
+        $ifcFileName = $desain->Nama_Desain . '.ifc';
+        $publicPath = public_path('uploads/ifc/' . $ifcFileName);
+        $ifcUrl = File::exists($publicPath) ? asset('uploads/ifc/' . $ifcFileName) : '';
 
         return view('Page.HasilAnalisis', compact('desain', 'data', 'ifcUrl', 'works'));
     }
@@ -113,7 +114,7 @@ class HasilAnalisisController extends Controller
 
         $sessionKey = 'workspace_desain_' . $komponen->ID_Desain_Rumah;
         $workspace = session()->get($sessionKey, []);
-        $jobs = isset($workspace[$guid]) ? $workspace[$guid] : [];
+        $jobs = $workspace[$guid] ?? [];
 
         return response()->json(['status' => 'success', 'data' => $jobs]);
     }
@@ -136,12 +137,7 @@ class HasilAnalisisController extends Controller
             $workspace[$guid] = [];
         }
 
-        $exists = false;
-        foreach ($workspace[$guid] as $existingJob) {
-            if ($existingJob['Nama_Pekerjaan'] === $job['Nama_Pekerjaan']) {
-                $exists = true; break;
-            }
-        }
+        $exists = collect($workspace[$guid])->contains(fn($j) => $j['Nama_Pekerjaan'] === $job['Nama_Pekerjaan']);
 
         if (!$exists) {
             $workspace[$guid][] = $job;
@@ -165,7 +161,7 @@ class HasilAnalisisController extends Controller
         $sessionKey = 'workspace_desain_' . $komponen->ID_Desain_Rumah;
         $workspace = session()->get($sessionKey, []);
 
-        if (isset($workspace[$guid]) && isset($workspace[$guid][$index])) {
+        if (isset($workspace[$guid][$index])) {
             array_splice($workspace[$guid], $index, 1);
             session()->put($sessionKey, $workspace);
         }
@@ -174,62 +170,54 @@ class HasilAnalisisController extends Controller
     }
 
     // =========================================================================
-    // 6. FINAL SAVE: SINKRONISASI PEKERJAAN + HITUNG RAB (HANYA USER LOGIN)
+    // 6. FINAL SAVE + RAB
     // =========================================================================
     public function finalSave(Request $request)
     {
         try {
             $desainId = $request->input('desain_id');
-
-            // Karena sudah pakai middleware auth, Auth::id() PASTI ada isinya.
-            $userId = Auth::id();
+            $userId   = Auth::id();
 
             $sessionKey = 'workspace_desain_' . $desainId;
-            $workspace = session()->get($sessionKey);
+            $workspace  = session()->get($sessionKey);
 
             if (!$workspace) {
-                return response()->json(['status' => 'success', 'message' => 'Tidak ada data sesi (session expired atau belum ada perubahan).']);
+                return response()->json(['status' => 'success', 'message' => 'Tidak ada data sesi.']);
             }
 
             DB::beginTransaction();
 
-            // -------------------------------------------------------------
-            // TAHAP 1: SINKRONISASI PEKERJAAN (Session -> Database)
-            // -------------------------------------------------------------
             $masterPekerjaan = ListPekerjaan::pluck('ID_Pekerjaan', 'Nama_Pekerjaan')->toArray();
 
             foreach ($workspace as $guid => $jobsInSession) {
+
                 $komponen = KomponenDesain::where('ID_Desain_Rumah', $desainId)
-                                          ->where('Ifc_Guid', $guid)
-                                          ->first();
+                                          ->where('Ifc_Guid', $guid)->first();
+
                 if (!$komponen) continue;
 
-                // A. Hapus Lama
                 PekerjaanKomponen::where('ID_Komponen', $komponen->ID_Komponen)->delete();
 
-                // B. Simpan Baru
                 if (!empty($jobsInSession)) {
                     $insertData = [];
+
                     foreach ($jobsInSession as $jobData) {
-                        $namaPekerjaan = $jobData['Nama_Pekerjaan'];
-                        if (isset($masterPekerjaan[$namaPekerjaan])) {
+                        $nama = $jobData['Nama_Pekerjaan'];
+                        if (isset($masterPekerjaan[$nama])) {
                             $insertData[] = [
                                 'ID_Komponen'  => $komponen->ID_Komponen,
-                                'ID_Pekerjaan' => $masterPekerjaan[$namaPekerjaan]
+                                'ID_Pekerjaan' => $masterPekerjaan[$nama]
                             ];
                         }
                     }
-                    if (count($insertData) > 0) {
+
+                    if (!empty($insertData)) {
                         PekerjaanKomponen::insert($insertData);
                     }
                 }
             }
 
-            // -------------------------------------------------------------
-            // TAHAP 2: HITUNG ULANG RAB & SIMPAN KE TABEL REKAP
-            // -------------------------------------------------------------
-
-            // Ambil data fresh dari database
+            // =============== HITUNG RAB ===============
             $KomponenList = KomponenDesain::with([
                 'pekerjaanKomponen.pekerjaan.satuan',
                 'pekerjaanKomponen.pekerjaan.analisaBahan.bahan.hargaTerbaru',
@@ -241,55 +229,69 @@ class HasilAnalisisController extends Controller
             $tempRekap = [];
 
             foreach ($KomponenList as $komponen){
+
                 $P = floatval($komponen->Panjang);
                 $L = floatval($komponen->Lebar);
                 $T = floatval($komponen->Tinggi);
-                $vol_m3 = $P * $L * $T;
 
+                $vol_m3 = $P * $L * $T;
                 $namaKomponen = strtolower($komponen->Nama_Komponen);
-                $isFloor = str_contains($namaKomponen, 'slab') || str_contains($namaKomponen, 'floor') || str_contains($namaKomponen, 'lantai');
+
+                $isFloor = str_contains($namaKomponen, 'slab')
+                        || str_contains($namaKomponen, 'floor')
+                        || str_contains($namaKomponen, 'lantai');
+
                 $area_m2 = $isFloor ? ($P * $L) : ($P * $T);
                 $panjang_lari = max($P, $L, $T);
 
                 foreach ($komponen->pekerjaanKomponen as $pk) {
+
                     $masterKerja = $pk->pekerjaan;
                     if (!$masterKerja || !$masterKerja->ID_Satuan) continue;
 
-                    $volumeKerja = 0;
-                    switch ($masterKerja->ID_Satuan) {
-                        case 1: $volumeKerja = $vol_m3; break;       // m3
-                        case 7: $volumeKerja = $area_m2; break;      // m2
-                        case 12: $volumeKerja = $panjang_lari; break;// m'
-                        case 4: $volumeKerja = 1; break;             // Unit
-                        default: $volumeKerja = 0; break;
-                    }
+                    $volumeKerja = match($masterKerja->ID_Satuan) {
+                        1  => $vol_m3,
+                        7  => $area_m2,
+                        12 => $panjang_lari,
+                        4  => 1,
+                        default => 0,
+                    };
 
                     if ($masterKerja->analisaBahan) {
                         foreach($masterKerja->analisaBahan as $resep) {
+
                             $qtyButuh = $volumeKerja * $resep->Koefisien;
-                            $harga = $resep->bahan->hargaTerbaru->Harga_per_Satuan ?? 0;
+
+                            $harga      = $resep->bahan->hargaTerbaru->Harga_per_Satuan ?? 0;
                             $satuanNama = $resep->bahan->satuanUkur->Simbol_Satuan ?? 'Unit';
-                            $idBahan = $resep->ID_Bahan;
+                            $idBahan    = $resep->ID_Bahan;
 
                             if (!isset($tempRekap[$idBahan])) {
-                                $tempRekap[$idBahan] = ['qty' => 0, 'harga' => $harga, 'satuan' => $satuanNama];
+                                $tempRekap[$idBahan] = [
+                                    'qty'    => 0,
+                                    'harga'  => $harga,
+                                    'satuan' => $satuanNama
+                                ];
                             }
+
                             $tempRekap[$idBahan]['qty'] += $qtyButuh;
                         }
                     }
                 }
             }
 
-            // Hapus Rekap Lama milik User ini untuk Desain ini
+            // DELETE OLD
             RekapKebutuhanBahanProyek::where('ID_Desain_Rumah', $desainId)
-                               ->where('ID_User', $userId)
-                               ->delete();
+                ->where('ID_User', $userId)
+                ->delete();
 
+            // INSERT NEW
             $insertRAB = [];
             $now = now();
 
             foreach ($tempRekap as $idBahan => $data) {
                 if ($data['qty'] <= 0) continue;
+
                 $insertRAB[] = [
                     'ID_User'               => $userId,
                     'ID_Desain_Rumah'       => $desainId,
@@ -303,17 +305,23 @@ class HasilAnalisisController extends Controller
                 ];
             }
 
-            if (count($insertRAB) > 0) {
+            if (!empty($insertRAB)) {
                 RekapKebutuhanBahanProyek::insert($insertRAB);
             }
 
             DB::commit();
 
-            return response()->json(['status' => 'success', 'message' => 'Sinkronisasi & Perhitungan RAB Berhasil Disimpan!']);
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Sinkronisasi & Perhitungan RAB Berhasil!'
+            ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+            return response()->json([
+                'status'  => 'error',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 }
