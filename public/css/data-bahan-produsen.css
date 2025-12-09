@@ -1,4 +1,97 @@
 /* ========== GLOBAL STYLES ========== */
+
+.body, html {
+    background-color: #ffffff;
+}
+
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+    margin-top: 77px;
+}
+
+.main-container h1 {
+    font-size: 2.5rem;
+    font-weight: 500;
+    color: #FF5E16;
+    margin-bottom: 10px;
+}
+
+.header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin:0 auto;
+}
+
+.container-btn {
+    display: flex;
+    margin-bottom: 30px;
+    justify-content: flex-start;
+    gap: 12px;
+    align-items: center;
+}
+
+.container-back {
+    display: flex;
+    margin-bottom: 30px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.btn-header {
+    max-width: 190px;
+    height:auto;
+    background: #6D94C5;
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: collumn;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    transition: 0.2s ease;
+}
+
+.btn-header:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(12, 106, 230, 0.4);
+}
+
+.btn-back {
+    max-width: 190px;
+    height:auto;
+    background: #b90202;
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: collumn;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    transition: 0.2s ease;
+}
+
+.btn-back:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(255, 0, 0, 0.4);
+}
+
 .pilih-supplier-btn {
     min-width: 160px;
     white-space: nowrap;
@@ -14,6 +107,17 @@
 
 .table-hover tbody tr:hover {
     background-color: rgba(0, 0, 0, 0.075);
+}
+
+.table-dark th {
+    background-color: #0A2568 !important;
+    color: white;
+}
+
+.card-header {
+    background-color: #0A2568;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    padding: 0.75rem 1.25rem;
 }
 
 /* ========== BADGE STYLES ========== */
@@ -134,12 +238,35 @@
 .modal-header {
     border-bottom: 2px solid #f8f9fa;
     padding: 1rem 1.5rem;
+    background-color: #0A2568;
 }
+
+.modal-header h5 {
+    color: white;  
+    text-align: center;
+}
+
+.modal-header .btn-close {
+    filter: invert(1) brightness(200%);
+}
+
 
 .modal-footer {
     border-top: 2px solid #f8f9fa;
+    background-color: #FF5E16;
     padding: 0.75rem 1.5rem;
 }
+
+.modal-footer .btn-secondary {
+    background-color:rgb(209, 35, 4);
+    border-color:rgb(209, 35, 4);
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: rgb(255, 38, 0);
+    border-color: rgb(255, 38, 0);
+}
+
 
 /* ========== LOADING ANIMATION ========== */
 @keyframes spin {
@@ -293,7 +420,7 @@
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-    background-color: rgba(0, 0, 0, 0.02);
+    background-color: rgb(0, 162, 255);
 }
 
 .table-bordered {
@@ -312,7 +439,7 @@
 }
 
 .card-header {
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: #0A2568;
     border-bottom: 1px solid rgba(0, 0, 0, 0.125);
     padding: 0.75rem 1.25rem;
 }
