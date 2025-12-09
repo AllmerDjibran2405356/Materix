@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Home | MateRix Smart Database Konstruksi')
+@section('title', 'Daftar Proyek')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/daftarProyek.css') }}">
@@ -25,10 +25,10 @@
 
     <div class="right-content">
 
-    <div class="search-wrapper">
-        <input type="text" placeholder="Search">
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-    </div>
+        <div class="search-wrapper">
+            <input type="text" placeholder="Search">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        </div>
 
     <section class="riwayat-section">
         <div class="container">

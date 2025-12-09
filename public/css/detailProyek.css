@@ -1,6 +1,6 @@
 .detailProyek-container {
     width: 100%;
-    min-height: 100vh;
+    min-height: 90vh;
     padding-top: 120px;
     text-align: center;
 
@@ -21,7 +21,7 @@
     color: #333;
 }
 
-/* Tombol Biru Besar */
+/* btn lihat desain */
 .big-button {
     width: 80%;
     max-width: 900px;
@@ -32,7 +32,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 18px;
+    position: relative;
+    overflow: hidden;
 
     text-decoration: none;
     color: white;
@@ -47,10 +48,20 @@
     transform: translateY(-4px);
 }
 
-/* icon dalam tombol */
 .big-btn-icon {
-    width: 52px;
-    opacity: 0.3;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    width: 160px;
+    opacity: 0.16;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.big-button span {
+    position: relative;
+    z-index: 2;
 }
 
 /* Wrapper tombol bawah */
@@ -59,12 +70,12 @@
     justify-content: center;
     gap: 40px;
     margin-top: 20px;
-    width: 100%;
+    width: 80%;
+    max-width: 900px;
 }
 
-/* Card tombol bawah */
 .card-btn {
-    width: 300px;
+    width: 50%;
     height: 160px;
     background: #F7F1E6;
     border-radius: 20px;
@@ -73,7 +84,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    gap: 20px;
+    gap: 10%;
     padding: 24px;
 
     text-decoration: none;
@@ -89,7 +100,6 @@
     transform: translateY(-3px);
 }
 
-/* icon kiri card */
 .card-icon {
     width: 50px;
     opacity: 0.5;
@@ -100,6 +110,7 @@
     .bottom-button-wrapper {
         flex-direction: column;
         gap: 20px;
+        width: 100%;
     }
 
     .card-btn {
