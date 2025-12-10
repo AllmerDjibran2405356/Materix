@@ -11,18 +11,16 @@
 <div class="main-content">
 
     <div class="left-sidebar">
-        <a href="{{ route('HomePage')}}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Kembali ke Homepage
+        <a href="{{ route('HomePage')}}" class="back-home-btn">
+            <i class="bi bi-arrow-left"></i>
+            <span>Kembali ke Homepage</span>
         </a>
+
         <div class="btn-wrapper">
-            <a href="{{ route('Unggah.index') }}" class="unggah-btn">
-                Input Design
-            </a>
+            <a href="{{ route('Unggah.index') }}" class="unggah-btn">Input Design</a>
         </div>
         <div class="btn-wrapper">
-            <a href="{{ route('master-bahan.index') }}" class="data-btn">
-                Input Data Bahan & Supplier
-            </a>
+            <a href="{{ route('master-bahan.index') }}" class="data-btn">Input Data Bahan & Supplier</a>
         </div>
     </div>
 

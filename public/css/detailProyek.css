@@ -1,3 +1,60 @@
+/* Styling Tombol Kembali */
+.back-home-btn {
+    /* --- POSISI --- */
+    align-self: flex-start; /* Tetap di sisi kiri */
+
+    /* Ganti persen dengan pixel agar jaraknya "pasti" jauh dari pinggir */
+    margin-left: 125px;
+
+    /* Tarik ke atas lebih kuat agar pas di bawah header */
+    margin-top: 0px;
+
+    margin-bottom: 20px;    /* Jarak ke judul di bawahnya */
+
+    /* --- TAMPILAN (Biru -> Putih) --- */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    background-color: #0A1F59;
+    color: #ffffff;
+    border: 2px solid #0A1F59;
+
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Efek Hover */
+.back-home-btn:hover {
+    background-color: #ffffff;
+    color: #0A1F59;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(10, 31, 89, 0.25);
+}
+
+.back-home-btn i {
+    font-size: 18px;
+}
+
+/* --- RESPONSIF HP (PENTING) --- */
+/* Kita harus mereset margin 150px tadi saat di HP, kalau tidak tombolnya hilang ke kanan */
+@media (max-width: 768px) {
+    .back-home-btn {
+        margin-left: 20px; /* Jarak wajar untuk Tablet/HP */
+        margin-top: 0;     /* Reset tarikan ke atas */
+
+        /* Opsional: Jika ingin tetap bulat ikon saja di HP */
+        /* width: 50px; height: 50px; padding: 0; border-radius: 50%; */
+    }
+}
+
+
 .detailProyek-container {
     width: 100%;
     min-height: 90vh;
