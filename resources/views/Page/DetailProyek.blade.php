@@ -14,7 +14,7 @@
         <span>Kembali ke Daftar Proyek</span>
     </a>
 
-    <h1 class="project-title">“{{ $project->Nama_desain ?? 'Tanpa Judul' }}”</h1>
+    <h1 class="project-title">“{{ $project->Nama_Desain ?? 'Tanpa Judul' }}”</h1>
 
     <a href="{{ route('viewer', ['id' => $project->ID_Desain_Rumah]) }}" class="big-button">
         <img src="{{ asset('images/eye.png') }}" class="big-btn-icon" alt="icon">

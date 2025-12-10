@@ -60,8 +60,8 @@
                            class="riwayat-item">
 
                             <div>
-                                <h5>{{ $project->Nama_desain ?? 'Tanpa Judul' }}</h5>
-                                <p>{{ \Carbon\Carbon::parse($project->Tanggal_dibuat)->format('d/m/Y | H:i') }}</p>
+                                <h5>{{ $project->Nama_Desain ?? 'Tanpa Judul' }}</h5>
+                                <p>{{ \Carbon\Carbon::parse($project->Tanggal_dibuat)->format('d/m/Y') }}</p>
                             </div>
 
                             <span class="dots">⋮</span>
