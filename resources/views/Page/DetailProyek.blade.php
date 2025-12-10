@@ -9,7 +9,9 @@
 @section('content')
 
 <div class="detailProyek-container">
-
+    <a href="{{ route('DaftarProyek.index') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Kembali ke Homepage
+    </a>
     <h1 class="project-title">“{{ $project->Nama_desain ?? 'Tanpa Judul' }}”</h1>
 
     <a href="{{ route('viewer', ['id' => $project->ID_Desain_Rumah]) }}" class="big-button">

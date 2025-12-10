@@ -15,6 +15,7 @@ use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\UnggahController;
 use App\Http\Controllers\DetailProyekController;
 use App\Http\Controllers\KelolaLaporanProyekController;
+use App\Http\Controllers\MasterBahanController;
 use App\Http\Controllers\RABController;
 
 /*
@@ -74,6 +75,13 @@ Route::middleware('auth')->group(function () {
     // Project Detail (Tampilan Utama Proyek)
     Route::get('/proyek/{ID_Desain_Rumah}', [DetailProyekController::class, 'show'])->name('detailProyek.show');
 
+    Route::controller(MasterBahanController::class)->group(function () {
+        Route::get('/master-bahan', 'index')->name('master-bahan.index');
+        Route::post('/master-bahan/store', 'store')->name('master-bahan.store');
+        Route::put('/master-bahan/update/{id}', 'update')->name('master-bahan.update');
+        Route::delete('/master-bahan/delete/{id}', 'destroy')->name('master-bahan.destroy');
+    });
+
     // =========================================================================
     // FITUR PENDATAAN BAHAN & PRODUSEN (DataProyekController)
     // =========================================================================
@@ -110,20 +118,6 @@ Route::middleware('auth')->group(function () {
 
     // 3. Rekap Management (Update Supplier/Harga di Tabel Utama)
     Route::post('/rekap/update-supplier', [DataProyekController::class, 'updateSupplierRekap'])->name('rekap.updateSupplier');
-
-    // =========================================================================
-
-    // Materials Management (Project Specific)
-    Route::prefix('projects')->group(function () {
-        Route::get('/{id}/materials', [MaterialController::class, 'index'])->name('materials.index');
-        Route::post('/{id}/materials', [MaterialController::class, 'store'])->name('materials.store');
-        Route::get('/{id}/materials/export-pdf', [MaterialController::class, 'exportPDF'])->name('materials.export.pdf');
-        Route::get('/{id}/materials/export-excel', [MaterialController::class, 'exportExcel'])->name('materials.export.excel');
-        Route::post('/kategori/store', [MaterialController::class, 'storeKategori'])->name('materials.kategori.store');
-        Route::get('/kategori/list', [MaterialController::class, 'getKategori'])->name('materials.kategori.list');
-        Route::post('/satuan/store', [MaterialController::class, 'storeSatuan'])->name('materials.satuan.store');
-        Route::get('/satuan/list', [MaterialController::class, 'getSatuan'])->name('materials.satuan.list');
-    });
 
     // Lihat RAB (Laporan)
     Route::get('/laporan/{id}', [RABController::class, 'index'])->name('laporan.index');
@@ -180,13 +174,6 @@ Route::prefix('api')->middleware('auth')->group(function () {
         $supplier = \App\Models\ListSupplier::orderBy('Nama_Supplier')->get(['ID_Supplier', 'Nama_Supplier']);
         return response()->json($supplier);
     })->name('api.supplier-all');
-
-    // Material Controller APIs
-    Route::get('/bahan-list', [MaterialController::class, 'getBahanList'])->name('api.bahan-list');
-    Route::get('/komponen-list', [MaterialController::class, 'getKomponenList'])->name('api.komponen-list');
-    Route::get('/supplier-list', [MaterialController::class, 'getSupplierList'])->name('api.supplier-list');
-    Route::post('/bahan/store', [MaterialController::class, 'storeBahan'])->name('api.bahan-store');
-    Route::post('/supplier/store', [MaterialController::class, 'storeSupplier'])->name('api.supplier-store');
 
     // Hasil Analisis APIs
     Route::get('/cari-komponen', [HasilAnalisisController::class, 'cariKomponen'])->name('api.cari_komponen');

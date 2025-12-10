@@ -12,7 +12,6 @@
 <div class="body">
     <div class="main-container">
         <h1>Pendataan Bahan & Produsen</h1>
-
         <div class="header-wrapper d-flex justify-content-between mb-4">
             <div class="container-btn">
                 <a href="#" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#modalSupplier">

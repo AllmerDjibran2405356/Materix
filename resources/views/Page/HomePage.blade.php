@@ -42,7 +42,7 @@
 
             <div class="fitur-box">
                 <img src="../images/icon-chart.png" alt="icon" class="fitur-icon">
-                <a href="{{ route('Bahan.index') }}" class="fitur-btn">
+                <a href="{{ route('master-bahan.index') }}" class="fitur-btn">
                     Harga Bahan & Produsen Material
                 </a>
             </div>

@@ -3,12 +3,12 @@
    ========================================= */
 #viewer-container {
     position: fixed;
-    top: 64px;
+    top: 64px;                    /* Tinggi Header Website */
     left: 0;
     right: 0;
     bottom: 0;
     width: 100vw;
-    height: auto;
+    height: calc(100vh - 64px);   /* Sisa layar */
     background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
     overflow: hidden;
     z-index: 1;
@@ -16,26 +16,83 @@
 }
 
 /* =========================================
-   2. OVERLAYS (JUDUL & KONTROL)
+   2. HEADER GROUP (FULL WIDTH CONTAINER)
    ========================================= */
-.title-overlay {
+.viewer-header-group {
     position: absolute;
     top: 20px;
-    left: 20px;
-    z-index: 20;
-    background: rgba(255, 255, 255, 0.85);
-    padding: 10px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    pointer-events: none;
-}
-.title-overlay h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    color: #1f2937;
-    font-weight: 700;
+    left: 0;
+    width: 100%;          /* Memenuhi lebar layar */
+    height: 50px;         /* Tinggi area header */
+    z-index: 2000;
+
+    /* Flexbox untuk menengahkan Judul */
+    display: flex;
+    justify-content: center; /* Judul otomatis di tengah */
+    align-items: center;
+
+    pointer-events: none; /* Area kosong tembus klik ke model */
 }
 
+/* Style Tombol Back (Absolute Left) */
+.btn-back-viewer {
+    position: absolute;   /* Keluar dari flow flexbox */
+    left: 20px;           /* Tempel di KIRI */
+
+    background: white;
+    color: #333;
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 20px;
+
+    pointer-events: auto; /* Aktifkan klik */
+    transition: all 0.2s ease;
+}
+
+.btn-back-viewer:hover {
+    background: #f8f9fa;
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    color: #000;
+}
+
+/* Style Judul (Centered by Flex Parent) */
+.viewer-title-badge {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 10px 30px;
+    border-radius: 50px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    pointer-events: auto; /* Aktifkan klik/select text */
+    text-align: center;
+
+    /* Pastikan judul tidak terlalu lebar di layar HP */
+    max-width: 60%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.viewer-title-badge h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+/* =========================================
+   3. CONTROLS OVERLAY
+   ========================================= */
 .controls-overlay {
     position: absolute;
     bottom: 30px;
@@ -68,6 +125,7 @@
     font-size: 0.8rem;
     color: #e5e7eb;
 }
+
 .control-icon {
     width: 24px;
     text-align: center;
@@ -76,7 +134,7 @@
 }
 
 /* =========================================
-   3. LOADING SCREEN
+   4. LOADING SCREEN
    ========================================= */
 #loading-overlay {
     position: absolute;
@@ -106,7 +164,7 @@
 }
 
 /* =========================================
-   4. SIDEBAR PROPERTI (KANAN)
+   5. PROPERTIES PANEL (SIDEBAR KANAN)
    ========================================= */
 #properties-panel {
     position: absolute;
@@ -134,6 +192,7 @@
     align-items: center;
     background: #fff;
 }
+
 .prop-header h4 { margin: 0; font-size: 1rem; color: #1f2937; }
 
 .close-btn {
@@ -147,14 +206,7 @@
 
 .prop-content { padding: 20px; overflow-y: auto; flex: 1; }
 
-.prop-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 20px; }
-.prop-table th, .prop-table td {
-    padding: 8px 0;
-    border-bottom: 1px solid #f3f4f6;
-    text-align: left;
-}
-.prop-table th { color: #6b7280; width: 40%; }
-
+/* Tambahan Style untuk Konten Analisis di Panel */
 .analysis-box {
     background: #f0fdf4;
     border: 1px solid #bbf7d0;
@@ -169,8 +221,6 @@
     border-bottom: 1px solid #bbf7d0;
     padding-bottom: 8px;
 }
-
-/* Form dalam panel */
 .form-label {
     display: block;
     font-size: 0.8rem;
@@ -178,11 +228,13 @@
     color: #166534;
     margin-bottom: 5px;
 }
-
 .form-input {
-    width: 100%; padding: 8px; margin-bottom: 10px;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
     border: 1px solid #bbf7d0;
-    border-radius: 6px; font-size: 0.85rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
     background-color: #ffffff;
     color: #1f2937;
     outline: none;
@@ -193,9 +245,9 @@
     border-color: #166534;
     box-shadow: 0 0 0 2px rgba(22, 101, 52, 0.1);
 }
-
 .btn-save {
-    width: 100%; padding: 8px;
+    width: 100%;
+    padding: 8px;
     background-color: #166534;
     color: white;
     border: none;
@@ -212,32 +264,13 @@
 .btn-save:hover { background-color: #14532d; }
 
 /* =========================================
-   5. CROSSHAIR
-   ========================================= */
-#pivot-crosshair {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 10px; height: 10px;
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 2px solid rgba(0, 0, 0, 0.2);
-    border-radius: 50%;
-    box-shadow: 0 0 4px rgba(0,0,0,0.3);
-    pointer-events: none;
-    z-index: 30;
-}
-
-/* =========================================
-   6. TOMBOL SAVE FLOATING (GRADIENT HIJAU OPSI A)
+   6. FLOATING SAVE BUTTON
    ========================================= */
 .btn-save-floating {
     position: fixed;
     bottom: 30px;
     right: 30px;
-
-    /* === Gradasi Hijau Opsi A === */
     background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-
     color: white;
     border: none;
     border-radius: 50px;
@@ -256,15 +289,8 @@
 .btn-save-floating:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-    background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
 }
 
-.btn-save-floating:active {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-
-/* Jika panel kanan dibuka, tombol geser kiri */
 #viewer-container.panel-open .btn-save-floating {
     right: 350px;
 }
@@ -280,34 +306,7 @@
         right: 20px;
         z-index: 40;
     }
-}
 
-/* =========================================
-   7. TOMBOL BACK
-   ========================================= */
-.btn-back-viewer {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    background: white;
-    color: #333;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-    z-index: 2000 !important;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    font-size: 20px;
-}
-
-.btn-back-viewer:hover {
-    background: #f8f9fa;
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    /* Responsive Title */
+    .viewer-title-badge h3 { font-size: 0.9rem; }
 }
