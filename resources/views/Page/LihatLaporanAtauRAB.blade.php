@@ -1,78 +1,67 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAB - {{ $project->Nama_Desain }}</title>
-</head>
-<body>
-    <!-- Tombol Kembali -->
-    <div>
-        <button onclick="window.location.href='{{ route('detailProyek.show', $project->ID_Desain_Rumah) }}'">
-            < Kembali ke Detail Proyek
-        </button>
-    </div>
+@extends('layouts.app')
+
+@section('title', 'RAB - {{ $project->Nama_Desain }}')
+
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/laporanRAB.css') }}">
+@endsection
+
+@section('content')
+<div class="main-container">
 
     <!-- Header -->
-    <div>
-        <h1>Rencana Anggaran Biaya (RAB)</h1>
-        <h2>{{ $project->Nama_Desain }}</h2>
+    <div class="header-container">
+        <h1>Rencana Anggaran Biaya "{{ $project->Nama_Desain }}"</h1>
         <div>
-            <span>Tanggal: {{ \Carbon\Carbon::parse($project->Tanggal_Dibuat)->translatedFormat('d F Y') }}</span>
-            <span>File: {{ $project->Nama_File }}</span>
-        </div>
-        <div>
-            <h3>Total RAB</h3>
-            <h2>Rp {{ number_format($grandTotal, 0, ',', '.') }}</h2>
+            <p>Tanggal: {{ \Carbon\Carbon::parse($project->Tanggal_Dibuat)->translatedFormat('d F Y') }}
+            File: {{ $project->Nama_File }}</p>
         </div>
     </div>
+    <div class="table-utama">
+        @if($message)
+        <div>
+            <h4>Belum Ada Data RAB</h4>
+            <p>{{ $message }}</p>
+            <p>Silakan hitung kebutuhan bahan terlebih dahulu untuk melihat RAB.</p>
+        </div>
+        <div class="container-back">
+            <a href="{{ route('detailProyek.show', $project->ID_Desain_Rumah) }}" class="btn-back">
+                Kembali ke Detail Proyek
+            </a>
+        </div>
 
-    <!-- Ringkasan -->
-    <div>
-        <div>
-            <h4>Total Item Bahan</h4>
-            <h3>{{ $totalItems }}</h3>
-            <p>Jenis bahan yang dibutuhkan</p>
-        </div>
-        <div>
-            <h4>Supplier Terlibat</h4>
-            <h3>{{ $uniqueSuppliers }}</h3>
-            <p>Jumlah supplier penyedia</p>
-        </div>
-        <div>
-            <h4>Status RAB</h4>
-            @if($totalItems > 0)
-                <span>LENGKAP</span>
-            @else
-                <span>BELUM ADA DATA</span>
-            @endif
-            <p>Perhitungan selesai</p>
-        </div>
-    </div>
+
+        @else
 
     <!-- Tombol Export -->
-    <div>
-        <button onclick="exportToExcel()">Export Excel</button>
-        <button onclick="exportToPDF()">Export PDF</button>
-        <button onclick="refreshData()">Refresh</button>
+    <div class="btn-wrapper">
+        <div class="container-btn">
+            <a class="btn-header" onclick="exportToExcel()">Export Excel</a>
+            <a class="btn-header" onclick="exportToPDF()">Export PDF</a>
+            <a class="btn-header" onclick="refreshData()">Refresh</a>
+        </div>
+
+        <div class="container-back">
+            <a href="{{ route('detailProyek.show', $project->ID_Desain_Rumah) }}" class="btn-back">
+                Kembali ke Detail Proyek
+            </a>
+        </div>
     </div>
 
     <!-- Loading -->
-    <div id="loadingSpinner" style="display: none;">
-        <p>Memuat data...</p>
+    <div class="loadingSpinner" id="loadingSpinner" style="display: none;">
+        <div class="loader"></div>
     </div>
 
     <!-- Tabel Utama -->
-    <div>
-        @if($message)
-            <div>
-                <h4>Belum Ada Data RAB</h4>
-                <p>{{ $message }}</p>
-                <p>Silakan hitung kebutuhan bahan terlebih dahulu untuk melihat RAB.</p>
+        <div class="section info-container">
+            <div class="section-header">
+                <h2>Data RAB</h2>
             </div>
-        @else
-            <table id="rabTable">
-                <thead>
+
+            <div class="section-body">
+                <table id="rabTable" class="info-table">
+                    <thead>
                     <tr>
                         <th>No</th>
                         <th>Nama Bahan</th>
@@ -83,8 +72,7 @@
                         <th>Total Harga</th>
                         <th>Supplier</th>
                     </tr>
-                </thead>
-                <tbody>
+                    <tbody>
                     @foreach($recaps as $index => $recap)
                     <tr>
                         <td>{{ $index + 1 }}</td>
@@ -137,31 +125,85 @@
                         </td>
                     </tr>
                     @endforeach
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="6">GRAND TOTAL</td>
-                        <td colspan="2">Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
-                    </tr>
-                </tfoot>
-            </table>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="6">GRAND TOTAL</td>
+                            <td colspan="2">Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         @endif
+    </div>
+
+    <!-- Ringkasan -->
+    <div class="ringkasan-rab">
+        <div class="section info-container">
+            <div class="section-header">
+                <h2>Ringkasan RAB</h2>
+            </div>
+
+            <div class="section-body">
+                <table class="info-table">
+                <tr>
+                    <th>Total Item Bahan :</th> 
+                    <td>{{ $totalItems }}</td>
+                    <td>Jenis bahan yang dibutuhkan</td>
+                </tr>
+                <tr>
+                    <th>Supplier Terlibat :</th> 
+                    <td>{{ $uniqueSuppliers }}</td>
+                    <td>Jumlah supplier penyedia</td>
+                </tr>
+                <tr>
+                    <th>Total RAB :</th> 
+                    <td> </td>
+                    <td>Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
+                </tr>
+
+                </table>
+            </div>
+        </div>
+
+        <div class="section info-container">
+            <div class="section-header">
+                <h2>Status RAB</h2>
+            </div>
+
+            <div class="section-body">
+                <table class="info-table">
+                <tr>
+                    <td>
+                        @if($totalItems > 0)
+                            <span>LENGKAP</span>
+                        @else
+                            <span>BELUM ADA DATA</span>
+                        @endif
+                    </td> 
+                    <td>Perhitungan selesai</td>
+                </tr>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- Perbandingan Harga -->
     @if($groupedPrices->count() > 0 && !$message)
-    <div>
-        <h3>Perbandingan Harga Bahan dari Berbagai Supplier</h3>
-        <table>
-            <thead>
+    <div class="perbandingan-harga">
+        <div class="section info-container">
+            <div class="section-header">
+                <h2>Perbandingan Harga Bahan dari Berbagai Supplier</h2>
+            </div>
+
+            <div class="section-body">
+                <table class="info-table">
                 <tr>
                     <th>Bahan</th>
                     @foreach($suppliers as $supplier)
                     <th>{{ $supplier->Nama_Supplier }}</th>
                     @endforeach
                 </tr>
-            </thead>
-            <tbody>
                 @foreach($groupedPrices as $bahanId => $hargaList)
                 @php
                     $bahan = $hargaList->first()->bahan ?? null;
@@ -188,9 +230,9 @@
                 </tr>
                 @endif
                 @endforeach
-            </tbody>
-        </table>
-    </div>
+                </table>
+            </div>
+        </div>
     @endif
 
     <script>
@@ -209,5 +251,5 @@
             }, 1000);
         }
     </script>
-</body>
-</html>
+</div>
+@endsection
