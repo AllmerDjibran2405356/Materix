@@ -12,7 +12,21 @@
 <div class="body">
     <div class="main-container">
         <h1>Pendataan Bahan & Produsen</h1>
-        <div class="header-wrapper d-flex justify-content-between mb-4">
+        {{-- Ubah 'mb-2' menjadi 'mb-1' (jarak sangat kecil) atau 'mb-0' (tanpa jarak) --}}
+        <div class="header-wrapper d-flex justify-content-between align-items-end mb-1">
+
+            <div class="container-back">
+                @if(isset($project))
+                    <a href="{{ route('detailProyek.show', $project->ID_Desain_Rumah) }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Kembali ke Detail Proyek
+                    </a>
+                @else
+                    <a href="#" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Kembali
+                    </a>
+                @endif
+            </div>
+
             <div class="container-btn">
                 <a href="#" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#modalSupplier">
                     <i class="bi bi-people-fill"></i> Tambah Data Supplier
@@ -20,15 +34,6 @@
                 <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalBahan">
                     <i class="bi bi-box-seam"></i> Tambah Data Bahan
                 </a>
-            </div>
-            <div class="container-back">
-                @if(isset($project))
-                <a href="{{ route('detailProyek.show', $project->ID_Desain_Rumah) }}" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Kembali ke Detail Proyek
-                </a>
-                @else
-                <a href="#" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
-                @endif
             </div>
         </div>
 
