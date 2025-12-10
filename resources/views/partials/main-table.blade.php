@@ -16,31 +16,40 @@
             <td>{{ $recap->bahan->Nama_Bahan ?? 'Unknown' }}</td>
             <td class="text-end">{{ number_format($recap->Volume_Final, 2, ',', '.') }}</td>
             <td class="text-center">{{ $recap->bahan->satuan->Nama_Satuan ?? 'Unit' }}</td>
-            <td class="text-end">
+
+            {{-- KOLOM HARGA SATUAN: Tambah class 'cell-harga-satuan' --}}
+            <td class="text-end cell-harga-satuan">
                 Rp {{ number_format($recap->Harga_Satuan_Saat_Ini, 0, ',', '.') }}
             </td>
-            <td class="text-end text-primary fw-bold">
+
+            {{-- KOLOM TOTAL HARGA: Tambah class 'cell-total-harga' --}}
+            <td class="text-end text-primary fw-bold cell-total-harga">
                 Rp {{ number_format($recap->Total_Harga, 0, ',', '.') }}
             </td>
+
             <td>
-                <form action="{{ route('rekap.updateSupplier') }}" method="POST" class="d-inline supplier-form">
-                    @csrf
-                    {{-- Tambah hidden input untuk ID_Rekap --}}
-                    <input type="hidden" name="ID_Rekap" value="{{ $recap->ID_Rekap }}">
-                    <div class="input-group input-group-sm">
-                        <select name="ID_Supplier" class="form-select form-select-sm"
-                                data-recap-id="{{ $recap->ID_Rekap }}"
-                                data-bahan-id="{{ $recap->ID_Bahan }}">
-                            <option value="">-- Pilih Supplier --</option>
-                            @foreach ($suppliers as $supplier)
-                            <option value="{{ $supplier->ID_Supplier }}"
-                                {{ $recap->ID_Supplier == $supplier->ID_Supplier ? 'selected' : '' }}>
-                                {{ $supplier->Nama_Supplier }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </form>
+                {{-- Form tidak wajib submit, kita pakai AJAX via Select --}}
+                <div class="input-group input-group-sm">
+                    {{--
+                        PENTING:
+                        1. Class 'select-supplier-main' untuk trigger JS
+                        2. data-url untuk tujuan AJAX
+                        3. data-id untuk ID Rekap yang mau diupdate
+                    --}}
+                    <select name="ID_Supplier" class="form-select form-select-sm select-supplier-main"
+                            data-id="{{ $recap->ID_Rekap }}"
+                            data-url="{{ route('rekap.updateSupplier') }}">
+
+                        <option value="" disabled {{ !$recap->ID_Supplier ? 'selected' : '' }}>-- Pilih Supplier --</option>
+
+                        @foreach ($suppliers as $supplier)
+                        <option value="{{ $supplier->ID_Supplier }}"
+                            {{ $recap->ID_Supplier == $supplier->ID_Supplier ? 'selected' : '' }}>
+                            {{ $supplier->Nama_Supplier }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
             </td>
         </tr>
         @endforeach
@@ -51,7 +60,8 @@
         @endphp
         <tr class="table-secondary">
             <td colspan="5" class="text-end fw-bold">Grand Total</td>
-            <td class="text-end text-primary fw-bold fs-6">
+            {{-- Tambah ID 'grand-total-display' agar bisa diupdate JS --}}
+            <td class="text-end text-primary fw-bold fs-6" id="grand-total-display">
                 Rp {{ number_format($grandTotal, 0, ',', '.') }}
             </td>
             <td></td>

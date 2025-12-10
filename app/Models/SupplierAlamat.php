@@ -10,9 +10,13 @@ class SupplierAlamat extends Model
     use HasFactory;
     public $timestamps = false;
     protected $table = 'supplier_alamat';
+
+    protected $primaryKey = null;
+    public $incrementing = false;
+
     protected $fillable = ['ID_Supplier', 'Alamat_Supplier'];
 
     public function supplier() {
-        return $this->belongsTo(ListSupplier::class, 'ID_Supplier');
+        return $this->belongsTo(ListSupplier::class, 'ID_Supplier', 'ID_Supplier');
     }
 }

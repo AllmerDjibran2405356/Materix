@@ -3,8 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DaftarProyekController;
-use App\Http\Controllers\DataBahanDanProdusenController;
-use App\Http\Controllers\DataProyekController;
+use App\Http\Controllers\DataProyekController; // Controller Utama Kita
 use App\Http\Controllers\DataRABController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\PengaturanController;
@@ -51,14 +50,14 @@ Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/HomePage', [HomeController::class, 'index'])->name('HomePage');
 
-    // Projects
+    // Projects List
     Route::get('/daftarProyek', [DaftarProyekController::class, 'index'])->name('DaftarProyek.index');
     Route::get('/daftarProyek/{id}', [DaftarProyekController::class, 'show'])->name('DaftarProyek.show');
 
-    // Material Prices
+    // Material Prices (Menu Global)
     Route::get('/harga-bahan', [HargaBahanController::class, 'index'])->name('Bahan.index');
 
-    // Upload
+    // Upload & Analysis
     Route::prefix('unggah')->group(function () {
         Route::get('/', [UnggahController::class, 'index'])->name('Unggah.index');
         Route::post('/', [UnggahController::class, 'upload'])->name('Unggah.upload');
@@ -72,41 +71,49 @@ Route::middleware('auth')->group(function () {
     Route::get('/hasil-analisis/{id}', [HasilAnalisisController::class, 'view'])->name('hasil.analisis.view');
     Route::get('/viewer/{id}', [HasilAnalisisController::class, 'view'])->name('viewer');
 
-    // Project Detail
+    // Project Detail (Tampilan Utama Proyek)
     Route::get('/proyek/{ID_Desain_Rumah}', [DetailProyekController::class, 'show'])->name('detailProyek.show');
 
-    // Project Data
+    // =========================================================================
+    // FITUR PENDATAAN BAHAN & PRODUSEN (DataProyekController)
+    // =========================================================================
+
+    // Halaman Utama Pendataan
     Route::get('/data-proyek/{id}', [DataProyekController::class, 'index'])->name('dataProyek.index');
     Route::get('/data-proyek/{id}/refresh', [DataProyekController::class, 'refreshTable'])->name('dataProyek.refresh');
 
-    // ========== TAMBAHAN ROUTE UNTUK FITUR BARU ==========
+    // 1. Supplier Management Routes
     // Supplier Management
     Route::prefix('supplier')->group(function () {
         Route::post('/tambah', [DataProyekController::class, 'tambahSupplier'])->name('supplier.tambah');
+        Route::put('/update/{id}', [DataProyekController::class, 'updateSupplier'])->name('supplier.update');
+
         Route::post('/tambah-alamat', [DataProyekController::class, 'tambahAlamatSupplier'])->name('supplier.tambahAlamat');
+        // HAPUS {id} DI SINI:
+        Route::delete('/hapus-alamat', [DataProyekController::class, 'hapusAlamatSupplier'])->name('supplier.hapusAlamat');
+
         Route::post('/tambah-kontak', [DataProyekController::class, 'tambahKontakSupplier'])->name('supplier.tambahKontak');
-        Route::delete('/alamat/{id}', [DataProyekController::class, 'hapusAlamatSupplier'])->name('supplier.hapusAlamat');
-        Route::delete('/kontak/{id}', [DataProyekController::class, 'hapusKontakSupplier'])->name('supplier.hapusKontak');
+        // HAPUS {id} DI SINI:
+        Route::delete('/hapus-kontak', [DataProyekController::class, 'hapusKontakSupplier'])->name('supplier.hapusKontak');
+
+        Route::delete('/hapus-supplier/{id}', [DataProyekController::class, 'hapusSupplier'])->name('supplier.hapus');
+
         Route::get('/{id}/edit', [DataProyekController::class, 'editSupplier'])->name('supplier.edit');
-        Route::put('/{id}', [DataProyekController::class, 'updateSupplier'])->name('supplier.update');
     });
 
-    // Harga Bahan Management
-    Route::prefix('harga-bahan')->group(function () {
+    // 2. Harga Bahan Management Routes
+    Route::prefix('harga-bahan-proyek')->group(function () {
         Route::post('/simpan', [DataProyekController::class, 'simpanHargaBahan'])->name('bahan.simpanHarga');
-        Route::get('/{id}/edit', [DataProyekController::class, 'editHargaBahan'])->name('harga.edit');
-        Route::put('/{id}', [DataProyekController::class, 'updateHargaBahan'])->name('harga-bahan.update'); // NAMA ROUTE DIPERBAIKI
+        // Route khusus untuk Edit Inline via AJAX (Tabel Modal)
+        Route::post('/update-inline', [DataProyekController::class, 'updateHargaInline'])->name('bahan.updateHargaInline');
     });
 
-    // Rekap Management
+    // 3. Rekap Management (Update Supplier/Harga di Tabel Utama)
     Route::post('/rekap/update-supplier', [DataProyekController::class, 'updateSupplierRekap'])->name('rekap.updateSupplier');
 
-    // Existing Routes...
-    Route::get('/rekap/get-harga-bahan', [DataProyekController::class, 'getHargaBahan'])->name('rekap.get-harga-bahan');
-    Route::post('/rekap/update-harga', [DataProyekController::class, 'updateHarga'])->name('rekap.updateHarga');
-    Route::post('/bahan/simpan-harga', [DataProyekController::class, 'simpanHargaBahan'])->name('bahan.simpanHarga');
+    // =========================================================================
 
-    // Materials
+    // Materials Management (Project Specific)
     Route::prefix('projects')->group(function () {
         Route::get('/{id}/materials', [MaterialController::class, 'index'])->name('materials.index');
         Route::post('/{id}/materials', [MaterialController::class, 'store'])->name('materials.store');
@@ -118,7 +125,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/satuan/list', [MaterialController::class, 'getSatuan'])->name('materials.satuan.list');
     });
 
-    // Lihat RAB
+    // Lihat RAB (Laporan)
     Route::get('/laporan/{id}', [RABController::class, 'index'])->name('laporan.index');
 });
 
@@ -132,9 +139,9 @@ Route::prefix('rab')->group(function () {
     Route::delete('/recap/{id}', [RABController::class, 'deleteRecap'])->name('rab.delete');
 });
 
-// API Routes (Authenticated)
+// API Routes (Authenticated) - Untuk Data Global/Cache
 Route::prefix('api')->middleware('auth')->group(function () {
-    // API untuk mendapatkan harga berdasarkan bahan dan supplier
+    // API Cek Harga Spesifik
     Route::get('/harga/{bahanId}/{supplierId}', function($bahanId, $supplierId) {
         $harga = \App\Models\ListHargaBahan::where('ID_Bahan', $bahanId)
             ->where('ID_Supplier', $supplierId)
@@ -147,7 +154,7 @@ Route::prefix('api')->middleware('auth')->group(function () {
         ]);
     });
 
-    // API untuk mendapatkan semua harga (cache)
+    // API Cache Harga
     Route::get('/harga-cache', function() {
         $hargaData = \App\Models\ListHargaBahan::select('ID_Bahan', 'ID_Supplier', 'Harga_Per_Satuan')
             ->orderBy('Tanggal_Update_Data', 'desc')
@@ -163,6 +170,7 @@ Route::prefix('api')->middleware('auth')->group(function () {
         return response()->json($hargaData);
     });
 
+    // Helper APIs
     Route::get('/bahan-all', function() {
         $bahan = \App\Models\ListBahan::orderBy('Nama_Bahan')->get(['ID_Bahan', 'Nama_Bahan']);
         return response()->json($bahan);
@@ -173,7 +181,7 @@ Route::prefix('api')->middleware('auth')->group(function () {
         return response()->json($supplier);
     })->name('api.supplier-all');
 
-    // Material APIs
+    // Material Controller APIs
     Route::get('/bahan-list', [MaterialController::class, 'getBahanList'])->name('api.bahan-list');
     Route::get('/komponen-list', [MaterialController::class, 'getKomponenList'])->name('api.komponen-list');
     Route::get('/supplier-list', [MaterialController::class, 'getSupplierList'])->name('api.supplier-list');
@@ -186,11 +194,7 @@ Route::prefix('api')->middleware('auth')->group(function () {
     Route::post('/save-job', [HasilAnalisisController::class, 'saveJob'])->name('api.save_job');
     Route::post('/remove-job', [HasilAnalisisController::class, 'removeJob'])->name('api.remove_job');
     Route::post('/final-save', [HasilAnalisisController::class, 'finalSave'])->name('api.final_save');
-
-    // New IFC File APIs
     Route::get('/list-ifc-files', [HasilAnalisisController::class, 'listIfcFiles'])->name('api.list_ifc_files');
-
-    // Debug API
     Route::get('/debug-info/{id}', [HasilAnalisisController::class, 'debugInfo'])->name('api.debug.info');
 });
 

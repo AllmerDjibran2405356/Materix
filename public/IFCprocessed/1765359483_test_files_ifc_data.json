@@ -1,0 +1,92 @@
+[
+    {
+        "guid": "0wTszkXKj4HPM8XUzKtMf2",
+        "tipe_ifc": "IfcSlab",
+        "nama": "Slab",
+        "label_cad": "1240831",
+        "satuan_utama_hitung": "unit",
+        "satuan_sumber": "METER (Converted)",
+        "kuantitas": {
+            "panjang": 0,
+            "tinggi": 0,
+            "tebal": 0,
+            "area_m2": 0,
+            "volume_m3": 0
+        }
+    },
+    {
+        "guid": "1GX8Un5Ur8IvG5ROhzB4mc",
+        "tipe_ifc": "IfcWallStandardCase",
+        "nama": "Wall",
+        "label_cad": "1241231",
+        "satuan_utama_hitung": "unit",
+        "satuan_sumber": "METER (Converted)",
+        "kuantitas": {
+            "panjang": 0,
+            "tinggi": 0,
+            "tebal": 0,
+            "area_m2": 0,
+            "volume_m3": 0
+        }
+    },
+    {
+        "guid": "2xvf_4thb2mOdIqf26ABdx",
+        "tipe_ifc": "IfcWallStandardCase",
+        "nama": "Wall",
+        "label_cad": "1241234",
+        "satuan_utama_hitung": "unit",
+        "satuan_sumber": "METER (Converted)",
+        "kuantitas": {
+            "panjang": 0,
+            "tinggi": 0,
+            "tebal": 0,
+            "area_m2": 0,
+            "volume_m3": 0
+        }
+    },
+    {
+        "guid": "3okhjtEzPDAx9tIVwQy68t",
+        "tipe_ifc": "IfcWallStandardCase",
+        "nama": "Wall",
+        "label_cad": "1241235",
+        "satuan_utama_hitung": "unit",
+        "satuan_sumber": "METER (Converted)",
+        "kuantitas": {
+            "panjang": 0,
+            "tinggi": 0,
+            "tebal": 0,
+            "area_m2": 0,
+            "volume_m3": 0
+        }
+    },
+    {
+        "guid": "33aBzOrnjBlBkHBvs3nn39",
+        "tipe_ifc": "IfcWallStandardCase",
+        "nama": "Wall",
+        "label_cad": "1241631",
+        "satuan_utama_hitung": "unit",
+        "satuan_sumber": "METER (Converted)",
+        "kuantitas": {
+            "panjang": 0,
+            "tinggi": 0,
+            "tebal": 0,
+            "area_m2": 0,
+            "volume_m3": 0
+        }
+    },
+    {
+        "guid": "33aBzOrnjBlBkHBvs3nn2O",
+        "tipe_ifc": "IfcWallStandardCase",
+        "nama": "Wall",
+        "label_cad": "1241678",
+        "satuan_utama_hitung": "unit",
+        "satuan_sumber": "METER (Converted)",
+        "kuantitas": {
+            "panjang": 0,
+            "tinggi": 0,
+            "tebal": 0,
+            "area_m2": 0,
+            "volume_m3": 0
+        }
+    }
+]

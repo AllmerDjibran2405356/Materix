@@ -147,17 +147,17 @@
             <div class="section-body">
                 <table class="info-table">
                 <tr>
-                    <th>Total Item Bahan :</th> 
+                    <th>Total Item Bahan :</th>
                     <td>{{ $totalItems }}</td>
                     <td>Jenis bahan yang dibutuhkan</td>
                 </tr>
                 <tr>
-                    <th>Supplier Terlibat :</th> 
+                    <th>Supplier Terlibat :</th>
                     <td>{{ $uniqueSuppliers }}</td>
                     <td>Jumlah supplier penyedia</td>
                 </tr>
                 <tr>
-                    <th>Total RAB :</th> 
+                    <th>Total RAB :</th>
                     <td> </td>
                     <td>Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
                 </tr>
@@ -180,7 +180,7 @@
                         @else
                             <span>BELUM ADA DATA</span>
                         @endif
-                    </td> 
+                    </td>
                     <td>Perhitungan selesai</td>
                 </tr>
                 </table>

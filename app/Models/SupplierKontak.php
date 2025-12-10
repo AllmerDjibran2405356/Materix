@@ -10,9 +10,13 @@ class SupplierKontak extends Model
     use HasFactory;
     public $timestamps = false;
     protected $table = 'supplier_kontak';
+
+    protected $primaryKey = null;
+    public $incrementing = false;
+
     protected $fillable = ['ID_Supplier', 'Kontak_Supplier'];
 
     public function supplier() {
-        return $this->belongsTo(ListSupplier::class, 'ID_Supplier');
+        return $this->belongsTo(ListSupplier::class, 'ID_Supplier', 'ID_Supplier');
     }
 }
