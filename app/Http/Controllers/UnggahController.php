@@ -81,7 +81,7 @@ class UnggahController extends Controller
             DB::beginTransaction();
 
             // ======== CALL PYTHON FASTAPI ==========
-            $pythonUrl = 'http://127.0.0.1:8000/convert-ifc';
+            $pythonUrl = 'https://d931e775-4846-4537-8226-23568bedb232-00-3etr9atpy4f3d.pike.replit.dev/convert-ifc';
 
             $response = Http::attach(
                 'file',
