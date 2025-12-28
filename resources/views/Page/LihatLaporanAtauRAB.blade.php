@@ -4,6 +4,7 @@
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/laporanRAB.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
 @endsection
 
 @section('content')

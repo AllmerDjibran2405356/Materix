@@ -34,14 +34,14 @@
         <div class="dual-container-wrapper">
 
             <div class="fitur-box">
-                <img src="../images/icon-kalkulasi.png" alt="icon" class="fitur-icon">
+                <img src="{{ asset('images/icon-kalkulasi.png') }}" alt="icon" class="fitur-icon">
                 <a href="{{ route('DaftarProyek.index') }}" class="fitur-btn">
                     Kalkulasi Material
                 </a>
             </div>
 
             <div class="fitur-box">
-                <img src="../images/icon-chart.png" alt="icon" class="fitur-icon">
+                <img src="{{ asset('images/icon-chart.png') }}" alt="icon" class="fitur-icon">
                 <a href="{{ route('master-bahan.index') }}" class="fitur-btn">
                     Harga Bahan & Produsen Material
                 </a>

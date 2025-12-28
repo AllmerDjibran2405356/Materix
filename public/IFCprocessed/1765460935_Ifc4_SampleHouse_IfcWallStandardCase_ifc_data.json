@@ -1,0 +1,32 @@
+[
+    {
+        "guid": "3cUkl32yn9qRSPvBJVyWXt",
+        "tipe_ifc": "IfcWallStandardCase",
+        "nama": "Basic Wall:Wall-Partn_12P-70MStd-12P:285792",
+        "label_cad": "285792",
+        "satuan_utama_hitung": "m3",
+        "satuan_sumber": "METER (Converted)",
+        "kuantitas": {
+            "panjang": 5.51,
+            "tinggi": 2.335,
+            "tebal": 0.095,
+            "area_m2": 12.866,
+            "volume_m3": 1.222
+        }
+    },
+    {
+        "guid": "3cUkl32yn9qRSPvBJVyWY1",
+        "tipe_ifc": "IfcWallStandardCase",
+        "nama": "Basic Wall:Wall-Partn_12P-70MStd-12P:285846",
+        "label_cad": "285846",
+        "satuan_utama_hitung": "m3",
+        "satuan_sumber": "METER (Converted)",
+        "kuantitas": {
+            "panjang": 4.452,
+            "tinggi": 2.335,
+            "tebal": 0.095,
+            "area_m2": 10.395,
+            "volume_m3": 0.988
+        }
+    }
+]

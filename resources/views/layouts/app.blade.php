@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="css/navbar.css">
     <link href="{{ asset('css/homepage.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/unggah.css') }}">
     <link rel="stylesheet" href="{{ asset('css/HasilAnalisis.css') }}">
@@ -20,7 +20,12 @@
 
     @yield('styles')
 
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/unggah.js'])
+    @vite(['resources/css/app.css',
+            'resources/js/app.js',
+            'resources/js/material-management.js',
+            'resources/js/bootstrap.js',
+            'resources/js/login.js',
+            'resources/js/Unggah.js'])
 </head>
 
 <body class="bg-light">
@@ -29,7 +34,7 @@
         <div class="container">
             {{-- ▼▼▼ LOGO MATERIX MENGARAH KE HOMEPAGE ▼▼▼ --}}
             <a class="navbar-brand" href="{{ route('HomePage') }}">
-                <img src="/images/materixlogos.png" alt="MateRix Logo" class="navbar-logo">
+                <img src="{{ asset('/images/materixlogos.png') }}" alt="MateRix Logo" class="navbar-logo">
                 <span class="logo-text">aterix</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

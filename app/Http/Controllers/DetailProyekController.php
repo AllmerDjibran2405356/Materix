@@ -13,7 +13,7 @@ class DetailProyekController extends Controller
             ->where('id_user', Auth::id())
             ->firstOrFail();
 
-        return view('page.DetailProyek', compact('project'));
+        return view('Page.DetailProyek', compact('project'));
     }
 
 }

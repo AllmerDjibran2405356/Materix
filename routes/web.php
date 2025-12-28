@@ -1,9 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ConnectionTestController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DaftarProyekController;
-use App\Http\Controllers\DataProyekController; // Controller Utama Kita
+use App\Http\Controllers\DataProyekController;
 use App\Http\Controllers\DataRABController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\PengaturanController;
@@ -17,6 +18,8 @@ use App\Http\Controllers\DetailProyekController;
 use App\Http\Controllers\KelolaLaporanProyekController;
 use App\Http\Controllers\MasterBahanController;
 use App\Http\Controllers\RABController;
+
+Route::get('/cek-db', [ConnectionTestController::class, 'index']);
 
 /*
 |--------------------------------------------------------------------------

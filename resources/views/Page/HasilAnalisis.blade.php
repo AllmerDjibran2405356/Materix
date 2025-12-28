@@ -5,6 +5,7 @@
     {{-- Panggil CSS External --}}
     <link rel="stylesheet" href="{{ asset('css/HasilAnalisis.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 
